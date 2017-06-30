@@ -34,12 +34,15 @@ public class MainActivity extends Activity {
     ImageView centerImageAnimationHelper;
     Button aboutButton, playButton;
     ValueAnimator animator;
-
+    String currentScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        currentScreen= "entry";
         setContentView(R.layout.activity_main);
+
+
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
         aboutButton = (Button) findViewById(R.id.aboutButton);
@@ -54,6 +57,7 @@ public class MainActivity extends Activity {
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                currentScreen = "play";
                 setContentView(R.layout.play_main);
             }
         });
@@ -61,6 +65,7 @@ public class MainActivity extends Activity {
         aboutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                currentScreen = "about";
                 setContentView(R.layout.about_main);
             }
         });
@@ -89,32 +94,37 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    public String getCurrentScreen(){
+        return currentScreen;
+    }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        animator = ValueAnimator.ofFloat(0.0f, 1.0f);
-        animator.setRepeatCount(ValueAnimator.INFINITE);
-        animator.setInterpolator(new LinearInterpolator());
-        animator.setDuration(30000L);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                final float progress = (float) animation.getAnimatedValue();
-                final float width = centerImage.getWidth();
-                final float translationX = -(width * progress);
-                centerImage.setTranslationX(translationX);
-                centerImageAnimationHelper.setTranslationX(translationX + width);
-            }
-        });
-        animator.start();
+        if(currentScreen.equals("play")) {
+            animator = ValueAnimator.ofFloat(0.0f, 1.0f);
+            animator.setRepeatCount(ValueAnimator.INFINITE);
+            animator.setInterpolator(new LinearInterpolator());
+            animator.setDuration(30000L);
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    final float progress = (float) animation.getAnimatedValue();
+                    final float width = centerImage.getWidth();
+                    final float translationX = -(width * progress);
+                    centerImage.setTranslationX(translationX);
+                    centerImageAnimationHelper.setTranslationX(translationX + width);
+                }
+            });
+            animator.start();
 
 
-        shipImage = (ImageView)findViewById(R.id.shipImage);
-        shipImage.setBackgroundResource(R.drawable.shipanimation);
+            shipImage = (ImageView) findViewById(R.id.shipImage);
+            shipImage.setBackgroundResource(R.drawable.shipanimation);
 
-        // Get the background, which has been compiled to an AnimationDrawable object.
-        AnimationDrawable frameAnimation = (AnimationDrawable) shipImage.getBackground();
+            // Get the background, which has been compiled to an AnimationDrawable object.
+            AnimationDrawable frameAnimation = (AnimationDrawable) shipImage.getBackground();
 
-        // Start the animation (looped playback by default).
-        frameAnimation.start();
+            // Start the animation (looped playback by default).
+            frameAnimation.start();
+        }
     }
 }

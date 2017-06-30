@@ -10,6 +10,41 @@
     tools:layout_editor_absoluteX="0dp">
 
 
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="426dp"
+        android:layout_height="790dp"
+        tools:layout_editor_absoluteX="-1dp"
+        tools:layout_editor_absoluteY="-9dp">
+
+
+        <ImageView
+            android:id="@+id/BackgroundImage"
+            android:layout_width="1184dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/sidescrollingstars"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/sidescrollingstars" />
+
+        <ImageView
+            android:id="@+id/centerImage"
+            android:layout_width="424dp"
+            android:layout_height="591dp"
+            android:background="@drawable/verticalstars"
+            android:hardwareAccelerated="true"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/sidescrollingstars" />
+
+        <ImageView
+            android:id="@+id/centerImageAnimationHelper"
+            android:layout_width="wrap_content"
+            android:layout_height="588dp"
+            android:background="@drawable/verticalstars"
+            android:hardwareAccelerated="true"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/sidescrollingstars" />
+
+    </FrameLayout>
 
 
 </android.support.constraint.ConstraintLayout>
