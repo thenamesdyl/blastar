@@ -46,11 +46,6 @@ public class MainActivity extends Activity {
 
 
 
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/elitedanger.ttf");
-        titleTextView.setTypeface(typeface);
-
-
 
     }
 
@@ -171,6 +166,12 @@ public class MainActivity extends Activity {
         if(currentScreen.equals("entry")) {
             centerImage = (ImageView) findViewById(R.id.centerImage);
             centerImageAnimationHelper = (ImageView) findViewById(R.id.centerImageAnimationHelper);
+
+            titleTextView = (TextView) findViewById(R.id.titleTextView);
+            Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/elitedanger.ttf");
+            titleTextView.setTypeface(typeface);
+
+
             startButtonListeners();
             animator = ValueAnimator.ofFloat(0.0f, 1.0f);
             animator.setRepeatCount(ValueAnimator.INFINITE);
