@@ -1,6 +1,9 @@
 package me.dylanburton.blastarreborn;
 
 import android.animation.ValueAnimator;
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.Image;
@@ -10,27 +13,37 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     TextView titleTextView;
     ImageView centerImage, shipImage;
     ImageView centerImageAnimationHelper;
+    Button aboutButton, playButton;
     ValueAnimator animator;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
+        aboutButton = (Button) findViewById(R.id.aboutButton);
+        playButton = (Button) findViewById(R.id.playButton);
         Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/elitedanger.ttf");
         titleTextView.setTypeface(typeface);
 
@@ -38,15 +51,20 @@ public class MainActivity extends AppCompatActivity {
         centerImageAnimationHelper = (ImageView) findViewById(R.id.centerImageAnimationHelper);
 
 
-
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                setContentView(R.layout.play_main);
             }
-        });*/
+        });
+
+        aboutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setContentView(R.layout.about_main);
+            }
+        });
+
     }
 
     @Override
