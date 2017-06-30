@@ -14,37 +14,46 @@
         android:id="@+id/frameLayout"
         android:layout_width="426dp"
         android:layout_height="790dp"
-        tools:layout_editor_absoluteX="-1dp"
+        tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="-9dp">
 
 
+
         <ImageView
-            android:id="@+id/BackgroundImage"
+            android:id="@+id/BackgroundImagePlay"
             android:layout_width="1184dp"
             android:layout_height="match_parent"
             android:background="@drawable/sidescrollingstars"
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/sidescrollingstars" />
 
+
         <ImageView
-            android:id="@+id/centerImage"
+            android:id="@+id/centerImagePlay"
             android:layout_width="424dp"
             android:layout_height="591dp"
-            android:background="@drawable/verticalstars"
+            android:background="@drawable/sidescrollingstars"
             android:hardwareAccelerated="true"
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/sidescrollingstars" />
 
         <ImageView
-            android:id="@+id/centerImageAnimationHelper"
+            android:id="@+id/centerImageAnimationHelperPlay"
             android:layout_width="wrap_content"
             android:layout_height="588dp"
-            android:background="@drawable/verticalstars"
+            android:background="@drawable/sidescrollingstars"
             android:hardwareAccelerated="true"
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/sidescrollingstars" />
-
     </FrameLayout>
+
+    <ImageView
+        android:id="@+id/shipTopView"
+        android:layout_width="143dp"
+        android:layout_height="174dp"
+        app:srcCompat="@drawable/spaceshiptopview"
+        tools:layout_editor_absoluteX="121dp"
+        tools:layout_editor_absoluteY="355dp" />
 
 
 </android.support.constraint.ConstraintLayout>

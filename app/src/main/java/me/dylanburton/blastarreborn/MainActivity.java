@@ -30,8 +30,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
     TextView titleTextView;
-    ImageView centerImage, shipImage;
-    ImageView centerImageAnimationHelper;
+    ImageView centerImage, shipImage, centerImageAnimationHelper, centerImagePlay, centerImageAnimationHelperPlay,shipTopView;
     Button aboutButton, playButton;
     ValueAnimator animator;
     String currentScreen;
@@ -57,8 +56,13 @@ public class MainActivity extends Activity {
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 currentScreen = "play";
                 setContentView(R.layout.play_main);
+                centerImagePlay = (ImageView) findViewById(R.id.centerImagePlay);
+                centerImageAnimationHelperPlay = (ImageView) findViewById(R.id.centerImageAnimationHelperPlay);
+                startVerticalAnimation();
+                shipTopView = (ImageView) findViewById(R.id.shipTopView);
             }
         });
 
@@ -97,9 +101,27 @@ public class MainActivity extends Activity {
     public String getCurrentScreen(){
         return currentScreen;
     }
+
+    public void startVerticalAnimation(){
+        animator = ValueAnimator.ofFloat(0.0f, 1.0f);
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        animator.setInterpolator(new LinearInterpolator());
+        animator.setDuration(30000L);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                final float progress = (float) animation.getAnimatedValue();
+                final float width = centerImagePlay.getHeight();
+                final float translationY = (width * progress);
+                centerImagePlay.setTranslationY(translationY);
+                centerImageAnimationHelperPlay.setTranslationY(translationY - width);
+            }
+        });
+        animator.start();
+    }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        if(currentScreen.equals("play")) {
+        if(currentScreen.equals("entry")) {
             animator = ValueAnimator.ofFloat(0.0f, 1.0f);
             animator.setRepeatCount(ValueAnimator.INFINITE);
             animator.setInterpolator(new LinearInterpolator());
@@ -125,6 +147,9 @@ public class MainActivity extends Activity {
 
             // Start the animation (looped playback by default).
             frameAnimation.start();
+        }else if(currentScreen.equals("play")){
+
+            startVerticalAnimation();
         }
     }
 }
