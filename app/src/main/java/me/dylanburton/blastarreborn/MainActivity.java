@@ -2,6 +2,7 @@ package me.dylanburton.blastarreborn;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
@@ -46,60 +47,25 @@ public class MainActivity extends Activity {
 
 
         titleTextView = (TextView) findViewById(R.id.titleTextView);
-        aboutButton = (Button) findViewById(R.id.aboutButton);
-        playButton = (Button) findViewById(R.id.playButton);
         Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/elitedanger.ttf");
         titleTextView.setTypeface(typeface);
 
-        centerImage = (ImageView) findViewById(R.id.centerImage);
-        centerImageAnimationHelper = (ImageView) findViewById(R.id.centerImageAnimationHelper);
 
 
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    }
 
-                currentScreen = "play";
-                setContentView(R.layout.play_main);
-                centerImagePlay = (ImageView) findViewById(R.id.centerImagePlay);
-                centerImageAnimationHelperPlay = (ImageView) findViewById(R.id.centerImageAnimationHelperPlay);
-                startVerticalAnimation();
-                shipTopView = (ImageView) findViewById(R.id.shipTopView);
-                shipTopView.setBackgroundResource(R.drawable.spaceshiptopview);
+    @Override
+    public void onBackPressed() {
+        if(!currentScreen.equals("entry")) {
+            setContentView(R.layout.activity_main);
 
+            currentScreen = "entry";
+            onWindowFocusChanged(true);
 
-                playLayout = (ConstraintLayout) findViewById(R.id.playLayout);
+        }else{
+            System.exit(0);
+        }
 
-
-                playLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-
-                        if (event.getAction() == MotionEvent.ACTION_DOWN){
-
-                            shipTopView.setY(event.getY()-200);
-                            shipTopView.setX(event.getX()-200);
-                        }
-
-
-                        return true;
-
-                    }
-
-                });
-
-
-            }
-        });
-
-
-        aboutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentScreen = "about";
-                setContentView(R.layout.about_main);
-            }
-        });
 
     }
 
@@ -146,9 +112,66 @@ public class MainActivity extends Activity {
         });
         animator.start();
     }
+
+    public void startButtonListeners(){
+
+        aboutButton = (Button) findViewById(R.id.aboutButton);
+        playButton = (Button) findViewById(R.id.playButton);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                currentScreen = "play";
+                setContentView(R.layout.play_main);
+                centerImagePlay = (ImageView) findViewById(R.id.centerImagePlay);
+                centerImageAnimationHelperPlay = (ImageView) findViewById(R.id.centerImageAnimationHelperPlay);
+                startVerticalAnimation();
+                shipTopView = (ImageView) findViewById(R.id.shipTopView);
+                shipTopView.setBackgroundResource(R.drawable.spaceshiptopview);
+
+                playLayout = (ConstraintLayout) findViewById(R.id.playLayout);
+
+
+
+                playLayout.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+
+                        if (event.getAction() == MotionEvent.ACTION_DOWN){
+
+                            shipTopView.setY(event.getY()-200);
+                            shipTopView.setX(event.getX()-200);
+                        }
+
+
+
+                        return true;
+
+                    }
+
+                });
+
+
+            }
+        });
+
+
+        aboutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentScreen = "about";
+                setContentView(R.layout.about_main);
+            }
+        });
+
+
+    }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         if(currentScreen.equals("entry")) {
+            centerImage = (ImageView) findViewById(R.id.centerImage);
+            centerImageAnimationHelper = (ImageView) findViewById(R.id.centerImageAnimationHelper);
+            startButtonListeners();
             animator = ValueAnimator.ofFloat(0.0f, 1.0f);
             animator.setRepeatCount(ValueAnimator.INFINITE);
             animator.setInterpolator(new LinearInterpolator());
