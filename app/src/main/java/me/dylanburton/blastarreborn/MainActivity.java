@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.Image;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,7 @@ public class MainActivity extends Activity {
 
     TextView titleTextView;
     ImageView centerImage, shipImage, centerImageAnimationHelper, centerImagePlay, centerImageAnimationHelperPlay,shipTopView;
+    ConstraintLayout playLayout;
     Button aboutButton, playButton;
     ValueAnimator animator;
     String currentScreen;
@@ -63,8 +65,33 @@ public class MainActivity extends Activity {
                 centerImageAnimationHelperPlay = (ImageView) findViewById(R.id.centerImageAnimationHelperPlay);
                 startVerticalAnimation();
                 shipTopView = (ImageView) findViewById(R.id.shipTopView);
+                shipTopView.setBackgroundResource(R.drawable.spaceshiptopview);
+
+
+                playLayout = (ConstraintLayout) findViewById(R.id.playLayout);
+
+
+                playLayout.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+
+                        if (event.getAction() == MotionEvent.ACTION_DOWN){
+
+                            shipTopView.setY(event.getY()-200);
+                            shipTopView.setX(event.getX()-200);
+                        }
+
+
+                        return true;
+
+                    }
+
+                });
+
+
             }
         });
+
 
         aboutButton.setOnClickListener(new View.OnClickListener() {
             @Override
