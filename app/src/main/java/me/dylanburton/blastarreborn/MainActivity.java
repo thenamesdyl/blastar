@@ -38,6 +38,9 @@ public class MainActivity extends Activity {
     ValueAnimator animator;
     String currentScreen;
 
+    PlayScreen playScreen;
+    AboutScreen aboutScreen;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,17 +110,18 @@ public class MainActivity extends Activity {
         });
         animator.start();
     }
+    public MainActivity mainClass(){ return this; }
 
     public void startButtonListeners(){
 
         aboutButton = (Button) findViewById(R.id.aboutButton);
         playButton = (Button) findViewById(R.id.playButton);
+        playScreen = new PlayScreen(this);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 currentScreen = "play";
-                setContentView(R.layout.play_main);
                 centerImagePlay = (ImageView) findViewById(R.id.centerImagePlay);
                 centerImageAnimationHelperPlay = (ImageView) findViewById(R.id.centerImageAnimationHelperPlay);
                 startVerticalAnimation();
@@ -125,7 +129,6 @@ public class MainActivity extends Activity {
                 shipTopView.setBackgroundResource(R.drawable.spaceshiptopview);
 
                 playLayout = (ConstraintLayout) findViewById(R.id.playLayout);
-
 
 
                 playLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -136,6 +139,7 @@ public class MainActivity extends Activity {
 
                             shipTopView.setY(event.getY()-200);
                             shipTopView.setX(event.getX()-200);
+
                         }
 
 
@@ -201,6 +205,8 @@ public class MainActivity extends Activity {
         }else if(currentScreen.equals("play")){
 
             startVerticalAnimation();
+        }else if(currentScreen.equals("about")){
+
         }
     }
 }
