@@ -48,8 +48,8 @@
 
     <ImageView
         android:id="@+id/shipTopView"
-        android:layout_width="100dp"
-        android:layout_height="130dp"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintBottom_creator="1"
         app:layout_constraintBottom_toBottomOf="parent"

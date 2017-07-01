@@ -101,7 +101,7 @@ public class PlayScreen extends Activity{
 
     public void update(){
 
-        if(!(dragActive) && shipTopView.getY() < 1500){
+        if(!(dragActive) && shipTopView.getY() < 1300){
             shipTopView.setY(shipTopView.getY()+shipScreenDownwardDecayRate);
         }
 
@@ -135,6 +135,7 @@ public class PlayScreen extends Activity{
         public void run() {
             try {
                 while(isRendering){
+
 
 
                     // update screen's context
