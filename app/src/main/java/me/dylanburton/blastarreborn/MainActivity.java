@@ -32,20 +32,20 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
     TextView titleTextView;
-    ImageView centerImage, shipImage, centerImageAnimationHelper, centerImagePlay, centerImageAnimationHelperPlay,shipTopView;
+    ImageView centerImage, shipImage, centerImageAnimationHelper;
     ConstraintLayout playLayout;
     Button aboutButton, playButton;
     ValueAnimator animator;
-    String currentScreen;
+    public enum Screen{ ENTRY, PLAY, ABOUT};
+    public Screen currentScreen = Screen.ENTRY;
 
-    PlayScreen playScreen;
-    AboutScreen aboutScreen;
+    PlayScreen playScreen = new PlayScreen(this);;
+    AboutScreen aboutScreen = new AboutScreen(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        currentScreen= "entry";
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.content_main);
 
 
 
@@ -54,10 +54,12 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if(!currentScreen.equals("entry")) {
-            setContentView(R.layout.activity_main);
-
-            currentScreen = "entry";
+        if(currentScreen != Screen.ENTRY) {
+            setContentView(R.layout.content_main);
+            if(currentScreen == Screen.PLAY){
+                playScreen.pauseRunnerThread();
+            }
+            currentScreen = Screen.ENTRY;
             onWindowFocusChanged(true);
 
         }else{
@@ -89,66 +91,37 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public String getCurrentScreen(){
+    public Screen getCurrentScreen(){
         return currentScreen;
     }
 
-    public void startVerticalAnimation(){
-        animator = ValueAnimator.ofFloat(0.0f, 1.0f);
-        animator.setRepeatCount(ValueAnimator.INFINITE);
-        animator.setInterpolator(new LinearInterpolator());
-        animator.setDuration(30000L);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                final float progress = (float) animation.getAnimatedValue();
-                final float width = centerImagePlay.getHeight();
-                final float translationY = (width * progress);
-                centerImagePlay.setTranslationY(translationY);
-                centerImageAnimationHelperPlay.setTranslationY(translationY - width);
-            }
-        });
-        animator.start();
+    public void setCurrentScreen(String screen){
+        if(screen.toLowerCase().equals("entry")){
+            this.currentScreen = Screen.ENTRY;
+        }else if(screen.toLowerCase().equals("about")){
+            this.currentScreen = Screen.ABOUT;
+
+        }else if(screen.toLowerCase().equals("play")){
+            this.currentScreen = Screen.PLAY;
+        }
     }
+
+
     public MainActivity mainClass(){ return this; }
+
 
     public void startButtonListeners(){
 
         aboutButton = (Button) findViewById(R.id.aboutButton);
         playButton = (Button) findViewById(R.id.playButton);
-        playScreen = new PlayScreen(this);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                currentScreen = "play";
-                centerImagePlay = (ImageView) findViewById(R.id.centerImagePlay);
-                centerImageAnimationHelperPlay = (ImageView) findViewById(R.id.centerImageAnimationHelperPlay);
-                startVerticalAnimation();
-                shipTopView = (ImageView) findViewById(R.id.shipTopView);
-                shipTopView.setBackgroundResource(R.drawable.spaceshiptopview);
 
-                playLayout = (ConstraintLayout) findViewById(R.id.playLayout);
+                playScreen.draw();
+          //      setContentView(R.layout.play_main);
 
-
-                playLayout.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-
-                        if (event.getAction() == MotionEvent.ACTION_DOWN){
-
-                            shipTopView.setY(event.getY()-200);
-                            shipTopView.setX(event.getX()-200);
-
-                        }
-
-
-
-                        return true;
-
-                    }
-
-                });
 
 
             }
@@ -158,8 +131,9 @@ public class MainActivity extends Activity {
         aboutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentScreen = "about";
-                setContentView(R.layout.about_main);
+
+                aboutScreen.draw();
+          //      setContentView(R.layout.about_main);
             }
         });
 
@@ -167,7 +141,7 @@ public class MainActivity extends Activity {
     }
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
-        if(currentScreen.equals("entry")) {
+        if(currentScreen == Screen.ENTRY) {
             centerImage = (ImageView) findViewById(R.id.centerImage);
             centerImageAnimationHelper = (ImageView) findViewById(R.id.centerImageAnimationHelper);
 
@@ -176,7 +150,11 @@ public class MainActivity extends Activity {
             titleTextView.setTypeface(typeface);
 
 
+            //starts listeners on play and about button
             startButtonListeners();
+
+
+            //starts image for background star movement
             animator = ValueAnimator.ofFloat(0.0f, 1.0f);
             animator.setRepeatCount(ValueAnimator.INFINITE);
             animator.setInterpolator(new LinearInterpolator());
@@ -194,6 +172,7 @@ public class MainActivity extends Activity {
             animator.start();
 
 
+            //the ship animation main screen
             shipImage = (ImageView) findViewById(R.id.shipImage);
             shipImage.setBackgroundResource(R.drawable.shipanimation);
 
@@ -202,10 +181,15 @@ public class MainActivity extends Activity {
 
             // Start the animation (looped playback by default).
             frameAnimation.start();
-        }else if(currentScreen.equals("play")){
+        }else if(currentScreen == Screen.PLAY){
 
-            startVerticalAnimation();
-        }else if(currentScreen.equals("about")){
+
+
+            //starts vertical animation on playScreen
+            playScreen.startVerticalAnimation();
+
+
+        }else if(currentScreen == Screen.ABOUT){
 
         }
     }

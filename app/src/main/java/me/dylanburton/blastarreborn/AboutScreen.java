@@ -13,16 +13,10 @@ public class AboutScreen extends Activity{
     public AboutScreen(MainActivity main){
         this.main = main;
     }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
 
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.play_main);
-
-
-
-
+    public void draw(){
+        main.setContentView(R.layout.about_main);
+        main.setCurrentScreen("about");
     }
 
 }

@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:id="@+id/playLayout"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="me.dylanburton.blastarreborn.MainActivity"
     tools:layout_editor_absoluteY="25dp"
     tools:layout_editor_absoluteX="0dp">
 
@@ -49,8 +48,8 @@
 
     <ImageView
         android:id="@+id/shipTopView"
-        android:layout_width="143dp"
-        android:layout_height="174dp"
+        android:layout_width="100dp"
+        android:layout_height="130dp"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintBottom_creator="1"
         app:layout_constraintBottom_toBottomOf="parent"
