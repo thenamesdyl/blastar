@@ -22,7 +22,9 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.Gallery;
 import android.widget.ImageView;
@@ -36,6 +38,9 @@ public class MainActivity extends Activity {
     ConstraintLayout playLayout;
     Button aboutButton, playButton;
     ValueAnimator animator;
+    TranslateAnimation anim;
+
+
     public enum Screen{ ENTRY, PLAY, ABOUT};
     public Screen currentScreen = Screen.ENTRY;
 
@@ -170,7 +175,6 @@ public class MainActivity extends Activity {
                 }
             });
             animator.start();
-
 
             //the ship animation main screen
             shipImage = (ImageView) findViewById(R.id.shipImage);

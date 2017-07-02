@@ -41,6 +41,7 @@
         android:layout_width="1231dp"
         android:layout_height="655dp"
         android:id="@+id/frameLayout"
+        android:background="#000000"
         tools:layout_constraintTop_creator="1"
         tools:layout_constraintLeft_creator="1"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -48,21 +49,12 @@
 
 
         <ImageView
-            android:id="@+id/BackgroundImage"
-            android:layout_width="1184dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/sidescrollingstars"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/sidescrollingstars" />
-
-        <ImageView
             android:id="@+id/centerImage"
             android:hardwareAccelerated="true"
             android:layout_width="1184dp"
             android:layout_height="match_parent"
             android:background="@drawable/sidescrollingstars"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/sidescrollingstars" />
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/centerImageAnimationHelper"
@@ -70,8 +62,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/sidescrollingstars"
             android:hardwareAccelerated="true"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/sidescrollingstars" />
+            android:scaleType="centerCrop" />
 
     </FrameLayout>
 

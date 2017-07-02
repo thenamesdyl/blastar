@@ -1,5 +1,8 @@
 package me.dylanburton.blastarreborn.Enemies;
 
+import me.dylanburton.blastarreborn.Tools.Coordinate;
+import me.dylanburton.blastarreborn.Tools.Velocity;
+
 /**
  * Created by Dylan on 7/1/2017.
  */
@@ -7,9 +10,9 @@ package me.dylanburton.blastarreborn.Enemies;
 public interface Enemy {
 
     //everytime movement behavior is called, will slightly change velocities of enemy. If contact with another enemy, reverses directions
-    public void movementBehavior();
+    public Velocity movementBehavior();
 
-    public void spawn();
+    public Coordinate spawn();
     public void shoot();
 
 }

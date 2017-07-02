@@ -13,18 +13,10 @@
         android:id="@+id/frameLayout"
         android:layout_width="426dp"
         android:layout_height="790dp"
+        android:background="#000000"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="-9dp">
 
-
-
-        <ImageView
-            android:id="@+id/BackgroundImagePlay"
-            android:layout_width="1184dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/sidescrollingstars"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/sidescrollingstars" />
 
 
         <ImageView
@@ -33,8 +25,7 @@
             android:layout_height="591dp"
             android:background="@drawable/sidescrollingstars"
             android:hardwareAccelerated="true"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/sidescrollingstars" />
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/centerImageAnimationHelperPlay"
@@ -42,8 +33,7 @@
             android:layout_height="588dp"
             android:background="@drawable/sidescrollingstars"
             android:hardwareAccelerated="true"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/sidescrollingstars" />
+            android:scaleType="centerCrop" />
     </FrameLayout>
 
     <ImageView

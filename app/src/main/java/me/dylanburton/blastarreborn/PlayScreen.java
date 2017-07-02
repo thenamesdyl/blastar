@@ -86,7 +86,7 @@ public class PlayScreen extends Activity implements Screen{
         animator = ValueAnimator.ofFloat(0.0f, 1.0f);
         animator.setRepeatCount(ValueAnimator.INFINITE);
         animator.setInterpolator(new LinearInterpolator());
-        animator.setDuration(10000L);
+        animator.setDuration(30000L);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -102,7 +102,7 @@ public class PlayScreen extends Activity implements Screen{
 
     public void update(){
 
-        if(!(dragActive) && shipTopView.getY() < 1400){
+        if(!(dragActive) && shipTopView.getY() < 1300){
             shipTopView.setY(shipTopView.getY()+shipScreenDownwardDecayRate);
         }
 
@@ -116,7 +116,7 @@ public class PlayScreen extends Activity implements Screen{
     }
 
 
-    //responsible for the running thread in playScreen. Will be responsible for various checking mechanisms
+    //responsible for the running thread in playScreen. Will be responsible for various checking mechanisms. Idea from Greenwalls repo on github
     private class playScreenRunnerThread implements Runnable{
         private volatile boolean isRendering = false;
         Thread renderThread = null;
