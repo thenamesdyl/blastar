@@ -19,12 +19,13 @@ import android.widget.ImageView;
  * Created by Dylan on 6/30/2017.
  */
 
-public class PlayScreen extends Activity{
+public class PlayScreen extends Activity implements Screen{
 
     MainActivity main;
     playScreenRunnerThread runnerThread = new playScreenRunnerThread(this);
 
     Boolean dragActive = false;
+    int currentLevel = 0;
 
     //after you let go of the ship, this is how fast it falls back to default y position
     public int shipScreenDownwardDecayRate = 1;
@@ -101,7 +102,7 @@ public class PlayScreen extends Activity{
 
     public void update(){
 
-        if(!(dragActive) && shipTopView.getY() < 1300){
+        if(!(dragActive) && shipTopView.getY() < 1400){
             shipTopView.setY(shipTopView.getY()+shipScreenDownwardDecayRate);
         }
 
