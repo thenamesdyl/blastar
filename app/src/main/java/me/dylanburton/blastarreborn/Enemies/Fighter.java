@@ -11,6 +11,13 @@ public class Fighter implements Enemy{
 
 
 
+    public Fighter(){
+
+
+    }
+
+
+
     //hopefully is being called multiple times in playScreen's runnerThread
     public Velocity movementBehavior(){
 
