@@ -3,7 +3,11 @@ package me.dylanburton.blastarreborn;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -14,6 +18,9 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by Dylan on 6/30/2017.
@@ -33,8 +40,18 @@ public class PlayScreen extends Activity implements Screen{
     ImageView centerImagePlay, centerImageAnimationHelperPlay, shipTopView;
     ConstraintLayout playLayout;
     ValueAnimator animator;
+
+    Bitmap fighter;
     public PlayScreen(MainActivity main){
         this.main = main;
+
+        try {
+            InputStream inputStream = main.getAssetManager().open("enemyship.png");
+            fighter = BitmapFactory.decodeStream(inputStream);
+            inputStream.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -75,10 +92,18 @@ public class PlayScreen extends Activity implements Screen{
 
         });
 
+
+
+
+    }
+
+    public void startGame(){
+        draw();
         runnerThread.resume();
+    }
 
-
-
+    public void resumeRunnerThread(){
+        runnerThread.resume();
     }
 
 
@@ -102,7 +127,7 @@ public class PlayScreen extends Activity implements Screen{
 
     public void update(){
 
-        if(!(dragActive) && shipTopView.getY() < 1300){
+        if(!(dragActive) && shipTopView.getY() < 1400){
             shipTopView.setY(shipTopView.getY()+shipScreenDownwardDecayRate);
         }
 

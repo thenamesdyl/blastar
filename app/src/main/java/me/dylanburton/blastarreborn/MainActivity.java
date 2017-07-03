@@ -4,6 +4,9 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
@@ -15,6 +18,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -31,6 +35,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public class MainActivity extends Activity {
 
     TextView titleTextView;
@@ -40,21 +47,32 @@ public class MainActivity extends Activity {
     ValueAnimator animator;
     TranslateAnimation anim;
 
+    AssetManager am;
+    DisplayMetrics dm;
+
 
     public enum Screen{ ENTRY, PLAY, ABOUT};
     public Screen currentScreen = Screen.ENTRY;
 
-    PlayScreen playScreen = new PlayScreen(this);;
-    AboutScreen aboutScreen = new AboutScreen(this);
+
+    PlayScreen playScreen;
+    AboutScreen aboutScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
+        dm = new DisplayMetrics();
+        am = getAssets();
+        playScreen = new PlayScreen(this);;
+        aboutScreen = new AboutScreen(this);
 
 
 
+    }
 
+    public AssetManager getAssetManager(){
+        return am;
     }
 
     @Override
@@ -124,7 +142,8 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
 
 
-                playScreen.draw();
+
+                playScreen.startGame();
           //      setContentView(R.layout.play_main);
 
 
@@ -144,6 +163,25 @@ public class MainActivity extends Activity {
 
 
     }
+
+
+    BitmapFactory.Options sboptions = new BitmapFactory.Options();
+    Bitmap getScaledBitmap(String fname) throws IOException
+    {
+        sboptions.inScreenDensity = dm.densityDpi;
+        sboptions.inTargetDensity =  dm.densityDpi;
+
+        InputStream inputStream = getAssets().open(fname);
+        Bitmap btm = BitmapFactory.decodeStream(inputStream, null, sboptions);
+        inputStream.close();
+        return btm;
+
+//        InputStream inputStream = getAssets().open(fname);
+//        Bitmap btm = BitmapFactory.decodeStream(inputStream);
+//        inputStream.close();
+//        return Bitmap.createScaledBitmap(btm, (int)(btm.getWidth()*sizescalefactor), (int)(btm.getHeight()*sizescalefactor), false);
+    }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         if(currentScreen == Screen.ENTRY) {
@@ -188,13 +226,17 @@ public class MainActivity extends Activity {
         }else if(currentScreen == Screen.PLAY){
 
 
+            //keeps ship moving backwards
+            playScreen.pauseRunnerThread();
+            playScreen.resumeRunnerThread();
 
-            //starts vertical animation on playScreen
-            playScreen.startVerticalAnimation();
 
 
         }else if(currentScreen == Screen.ABOUT){
 
         }
     }
+
+
+
 }
