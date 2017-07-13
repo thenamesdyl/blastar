@@ -41,10 +41,6 @@ public class MainActivity extends ActionBarActivity {
     FullScreenView mainView;
     Typeface gamefont;
 
-    /**
-     * Initialize the activity.
-     * @param savedInstanceState
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
@@ -88,8 +84,6 @@ public class MainActivity extends ActionBarActivity {
     /**
      * load and scale bitmap according to the apps scale factors.
      *
-     * @param fname
-     * @return
      */
     Bitmap getScaledBitmap(String fname) throws IOException
     {
@@ -134,7 +128,6 @@ public class MainActivity extends ActionBarActivity {
         return gamefont;
     }
 
-    // screen transitions
 
     /**
      * Start a new game.

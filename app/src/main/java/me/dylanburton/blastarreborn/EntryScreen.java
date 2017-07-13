@@ -13,9 +13,6 @@ import android.view.View;
 
 import java.io.InputStream;
 
-/**
- * Created by ugliest on 12/29/14.
- */
 public class EntryScreen extends Screen {
     MainActivity act;
     Paint p = new Paint();
