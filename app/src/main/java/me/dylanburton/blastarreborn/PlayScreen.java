@@ -198,8 +198,6 @@ public class PlayScreen extends Screen {
             }
 
 
-            // game programming!  pure and constant state manipulation!
-            // this is like fingernails on a chalkboard for the functional programming crowd
             if (gamestate == State.ROUNDSUMMARY
                     || gamestate == State.STARTGAME
                     || gamestate == State.PLAYERDIED
