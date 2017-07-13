@@ -1,191 +1,302 @@
 package me.dylanburton.blastarreborn;
 
-import android.animation.ValueAnimator;
-import android.app.Activity;
-import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
+import android.support.v4.view.VelocityTrackerCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.VelocityTracker;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
-import android.widget.ImageView;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Created by Dylan on 6/30/2017.
+ * Represents the main screen of play for the game.
+ *
  */
+public class PlayScreen extends Screen {
 
-public class PlayScreen extends Activity implements Screen{
 
-    MainActivity main;
-    playScreenRunnerThread runnerThread = new playScreenRunnerThread(this);
+    private MainActivity act;
+    private Paint p;
+    //how fast the spaceship moves backwards
+    private int decay_speed=1;
 
-    Boolean dragActive = false;
-    int currentLevel = 0;
+    private enum State {        RUNNING, STARTROUND, ROUNDSUMMARY, STARTGAME, PLAYERDIED, GAMEOVER    }
+    private volatile State gamestate = State.STARTGAME;
 
-    //after you let go of the ship, this is how fast it falls back to default y position
-    public int shipScreenDownwardDecayRate = 1;
+    private int width = 0;
+    private int height = 0;
 
-    ImageView centerImagePlay, centerImageAnimationHelperPlay, shipTopView;
-    ConstraintLayout playLayout;
-    ValueAnimator animator;
 
-    Bitmap fighter;
-    public PlayScreen(MainActivity main){
-        this.main = main;
+    private Bitmap starbackground, spaceship, fighter[];
+    private Rect scaledDst = new Rect();
+
+
+    private int minRoundPass;
+    private int round;
+    private int score;
+    private int lives;
+    private int highscore=0, highlev=1;
+    private static final String HIGHSCORE_FILE = "highscore.dat";
+    private static final int START_NUMLIVES = 3;
+    private Map<Integer, String> levelMap = new HashMap<Integer, String>();
+    private final int LEVEL_FIGHTER = 1;  // level where different ships are added
+    private final int LEVEL_IMPERIAL = 3;
+    private final int LEVEL_BATTLECRUISER = 4;
+    private final int LEVEL_BATTLESHIP = 5;
+    private final int LEVEL_BERSERKER = 6;
+
+
+    public PlayScreen(MainActivity act) {
+        p = new Paint();
+        this.act = act;
+        AssetManager assetManager = act.getAssets();
+        try {
+            // wall
+            InputStream inputStream = assetManager.open("sidescrollingstars.jpg");
+            starbackground = BitmapFactory.decodeStream(inputStream);
+            inputStream.close();
+
+            //fighter, making it an array in case I want to add multiple states of the ship
+            fighter = new Bitmap[1];
+          //  fighter[0]=act.getScaledBitmap("");
+
+            p.setTypeface(act.getGameFont());
+            round = 1;
+
+        } catch (IOException e) {
+            Log.d(act.LOG_ID, "why tho?", e);
+        }
+    }
+
+    /**
+     * initialize and start a game
+     */
+    void initGame() {
+        score = 0;
+        round = 1;
+        lives = START_NUMLIVES;
+        highscore = 0;
 
         try {
-            InputStream inputStream = main.getAssetManager().open("enemyship.png");
-            fighter = BitmapFactory.decodeStream(inputStream);
-            inputStream.close();
-        }catch(IOException e){
+            BufferedReader f = new BufferedReader(new FileReader(act.getFilesDir() + HIGHSCORE_FILE));
+            highscore = Integer.parseInt(f.readLine());
+            highlev = Integer.parseInt(f.readLine());
+            f.close();
+        } catch (Exception e) {
+            Log.d(MainActivity.LOG_ID, "ReadHighScore", e);
+        }
+        gamestate = State.STARTGAME;
+    }
+
+
+    /**
+     * init game for current round
+     */
+    private void initRound() {
+
+        // how many enemies do we need to kill to progress?
+        if (round == 1)
+            minRoundPass = 10;
+        else if (round < 4)
+            minRoundPass = 30;
+        else
+            minRoundPass = 40;
+
+
+        gamestate = State.RUNNING;
+    }
+
+    /**
+     * player lost a life
+     */
+    private void loseLife() {
+        lives--;
+
+        if (lives == 0) {
+            // game over!  wrap things up and write hi score file
+            gamestate = State.GAMEOVER;
+            try {
+                BufferedWriter f = new BufferedWriter(new FileWriter(act.getFilesDir() + HIGHSCORE_FILE));
+                f.write(Integer.toString(highscore)+"\n");
+                f.write(Integer.toString(highlev)+"\n");
+                f.close();
+            } catch (Exception e) { // if we can't write the hi score file...oh well.
+                Log.d(MainActivity.LOG_ID, "WriteHiScore", e);
+            }
+        } else
+            gamestate = State.PLAYERDIED;
+    }
+
+
+
+    @Override
+    public void update(View v) {
+
+
+        if (gamestate == State.STARTROUND) {
+
+            initRound();
+            return;
+        }
+
+        if (width == 0) {
+            // set variables that rely on screen size
+            width = v.getWidth();
+            height = v.getHeight();
+
+        }
+
+        if (gamestate == State.RUNNING) {
+
+        }
+
+        //need a place to update enemy positions, needs some sort of AI
+        //need to update background stars which will be moving
+        //need to make sure ship is decaying
+
+
+    }
+
+
+    @Override
+    public void draw(Canvas c, View v) {
+        try {
+            // actually draw the screen
+            scaledDst.set(0, 0, width, height);
+            c.drawBitmap(starbackground, null, scaledDst, p);
+
+            //c.drawBitmap(fighter, null, scaledDst, p);
+
+            p.setColor(Color.WHITE);
+            p.setTextSize(act.TS_NORMAL);
+            p.setTypeface(act.getGameFont());
+
+            if (score >= highscore) {
+                highscore = score;
+                highlev = round;
+            }
+
+
+            // game programming!  pure and constant state manipulation!
+            // this is like fingernails on a chalkboard for the functional programming crowd
+            if (gamestate == State.ROUNDSUMMARY
+                    || gamestate == State.STARTGAME
+                    || gamestate == State.PLAYERDIED
+                    || gamestate == State.GAMEOVER) {
+                if (gamestate != State.STARTGAME) {
+                    // round ended, by completion or player death, display stats
+
+                    if (gamestate == State.ROUNDSUMMARY) {
+
+                    } else if (gamestate == State.PLAYERDIED
+                            || gamestate == State.GAMEOVER){
+
+                    }
+
+                }
+
+                if (gamestate != State.PLAYERDIED
+                        && gamestate != State.GAMEOVER) {
+
+                }
+
+                if (gamestate != State.GAMEOVER) {
+
+                }
+            }
+            if (gamestate == State.GAMEOVER) {
+                p.setTextSize(act.TS_BIG);
+                p.setColor(Color.RED);
+                drawCenteredText(c, "GamE oVeR!", height /2, p, -2);
+                drawCenteredText(c, "Touch to end game", height * 4 /5, p, -2);
+                p.setColor(Color.WHITE);
+                drawCenteredText(c, "GamE oVeR!", height /2, p, 0);
+                drawCenteredText(c, "Touch to end game", height * 4 /5, p, 0);
+            }
+
+        } catch (Exception e) {
+            Log.e(MainActivity.LOG_ID, "draw", e);
             e.printStackTrace();
         }
     }
 
 
-    public void draw(){
-        main.setContentView(R.layout.play_main);
-        main.setCurrentScreen("play");
-        centerImagePlay = (ImageView) main.findViewById(R.id.centerImagePlay);
-        centerImageAnimationHelperPlay = (ImageView) main.findViewById(R.id.centerImageAnimationHelperPlay);
-        startVerticalAnimation();
-        shipTopView = (ImageView) main.findViewById(R.id.shipTopView);
-        shipTopView.setBackgroundResource(R.drawable.spaceshiptopview);
+    //center text
+    private void drawCenteredText(Canvas c, String msg, int height, Paint p, int shift) {
+        c.drawText(msg, (width - p.measureText(msg)) / 2 + shift, height, p);
+    }
 
-        playLayout = (ConstraintLayout) main.findViewById(R.id.playLayout);
-
-
-        shipTopView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (event.getAction() == MotionEvent.ACTION_MOVE){
-                    dragActive = true;
-
-                    shipTopView.setY(shipTopView.getY() + event.getY()-shipTopView.getHeight()/2);
-                    shipTopView.setX(shipTopView.getX() + event.getX()-shipTopView.getWidth()/2);
-
+    DisplayMetrics dm = new DisplayMetrics();
+    @Override
+    public boolean onTouch(MotionEvent e) {
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (gamestate == State.ROUNDSUMMARY
+                        || gamestate == State.STARTGAME
+                        || gamestate == State.PLAYERDIED) {
+                    gamestate = State.STARTROUND; // prep and start round
+                    return false; // no followup msgs
+                }
+                else if (gamestate == State.GAMEOVER) {
+                    act.leaveGame(); // user touched after gameover -> back to entry screen
+                    return false;  // no followup msgs
                 }
 
-                if(event.getAction() == MotionEvent.ACTION_UP){
-                    dragActive = false;
-                }
+                break;
 
+            case MotionEvent.ACTION_MOVE:
 
+                break;
 
+            case MotionEvent.ACTION_UP:
 
-                return true;
-
-            }
-
-        });
-
-
-
-
-    }
-
-    public void startGame(){
-        draw();
-        runnerThread.resume();
-    }
-
-    public void resumeRunnerThread(){
-        runnerThread.resume();
-    }
-
-
-    public void startVerticalAnimation(){
-        animator = ValueAnimator.ofFloat(0.0f, 1.0f);
-        animator.setRepeatCount(ValueAnimator.INFINITE);
-        animator.setInterpolator(new LinearInterpolator());
-        animator.setDuration(30000L);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                final float progress = (float) animation.getAnimatedValue();
-                final float height = centerImagePlay.getHeight();
-                final float translationY = (height * progress);
-                centerImagePlay.setTranslationY(translationY);
-                centerImageAnimationHelperPlay.setTranslationY(translationY - height);
-            }
-        });
-        animator.start();
-    }
-
-    public void update(){
-
-        if(!(dragActive) && shipTopView.getY() < 1400){
-            shipTopView.setY(shipTopView.getY()+shipScreenDownwardDecayRate);
+                break;
         }
 
-
-
-
+        return true;
     }
 
-    public void pauseRunnerThread(){
-        runnerThread.pause();
-    }
+    /**
+     * An enemy is a template for all the enemies     */
+    private class Enemy {
+        int points; // points this type of enemy is worth when destroyed
+        Bitmap btm[];
+        float width=0; // width onscreen
+        float height=0;  // height onscreen
+        float halfWidth = 0;  // convenience
+        float halfHeight = 0;
+        final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
 
-
-    //responsible for the running thread in playScreen. Will be responsible for various checking mechanisms. Idea from Greenwalls repo on github
-    private class playScreenRunnerThread implements Runnable{
-        private volatile boolean isRendering = false;
-        Thread renderThread = null;
-        PlayScreen playScreen;
-
-        public playScreenRunnerThread(Context context) {
-            this.playScreen = (PlayScreen) context;
-        }
-
-        public void resume() {
-            isRendering = true;
-            renderThread = new Thread(this);
-            renderThread.start();
-        }
-
-        @Override
-        public void run() {
-            try {
-                while(isRendering){
-
-
-
-                    // update screen's context
-                    playScreen.update();
-                    Thread.sleep(10);
-
-                }
-            } catch (Exception e) {
-                // arguably overzealous to grab all exceptions here...but i want to know.
-                e.printStackTrace();
-            }
-        }
-
-        public void pause() {
-            isRendering = false;
-            while(true) {
-                try {
-                    renderThread.join();
-                    return;
-                } catch (InterruptedException e) {
-                    // retry
-                }
-            }
+        public Enemy(Bitmap bitmaps[], int points) {
+            this.btm = bitmaps;
+            this.width = bitmaps[0].getWidth();
+            this.height = bitmaps[0].getHeight();
+            this.halfWidth = width/HALF_DIVISOR;
+            this.halfHeight = height/HALF_DIVISOR;
+            this.points = points;
         }
     }
+
 
 }
