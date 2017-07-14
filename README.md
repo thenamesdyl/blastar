@@ -1,7 +1,7 @@
 # Blastar
 
 ## Description
-Recreation of Elon Musk's developed childhood game "Blastar" on android. It's be a space game dependant upon shooting space aliens so you don't die. Simple yet addictive
+Recreation of Elon Musk's developed childhood game "Blastar" on android. It's a space game dependant upon shooting space aliens so you don't die. Simple yet addictive
 
 ## Features
 
