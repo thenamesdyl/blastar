@@ -13,5 +13,5 @@ Recreation of Elon Musk's developed childhood game "Blastar" on android. It's a 
 
 ## Part Credit to Greenwalls repo
 
-Since this a first venture into Android, using Greenwalls game construction as a similar framework for this game
+Since this is a first venture into Android, using Greenwalls game construction as a similar framework for this game
 https://github.com/awlzac/greenwall
