@@ -40,7 +40,12 @@ public class PlayScreen extends Screen {
     private MainActivity act;
     private Paint p;
     //how fast the spaceship moves backwards
-    private int decay_speed=1;
+    private final int DECAY_SPEED=5;
+    private final int LEVEL_FIGHTER = 1;  // level where different ships are added
+    private final int LEVEL_IMPERIAL = 3;
+    private final int LEVEL_BATTLECRUISER = 4;
+    private final int LEVEL_BATTLESHIP = 5;
+    private final int LEVEL_BERSERKER = 6;
 
     private enum State {        RUNNING, STARTROUND, ROUNDSUMMARY, STARTGAME, PLAYERDIED, GAMEOVER    }
     private volatile State gamestate = State.STARTGAME;
@@ -54,8 +59,10 @@ public class PlayScreen extends Screen {
     private Bitmap starbackground, spaceship, fighter[];
     private Rect scaledDst = new Rect();
 
+    //main spaceships location and bound
     private int spaceshipY;
     private int spaceshipX;
+    private Rect spaceshipBounds;
 
     //various game things
     private int minRoundPass;
@@ -66,11 +73,7 @@ public class PlayScreen extends Screen {
     private static final String HIGHSCORE_FILE = "highscore.dat";
     private static final int START_NUMLIVES = 3;
     private Map<Integer, String> levelMap = new HashMap<Integer, String>();
-    private final int LEVEL_FIGHTER = 1;  // level where different ships are added
-    private final int LEVEL_IMPERIAL = 3;
-    private final int LEVEL_BATTLECRUISER = 4;
-    private final int LEVEL_BATTLESHIP = 5;
-    private final int LEVEL_BERSERKER = 6;
+
 
 
     public PlayScreen(MainActivity act) {
@@ -198,7 +201,7 @@ public class PlayScreen extends Screen {
         }
         synchronized (spaceship){
             if(spaceshipY<1000) {
-                spaceshipY += 5;
+                spaceshipY += DECAY_SPEED;
             }
         }
 
@@ -289,20 +292,19 @@ public class PlayScreen extends Screen {
     public boolean onTouch(MotionEvent e) {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (gamestate == State.ROUNDSUMMARY
-                        || gamestate == State.STARTGAME
-                        || gamestate == State.PLAYERDIED) {
-                    gamestate = State.STARTROUND; // prep and start round
-                    return false; // no followup msgs
-                }
-                else if (gamestate == State.GAMEOVER) {
-                    act.leaveGame(); // user touched after gameover -> back to entry screen
-                    return false;  // no followup msgs
-                }
 
                 break;
 
             case MotionEvent.ACTION_MOVE:
+                synchronized (spaceship){
+                    spaceshipBounds = new Rect(spaceshipX,spaceshipY,spaceshipX+spaceship.getWidth(),spaceshipY+spaceship.getHeight());
+
+                    if(spaceshipBounds.contains((int) e.getX(),(int) e.getY())){
+                        spaceshipX = (int) e.getX();
+                        spaceshipY = (int) e.getY();
+
+                    }
+                }
 
                 break;
 
@@ -329,6 +331,8 @@ public class PlayScreen extends Screen {
         float halfHeight = 0;
         final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
 
+        Rect bounds = new Rect();
+
         public Enemy(Bitmap bitmap, int points) {
             this.btm = bitmap;
             this.width = bitmap.getWidth();
@@ -340,6 +344,15 @@ public class PlayScreen extends Screen {
         public Bitmap getBitmap(){
             return btm;
         }
+        public boolean hasCollision(float collx, float colly) {
+            return getBounds().contains((int) collx, (int) colly);
+        }
+        public Rect getBounds() {
+            bounds.set((int)(this.x - getBitmap().getWidth()/2), (int)(this.y-getBitmap().getHeight()/2),
+                    (int)(this.x+getBitmap().getWidth()/2), (int)(this.y+getBitmap().getHeight()/2));
+            return bounds;
+        }
+
     }
 
 
