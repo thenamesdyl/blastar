@@ -56,7 +56,7 @@ public class PlayScreen extends Screen {
     private int width = 0;
     private int height = 0;
     //bitmap with a rect used for drawing
-    private Bitmap starbackground, spaceship, fighter;
+    private Bitmap starbackground, spaceship, spaceshipLaser, fighter;
     private Rect scaledDst = new Rect();
 
     //main spaceships location and bound
@@ -64,6 +64,8 @@ public class PlayScreen extends Screen {
     private int spaceshipX;
     private Rect spaceshipBounds;
     private boolean spaceshipIsMoving;
+    private int spaceshipLaserX;
+    private int spaceshipLaserY;
 
     //fighter speed, a temp var that will be erased when movement behavior is made competent
     private int fighterSpeed = 5;
@@ -97,8 +99,9 @@ public class PlayScreen extends Screen {
             starbackground = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
 
-            //your spaceship
+            //your spaceship and laser
             spaceship = act.getScaledBitmap("spaceshiptopview.png");
+            spaceshipLaser = act.getScaledBitmap("spaceshiplaser.png");
 
             //fighter
             fighter = act.getScaledBitmap("fighter.png");
@@ -195,6 +198,9 @@ public class PlayScreen extends Screen {
             spaceshipX = width/2;
             spaceshipY = height*2/3;
 
+            spaceshipLaserX = spaceshipX+spaceship.getWidth()/3;
+            spaceshipLaserY = spaceshipY+spaceship.getHeight()/2;
+
             mapAnimatorX = width;
             mapAnimatorY = height;
             secondaryMapAnimatorX=width;
@@ -207,8 +213,6 @@ public class PlayScreen extends Screen {
         }
 
         //need a place to update enemy positions, needs some sort of AI
-        //need to update background stars which will be moving
-        //need to make sure ship is decaying
 
         synchronized (enemiesFlying){
             Iterator<Enemy> enemiesIterator = enemiesFlying.iterator();
@@ -229,12 +233,21 @@ public class PlayScreen extends Screen {
             }
         }
 
-        synchronized (spaceship){
-            if(spaceshipY<1600 && !spaceshipIsMoving) {
-                spaceshipY += DECAY_SPEED;
-            }
+        //spaceship decay
+        if(spaceshipY<1600 && !spaceshipIsMoving) {
+            spaceshipY += DECAY_SPEED;
         }
 
+        //resets spaceship laser
+        spaceshipLaserY -= 4.0f;
+        if(spaceshipLaserY < 0){
+            spaceshipLaserY = spaceshipY+spaceship.getHeight()/2;
+        }
+
+
+
+
+        //animator for map background
         mapAnimatorY+=2.0f;
         secondaryMapAnimatorY+=2.0f;
         //this means the stars are off the screen
@@ -259,9 +272,9 @@ public class PlayScreen extends Screen {
             c.drawBitmap(starbackground,null,new Rect(secondaryMapAnimatorX-width, secondaryMapAnimatorY-(height*2),secondaryMapAnimatorX, secondaryMapAnimatorY-height),p);
 
 
-            synchronized (spaceship){
-                c.drawBitmap(spaceship,spaceshipX,spaceshipY,p);
-            }
+            //main spaceship stuff
+            c.drawBitmap(spaceship,spaceshipX,spaceshipY,p);
+            c.drawBitmap(spaceshipLaser,spaceshipLaserX,spaceshipLaserY,p);
 
             synchronized (enemiesFlying) {
                 for(Enemy e: enemiesFlying) {
