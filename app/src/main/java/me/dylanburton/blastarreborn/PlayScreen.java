@@ -63,10 +63,17 @@ public class PlayScreen extends Screen {
     private int spaceshipY;
     private int spaceshipX;
     private Rect spaceshipBounds;
+    private boolean spaceshipIsMoving;
+
+    //used to move the background image, need two pairs of these vars for animation
+    private int mapAnimatorX;
+    private int mapAnimatorY;
+    private int secondaryMapAnimatorX;
+    private int secondaryMapAnimatorY;
 
     //various game things
     private int minRoundPass;
-    private int round;
+    private int currentLevel;
     private int score;
     private int lives;
     private int highscore=0, highlev=1;
@@ -95,7 +102,7 @@ public class PlayScreen extends Screen {
           //  fighter[0]=act.getScaledBitmap("");
 
             p.setTypeface(act.getGameFont());
-            round = 1;
+            currentLevel = 1;
 
         } catch (IOException e) {
             Log.d(act.LOG_ID, "why tho?", e);
@@ -108,7 +115,7 @@ public class PlayScreen extends Screen {
     void initGame() {
 
         score = 0;
-        round = 1;
+        currentLevel = 1;
         lives = START_NUMLIVES;
         highscore = 0;
 
@@ -130,9 +137,9 @@ public class PlayScreen extends Screen {
     private void initRound() {
 
         // how many enemies do we need to kill to progress?
-        if (round == 1)
+        if (currentLevel == 1)
             minRoundPass = 10;
-        else if (round < 4)
+        else if (currentLevel < 4)
             minRoundPass = 30;
         else
             minRoundPass = 40;
@@ -179,6 +186,14 @@ public class PlayScreen extends Screen {
             width = v.getWidth();
             height = v.getHeight();
 
+            spaceshipX = width/2;
+            spaceshipY = height*2/3;
+
+            mapAnimatorX = width;
+            mapAnimatorY = height;
+            secondaryMapAnimatorX=width;
+            secondaryMapAnimatorY=height;
+
         }
 
         if (gamestate == State.RUNNING) {
@@ -190,20 +205,33 @@ public class PlayScreen extends Screen {
         //need to make sure ship is decaying
 
         synchronized (enemiesFlying){
-            Iterator<Enemy> fit = enemiesFlying.iterator();
-            while (fit.hasNext()) {
-                Enemy e = fit.next();
+            Iterator<Enemy> enemiesIterator = enemiesFlying.iterator();
+            while (enemiesIterator.hasNext()) {
+                Enemy e = enemiesIterator.next();
                 e.x += 5;
 
 
 
             }
         }
+
+
         synchronized (spaceship){
-            if(spaceshipY<1000) {
+            if(spaceshipY<1600 && !spaceshipIsMoving) {
                 spaceshipY += DECAY_SPEED;
             }
         }
+
+
+        mapAnimatorY+=2.0f;
+        secondaryMapAnimatorY+=2.0f;
+        //this means the stars are off the screen
+        if(mapAnimatorY>=height*2){
+            mapAnimatorY = height;
+        }else if(secondaryMapAnimatorY>=height*2){
+            secondaryMapAnimatorY = height;
+        }
+
 
     }
 
@@ -213,13 +241,16 @@ public class PlayScreen extends Screen {
         try {
 
             // actually draw the screen
-            scaledDst.set(0, 0, width, height);
-            c.drawBitmap(starbackground, null, scaledDst, p);
+            scaledDst.set(mapAnimatorX-width, mapAnimatorY-height, mapAnimatorX, mapAnimatorY);
+            c.drawBitmap(starbackground,null,scaledDst,p);
+            //secondary background for animation
+            c.drawBitmap(starbackground,null,new Rect(secondaryMapAnimatorX-width, secondaryMapAnimatorY-(height*2),secondaryMapAnimatorX, secondaryMapAnimatorY-height),p);
 
 
             synchronized (spaceship){
                 c.drawBitmap(spaceship,spaceshipX,spaceshipY,p);
             }
+
             synchronized (enemiesFlying) {
                 for(Enemy e: enemiesFlying) {
                     c.drawBitmap(e.getBitmap(), e.x, e.y, p);
@@ -234,7 +265,7 @@ public class PlayScreen extends Screen {
 
             if (score >= highscore) {
                 highscore = score;
-                highlev = round;
+                highlev = currentLevel;
             }
 
 
@@ -300,8 +331,9 @@ public class PlayScreen extends Screen {
                     spaceshipBounds = new Rect(spaceshipX,spaceshipY,spaceshipX+spaceship.getWidth(),spaceshipY+spaceship.getHeight());
 
                     if(spaceshipBounds.contains((int) e.getX(),(int) e.getY())){
-                        spaceshipX = (int) e.getX();
-                        spaceshipY = (int) e.getY();
+                        spaceshipIsMoving = true;
+                        spaceshipX = (int) e.getX()-spaceship.getWidth()/2;
+                        spaceshipY = (int) e.getY()-spaceship.getHeight()/2;
 
                     }
                 }
@@ -309,6 +341,7 @@ public class PlayScreen extends Screen {
                 break;
 
             case MotionEvent.ACTION_UP:
+                spaceshipIsMoving=false;
 
                 break;
         }
