@@ -198,8 +198,8 @@ public class PlayScreen extends Screen {
             spaceshipX = width/2;
             spaceshipY = height*2/3;
 
-            spaceshipLaserX = spaceshipX+spaceship.getWidth()/3;
-            spaceshipLaserY = spaceshipY+spaceship.getHeight()/2;
+            spaceshipLaserX = spaceshipX+spaceship.getWidth()/8;
+            spaceshipLaserY = spaceshipY+spaceship.getHeight()/3;
 
             mapAnimatorX = width;
             mapAnimatorY = height;
@@ -211,6 +211,7 @@ public class PlayScreen extends Screen {
         if (gamestate == State.RUNNING) {
 
         }
+
 
         //need a place to update enemy positions, needs some sort of AI
 
@@ -228,9 +229,15 @@ public class PlayScreen extends Screen {
                     fighterSpeed=-fighterSpeed;
                 }
 
+                if(e.hasCollision(spaceshipLaserX, spaceshipLaserY)|| e.hasCollision(spaceshipLaserX*64/100, spaceshipLaserY)){
+                    spaceshipLaserX = 4000;
+                    enemiesFlying.remove(e);
+
+                }
 
 
             }
+
         }
 
         //spaceship decay
@@ -239,9 +246,10 @@ public class PlayScreen extends Screen {
         }
 
         //resets spaceship laser
-        spaceshipLaserY -= 4.0f;
-        if(spaceshipLaserY < 0){
-            spaceshipLaserY = spaceshipY+spaceship.getHeight()/2;
+        spaceshipLaserY -= 20.0f;
+        if(spaceshipLaserY < -150){
+            spaceshipLaserY = spaceshipY+spaceship.getHeight()/3;
+            spaceshipLaserX = spaceshipX+spaceship.getWidth()/8;
         }
 
 
@@ -273,8 +281,9 @@ public class PlayScreen extends Screen {
 
 
             //main spaceship stuff
-            c.drawBitmap(spaceship,spaceshipX,spaceshipY,p);
             c.drawBitmap(spaceshipLaser,spaceshipLaserX,spaceshipLaserY,p);
+            c.drawBitmap(spaceshipLaser,spaceshipLaserX+spaceship.getWidth()*64/100,spaceshipLaserY,p);
+            c.drawBitmap(spaceship,spaceshipX,spaceshipY,p);
 
             synchronized (enemiesFlying) {
                 for(Enemy e: enemiesFlying) {
