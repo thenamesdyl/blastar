@@ -51,7 +51,6 @@ public class PlayScreen extends Screen {
     private Bitmap starbackground, spaceship, fighter[];
     private Rect scaledDst = new Rect();
 
-
     private int minRoundPass;
     private int round;
     private int score;
@@ -77,8 +76,11 @@ public class PlayScreen extends Screen {
             starbackground = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
 
+            //your spaceship
+            spaceship = act.getScaledBitmap("spaceshiptopview");
+
             //fighter, making it an array in case I want to add multiple states of the ship
-            fighter = new Bitmap[1];
+            fighter = new Bitmap[0];
           //  fighter[0]=act.getScaledBitmap("");
 
             p.setTypeface(act.getGameFont());
@@ -186,6 +188,7 @@ public class PlayScreen extends Screen {
             scaledDst.set(0, 0, width, height);
             c.drawBitmap(starbackground, null, scaledDst, p);
 
+            c.drawBitmap(spaceship, null, new Rect(width/2-spaceship.getWidth()/2, height/2-spaceship.getHeight()/2, width/2+spaceship.getWidth(), height/2+spaceship.getHeight()/2),p);
             //c.drawBitmap(fighter, null, scaledDst, p);
 
             p.setColor(Color.WHITE);

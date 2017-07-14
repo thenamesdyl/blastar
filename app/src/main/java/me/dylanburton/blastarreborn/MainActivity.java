@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends ActionBarActivity {
-    static final String LOG_ID = "Dyl";
+    static final String LOG_ID = "Dylan";
     static final float EXPECTED_DENSITY = 315.0f;  // original target density of runtime device
     static final float EXPECTED_WIDTH = 720.0f;  // original target width of runtime device
     int TS_NORMAL; // normal text size
