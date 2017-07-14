@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.util.DisplayMetrics;
@@ -44,13 +45,19 @@ public class PlayScreen extends Screen {
     private enum State {        RUNNING, STARTROUND, ROUNDSUMMARY, STARTGAME, PLAYERDIED, GAMEOVER    }
     private volatile State gamestate = State.STARTGAME;
 
+    private List<Enemy> enemiesFlying = Collections.synchronizedList(new LinkedList<Enemy>());  // enemies that are still alive
+
+    //width and height of screen
     private int width = 0;
     private int height = 0;
-
-
+    //bitmap with a rect used for drawing
     private Bitmap starbackground, spaceship, fighter[];
     private Rect scaledDst = new Rect();
 
+    private int spaceshipY;
+    private int spaceshipX;
+
+    //various game things
     private int minRoundPass;
     private int round;
     private int score;
@@ -71,13 +78,14 @@ public class PlayScreen extends Screen {
         this.act = act;
         AssetManager assetManager = act.getAssets();
         try {
-            // wall
+
+            //background
             InputStream inputStream = assetManager.open("sidescrollingstars.jpg");
             starbackground = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
 
             //your spaceship
-            spaceship = act.getScaledBitmap("spaceshiptopview");
+            spaceship = act.getScaledBitmap("spaceshiptopview.png");
 
             //fighter, making it an array in case I want to add multiple states of the ship
             fighter = new Bitmap[0];
@@ -95,6 +103,7 @@ public class PlayScreen extends Screen {
      * initialize and start a game
      */
     void initGame() {
+
         score = 0;
         round = 1;
         lives = START_NUMLIVES;
@@ -177,6 +186,21 @@ public class PlayScreen extends Screen {
         //need to update background stars which will be moving
         //need to make sure ship is decaying
 
+        synchronized (enemiesFlying){
+            Iterator<Enemy> fit = enemiesFlying.iterator();
+            while (fit.hasNext()) {
+                Enemy e = fit.next();
+                e.x += 5;
+
+
+
+            }
+        }
+        synchronized (spaceship){
+            if(spaceshipY<1000) {
+                spaceshipY += 5;
+            }
+        }
 
     }
 
@@ -184,11 +208,21 @@ public class PlayScreen extends Screen {
     @Override
     public void draw(Canvas c, View v) {
         try {
+
             // actually draw the screen
             scaledDst.set(0, 0, width, height);
             c.drawBitmap(starbackground, null, scaledDst, p);
 
-            c.drawBitmap(spaceship, null, new Rect(width/2-spaceship.getWidth()/2, height/2-spaceship.getHeight()/2, width/2+spaceship.getWidth(), height/2+spaceship.getHeight()/2),p);
+
+            synchronized (spaceship){
+                c.drawBitmap(spaceship,spaceshipX,spaceshipY,p);
+            }
+            synchronized (enemiesFlying) {
+                for(Enemy e: enemiesFlying) {
+                    c.drawBitmap(e.getBitmap(), e.x, e.y, p);
+                }
+            }
+
             //c.drawBitmap(fighter, null, scaledDst, p);
 
             p.setColor(Color.WHITE);
@@ -236,10 +270,12 @@ public class PlayScreen extends Screen {
                 drawCenteredText(c, "Touch to end game", height * 4 /5, p, 0);
             }
 
+
         } catch (Exception e) {
             Log.e(MainActivity.LOG_ID, "draw", e);
             e.printStackTrace();
         }
+
     }
 
 
@@ -281,21 +317,28 @@ public class PlayScreen extends Screen {
     /**
      * An enemy is a template for all the enemies     */
     private class Enemy {
-        int points; // points this type of enemy is worth when destroyed
-        Bitmap btm[];
+        Bitmap btm;
+        float x=0;
+        float y=0;
+        double vx=.1;
+        double vy=.1;
+        int points;
         float width=0; // width onscreen
         float height=0;  // height onscreen
         float halfWidth = 0;  // convenience
         float halfHeight = 0;
         final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
 
-        public Enemy(Bitmap bitmaps[], int points) {
-            this.btm = bitmaps;
-            this.width = bitmaps[0].getWidth();
-            this.height = bitmaps[0].getHeight();
+        public Enemy(Bitmap bitmap, int points) {
+            this.btm = bitmap;
+            this.width = bitmap.getWidth();
+            this.height = bitmap.getHeight();
             this.halfWidth = width/HALF_DIVISOR;
             this.halfHeight = height/HALF_DIVISOR;
             this.points = points;
+        }
+        public Bitmap getBitmap(){
+            return btm;
         }
     }
 
