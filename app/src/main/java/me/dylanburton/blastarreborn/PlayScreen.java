@@ -56,7 +56,7 @@ public class PlayScreen extends Screen {
     private int width = 0;
     private int height = 0;
     //bitmap with a rect used for drawing
-    private Bitmap starbackground, spaceship, fighter[];
+    private Bitmap starbackground, spaceship, fighter;
     private Rect scaledDst = new Rect();
 
     //main spaceships location and bound
@@ -64,6 +64,9 @@ public class PlayScreen extends Screen {
     private int spaceshipX;
     private Rect spaceshipBounds;
     private boolean spaceshipIsMoving;
+
+    //fighter speed, a temp var that will be erased when movement behavior is made competent
+    private int fighterSpeed = 5;
 
     //used to move the background image, need two pairs of these vars for animation
     private int mapAnimatorX;
@@ -97,9 +100,8 @@ public class PlayScreen extends Screen {
             //your spaceship
             spaceship = act.getScaledBitmap("spaceshiptopview.png");
 
-            //fighter, making it an array in case I want to add multiple states of the ship
-            fighter = new Bitmap[0];
-          //  fighter[0]=act.getScaledBitmap("");
+            //fighter
+            fighter = act.getScaledBitmap("fighter.png");
 
             p.setTypeface(act.getGameFont());
             currentLevel = 1;
@@ -118,6 +120,10 @@ public class PlayScreen extends Screen {
         currentLevel = 1;
         lives = START_NUMLIVES;
         highscore = 0;
+
+        if(currentLevel == 1){
+            enemiesFlying.add(new Enemy(fighter,5));
+        }
 
         try {
             BufferedReader f = new BufferedReader(new FileReader(act.getFilesDir() + HIGHSCORE_FILE));
@@ -208,20 +214,26 @@ public class PlayScreen extends Screen {
             Iterator<Enemy> enemiesIterator = enemiesFlying.iterator();
             while (enemiesIterator.hasNext()) {
                 Enemy e = enemiesIterator.next();
-                e.x += 5;
+
+
+                //this needs to be replaced with some sort of competent movement behavior.
+                e.x += fighterSpeed;
+                if(e.x >=width*4/5){
+                    fighterSpeed=-fighterSpeed;
+                }else if(e.x<=0){
+                    fighterSpeed=-fighterSpeed;
+                }
 
 
 
             }
         }
-
 
         synchronized (spaceship){
             if(spaceshipY<1600 && !spaceshipIsMoving) {
                 spaceshipY += DECAY_SPEED;
             }
         }
-
 
         mapAnimatorY+=2.0f;
         secondaryMapAnimatorY+=2.0f;
@@ -243,7 +255,7 @@ public class PlayScreen extends Screen {
             // actually draw the screen
             scaledDst.set(mapAnimatorX-width, mapAnimatorY-height, mapAnimatorX, mapAnimatorY);
             c.drawBitmap(starbackground,null,scaledDst,p);
-            //secondary background for animation
+            //secondary background for animation. Same as last draw, but instead, these are a height-length higher
             c.drawBitmap(starbackground,null,new Rect(secondaryMapAnimatorX-width, secondaryMapAnimatorY-(height*2),secondaryMapAnimatorX, secondaryMapAnimatorY-height),p);
 
 
@@ -295,13 +307,13 @@ public class PlayScreen extends Screen {
                 }
             }
             if (gamestate == State.GAMEOVER) {
-                p.setTextSize(act.TS_BIG);
+                /*p.setTextSize(act.TS_BIG);
                 p.setColor(Color.RED);
                 drawCenteredText(c, "GamE oVeR!", height /2, p, -2);
                 drawCenteredText(c, "Touch to end game", height * 4 /5, p, -2);
                 p.setColor(Color.WHITE);
                 drawCenteredText(c, "GamE oVeR!", height /2, p, 0);
-                drawCenteredText(c, "Touch to end game", height * 4 /5, p, 0);
+                drawCenteredText(c, "Touch to end game", height * 4 /5, p, 0);*/
             }
 
 
@@ -374,6 +386,7 @@ public class PlayScreen extends Screen {
             this.halfHeight = height/HALF_DIVISOR;
             this.points = points;
         }
+
         public Bitmap getBitmap(){
             return btm;
         }
