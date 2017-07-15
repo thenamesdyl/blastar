@@ -44,23 +44,26 @@ public class PlayScreen extends Screen {
     private MainActivity act;
     private Paint p;
     //how fast the spaceship moves backwards
-    private final int DECAY_SPEED=5;
+    private final int DECAY_SPEED = 5;
     private final int LEVEL_FIGHTER = 1;  // level where different ships are added
     private final int LEVEL_IMPERIAL = 3;
     private final int LEVEL_BATTLECRUISER = 4;
     private final int LEVEL_BATTLESHIP = 5;
     private final int LEVEL_BERSERKER = 6;
     static final long ONESEC_NANOS = 1000000000L;
+    private enum State {RUNNING, STARTROUND, ROUNDSUMMARY, STARTGAME, PLAYERDIED, GAMEOVER;}
 
-    private enum State {        RUNNING, STARTROUND, ROUNDSUMMARY, STARTGAME, PLAYERDIED, GAMEOVER    }
+
     private volatile State gamestate = State.STARTGAME;
-
     private List<Enemy> enemiesFlying = Collections.synchronizedList(new LinkedList<Enemy>());  // enemies that are still alive
-
     //width and height of screen
     private int width = 0;
     private int height = 0;
+    private int MIN_HEIGHT;
+
     //bitmap with a rect used for drawing
+
+
     private Bitmap starbackground, spaceship, spaceshipLaser, fighter, explosion[];
     private Rect scaledDst = new Rect();
 
@@ -71,9 +74,9 @@ public class PlayScreen extends Screen {
     private boolean spaceshipIsMoving;
     private int spaceshipLaserX;
     private int spaceshipLaserY;
-
     //fighter speed, a temp var that will be erased when movement behavior is made competent
     private int fighterSpeed = 5;
+    private int enemySpeed = 4;
 
     //used to move the background image, need two pairs of these vars for animation
     private int mapAnimatorX;
@@ -86,18 +89,15 @@ public class PlayScreen extends Screen {
     private long frtime = 0;
     private int fps = 0;
 
-
     //various game things
     private int minRoundPass;
     private int currentLevel;
     private int score;
     private int lives;
-    private int highscore=0, highlev=1;
+    private int highscore = 0, highlev = 1;
     private static final String HIGHSCORE_FILE = "highscore.dat";
     private static final int START_NUMLIVES = 3;
     private Map<Integer, String> levelMap = new HashMap<Integer, String>();
-
-
 
     public PlayScreen(MainActivity act) {
         p = new Paint();
@@ -109,6 +109,8 @@ public class PlayScreen extends Screen {
             InputStream inputStream = assetManager.open("sidescrollingstars.jpg");
             starbackground = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
+
+            this.MIN_HEIGHT = (int) (starbackground.getHeight() * 0.7);
 
             //your spaceship and laser
             spaceship = act.getScaledBitmap("spaceshiptopview.png");
@@ -251,20 +253,16 @@ public class PlayScreen extends Screen {
 
 
                 //this needs to be replaced with some sort of competent movement behavior.
-                e.x += fighterSpeed;
-                if(e.x >=width*4/5){
-                    fighterSpeed=-fighterSpeed;
-                }else if(e.x<=0){
-                    fighterSpeed=-fighterSpeed;
+                e.x += enemySpeed;
+                if(e.x >=width*4/5 || e.x <= 0){
+                    enemySpeed = -enemySpeed;
                 }
-
-
             }
 
         }
 
         //spaceship decay
-        if(spaceshipY<1600 && !spaceshipIsMoving) {
+        if(spaceshipY < MIN_HEIGHT && !spaceshipIsMoving) {
             spaceshipY += DECAY_SPEED;
         }
 
@@ -275,9 +273,6 @@ public class PlayScreen extends Screen {
             spaceshipLaserX = spaceshipX+spaceship.getWidth()/8;
         }
 
-
-
-
         //animator for map background
         mapAnimatorY+=2.0f;
         secondaryMapAnimatorY+=2.0f;
@@ -287,8 +282,6 @@ public class PlayScreen extends Screen {
         }else if(secondaryMapAnimatorY>=height*2){
             secondaryMapAnimatorY = height;
         }
-
-
     }
 
 
@@ -420,8 +413,8 @@ public class PlayScreen extends Screen {
         Bitmap btm;
         float x=0;
         float y=0;
-        double vx=.1;
-        double vy=.1;
+        double vx = .1;
+        double vy = .1;
         int points;
         float width=0; // width onscreen
         float height=0;  // height onscreen
