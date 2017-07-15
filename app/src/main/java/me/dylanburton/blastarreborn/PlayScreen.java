@@ -67,9 +67,9 @@ public class PlayScreen extends Screen {
     private Bitmap starbackground, spaceship, spaceshipLaser, fighter, explosion[];
     private Rect scaledDst = new Rect();
 
-    //main spaceships location and bound
-    private int spaceshipY;
-    private int spaceshipX;
+    //main spaceships location and bound, using 1000 for spaceshipy and x because of a weird glitch where the spaceship is drawn at 0,0 for 100 ms
+    private int spaceshipY=1000;
+    private int spaceshipX=1000;
     private Rect spaceshipBounds;
     private boolean spaceshipIsMoving;
     private int spaceshipLaserX;
@@ -85,8 +85,10 @@ public class PlayScreen extends Screen {
     private int secondaryMapAnimatorY;
 
     //time stuff
-    private long hitContact = 0;
+    private long hitContactTime = 0;
+    private boolean enemyStartDelayReached = false;
     private long frtime = 0;
+    private long gameStartTime = 0;
     private int fps = 0;
 
 
@@ -139,6 +141,8 @@ public class PlayScreen extends Screen {
      */
     void initGame() {
 
+        //used for slight delays on spawning things at the beginning
+        gameStartTime = System.nanoTime();
         score = 0;
         currentLevel = 1;
         lives = START_NUMLIVES;
@@ -198,25 +202,6 @@ public class PlayScreen extends Screen {
             gamestate = State.PLAYERDIED;
     }
 
-   /*
-    public void playExplosionAnimation(final float x, final float y, final Canvas c, final int recursionCounter){
-        c.drawBitmap(explosion[4],x,y,p);
-
-        if(recursionCounter<11){
-
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    playExplosionAnimation(x,y,c,recursionCounter+1);
-                }
-            }, 1000);
-
-        }
-
-    }
-    */
-
 
 
     @Override
@@ -273,6 +258,8 @@ public class PlayScreen extends Screen {
                 }
 
 
+
+
             }
 
         }
@@ -309,14 +296,15 @@ public class PlayScreen extends Screen {
     @Override
     public void draw(Canvas c, View v) {
         try {
+            if(gameStartTime + (ONESEC_NANOS/10) < frtime){
+                enemyStartDelayReached = true;
+            }
 
             // actually draw the screen
             scaledDst.set(mapAnimatorX-width, mapAnimatorY-height, mapAnimatorX, mapAnimatorY);
             c.drawBitmap(starbackground,null,scaledDst,p);
             //secondary background for animation. Same as last draw, but instead, these are a height-length higher
             c.drawBitmap(starbackground,null,new Rect(secondaryMapAnimatorX-width, secondaryMapAnimatorY-(height*2),secondaryMapAnimatorX, secondaryMapAnimatorY-height),p);
-            //main spaceship
-            c.drawBitmap(spaceship, spaceshipX, spaceshipY, p);
 
 
             synchronized (shipExplosions) {
@@ -325,8 +313,8 @@ public class PlayScreen extends Screen {
 
 
                     //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
-                    if(hitContact + (ONESEC_NANOS/50) < frtime) {
-                        hitContact = System.nanoTime();
+                    if(hitContactTime + (ONESEC_NANOS/50) < frtime) {
+                        hitContactTime = System.nanoTime();
                         se.nextFrame();
 
                     }
@@ -339,22 +327,27 @@ public class PlayScreen extends Screen {
 
             synchronized (enemiesFlying) {
                 for(Enemy e: enemiesFlying) {
-                    c.drawBitmap(e.getBitmap(), e.x, e.y, p);
+                    if(enemyStartDelayReached) {
+                        c.drawBitmap(e.getBitmap(), e.x, e.y, p);
 
-                    if(e.hasCollision(spaceshipLaserX, spaceshipLaserY)|| e.hasCollision(spaceshipLaserX+spaceship.getWidth()*64/100, spaceshipLaserY)){
-                        spaceshipLaserX = 4000;
-                        enemiesFlying.remove(e);
-                        shipExplosions.add(new ShipExplosion(e.x,e.y+e.getBitmap().getHeight()/4,shipExplosions.size()));
-                        hitContact = System.nanoTime();
+                        if ((e.hasCollision(spaceshipLaserX, spaceshipLaserY) || e.hasCollision(spaceshipLaserX + spaceship.getWidth() * 64 / 100, spaceshipLaserY))) {
+                            spaceshipLaserX = 4000;
+                            enemiesFlying.remove(e);
+                            shipExplosions.add(new ShipExplosion(e.x, e.y + e.getBitmap().getHeight() / 4, shipExplosions.size()));
+                            hitContactTime = System.nanoTime();
 
 
+                        }
                     }
                 }
             }
 
-            //main spaceship lasers
+            //main spaceship lasers, adds a delay because for some reason it occasionally destroys spawned ships on start
             c.drawBitmap(spaceshipLaser, spaceshipLaserX, spaceshipLaserY, p);
             c.drawBitmap(spaceshipLaser, spaceshipLaserX + spaceship.getWidth() * 64 / 100, spaceshipLaserY, p);
+
+            //main spaceship
+            c.drawBitmap(spaceship, spaceshipX, spaceshipY, p);
 
 
             p.setColor(Color.WHITE);
@@ -480,8 +473,8 @@ public class PlayScreen extends Screen {
             return getBounds().contains((int) collx, (int) colly);
         }
         public Rect getBounds() {
-            bounds.set((int)(this.x - getBitmap().getWidth()/2), (int)(this.y-getBitmap().getHeight()/2),
-                    (int)(this.x+getBitmap().getWidth()/2), (int)(this.y+getBitmap().getHeight()/2));
+            bounds.set((int)(this.x), (int)(this.y-getBitmap().getHeight()),
+                    (int)(this.x+getBitmap().getWidth()/2), (int)(this.y+getBitmap().getHeight()));
             return bounds;
         }
 
