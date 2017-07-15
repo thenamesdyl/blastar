@@ -420,7 +420,7 @@ public class PlayScreen extends Screen {
         final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
 
         Rect bounds = new Rect();
-        public int fighterSpeed;
+        public int fighterSpeed = 5;
 
         public Enemy(Bitmap bitmap, int points) {
             this.btm = bitmap;
