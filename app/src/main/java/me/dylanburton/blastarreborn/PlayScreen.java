@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,15 +56,13 @@ public class PlayScreen extends Screen {
 
 
     private volatile State gamestate = State.STARTGAME;
-    private List<Enemy> enemiesFlying = Collections.synchronizedList(new LinkedList<Enemy>());  // enemies that are still alive
+    private List<Enemy> fightersFlying = Collections.synchronizedList(new LinkedList<Enemy>());  // enemies that are still alive
     //width and height of screen
     private int width = 0;
     private int height = 0;
     private int MIN_HEIGHT;
 
     //bitmap with a rect used for drawing
-
-
     private Bitmap starbackground, spaceship, spaceshipLaser, fighter, explosion[];
     private Rect scaledDst = new Rect();
 
@@ -74,9 +73,6 @@ public class PlayScreen extends Screen {
     private boolean spaceshipIsMoving;
     private int spaceshipLaserX;
     private int spaceshipLaserY;
-    //fighter speed, a temp var that will be erased when movement behavior is made competent
-    private int fighterSpeed = 5;
-    private int enemySpeed = 4;
 
     //used to move the background image, need two pairs of these vars for animation
     private int mapAnimatorX;
@@ -144,7 +140,8 @@ public class PlayScreen extends Screen {
         highscore = 0;
 
         if(currentLevel == 1){
-            enemiesFlying.add(new Enemy(fighter,5));
+            fightersFlying.add(new Enemy(fighter, 20));
+            fightersFlying.add(new Enemy(fighter, 20));
         }
 
         try {
@@ -246,16 +243,16 @@ public class PlayScreen extends Screen {
 
         //need a place to update enemy positions, needs some sort of AI
 
-        synchronized (enemiesFlying){
-            Iterator<Enemy> enemiesIterator = enemiesFlying.iterator();
+        synchronized (fightersFlying){
+            Iterator<Enemy> enemiesIterator = fightersFlying.iterator();
             while (enemiesIterator.hasNext()) {
                 Enemy e = enemiesIterator.next();
-
-
+                Random random = new Random();
+                e.fighterSpeed *= random.nextBoolean() ? 1 : -1;
                 //this needs to be replaced with some sort of competent movement behavior.
-                e.x += enemySpeed;
-                if(e.x >=width*4/5 || e.x <= 0){
-                    enemySpeed = -enemySpeed;
+                e.x += e.fighterSpeed;
+                if(e.x  >= width*4/5 || e.x <= 0){
+                    e.fighterSpeed = -e.fighterSpeed;
                 }
             }
 
@@ -296,13 +293,13 @@ public class PlayScreen extends Screen {
             c.drawBitmap(starbackground,null,new Rect(secondaryMapAnimatorX-width, secondaryMapAnimatorY-(height*2),secondaryMapAnimatorX, secondaryMapAnimatorY-height),p);
 
 
-            synchronized (enemiesFlying) {
-                for(Enemy e: enemiesFlying) {
+            synchronized (fightersFlying) {
+                for(Enemy e: fightersFlying) {
                     c.drawBitmap(e.getBitmap(), e.x, e.y, p);
 
                     if(e.hasCollision(spaceshipLaserX, spaceshipLaserY)|| e.hasCollision(spaceshipLaserX+spaceship.getWidth()*64/100, spaceshipLaserY)){
                         spaceshipLaserX = 4000;
-                        enemiesFlying.remove(e);
+                        fightersFlying.remove(e);
                         playExplosionAnimation(e.x+e.getBitmap().getWidth()/2,e.y+e.getBitmap().getHeight()/2,c,0);
 
 
@@ -411,18 +408,19 @@ public class PlayScreen extends Screen {
      * An enemy is a template for all the enemies     */
     private class Enemy {
         Bitmap btm;
-        float x=0;
-        float y=0;
-        double vx = .1;
-        double vy = .1;
+        float x = 0;
+        float y = 0;
+        double vx = 0.1;
+        double vy = 0.1;
         int points;
-        float width=0; // width onscreen
-        float height=0;  // height onscreen
+        float width = 0; // width onscreen
+        float height = 0;  // height onscreen
         float halfWidth = 0;  // convenience
         float halfHeight = 0;
         final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
 
         Rect bounds = new Rect();
+        public int fighterSpeed;
 
         public Enemy(Bitmap bitmap, int points) {
             this.btm = bitmap;
@@ -446,6 +444,4 @@ public class PlayScreen extends Screen {
         }
 
     }
-
-
 }
