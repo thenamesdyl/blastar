@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -29,6 +31,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Represents the main screen of play for the game.
@@ -46,6 +50,7 @@ public class PlayScreen extends Screen {
     private final int LEVEL_BATTLECRUISER = 4;
     private final int LEVEL_BATTLESHIP = 5;
     private final int LEVEL_BERSERKER = 6;
+    static final long ONESEC_NANOS = 1000000000L;
 
     private enum State {        RUNNING, STARTROUND, ROUNDSUMMARY, STARTGAME, PLAYERDIED, GAMEOVER    }
     private volatile State gamestate = State.STARTGAME;
@@ -56,7 +61,7 @@ public class PlayScreen extends Screen {
     private int width = 0;
     private int height = 0;
     //bitmap with a rect used for drawing
-    private Bitmap starbackground, spaceship, spaceshipLaser, fighter;
+    private Bitmap starbackground, spaceship, spaceshipLaser, fighter, explosion[];
     private Rect scaledDst = new Rect();
 
     //main spaceships location and bound
@@ -75,6 +80,12 @@ public class PlayScreen extends Screen {
     private int mapAnimatorY;
     private int secondaryMapAnimatorX;
     private int secondaryMapAnimatorY;
+
+    //time stuff
+    Timer timer = new Timer();
+    private long frtime = 0;
+    private int fps = 0;
+
 
     //various game things
     private int minRoundPass;
@@ -105,6 +116,12 @@ public class PlayScreen extends Screen {
 
             //fighter
             fighter = act.getScaledBitmap("fighter.png");
+
+            //explosion
+            explosion = new Bitmap[12];
+            for(int i = 0; i < 12; i++) {
+                explosion[i] = act.getScaledBitmap("explosion/explosion"+(i+1)+".png");
+            }
 
             p.setTypeface(act.getGameFont());
             currentLevel = 1;
@@ -178,10 +195,22 @@ public class PlayScreen extends Screen {
             gamestate = State.PLAYERDIED;
     }
 
+    public void playExplosionAnimation(float x, float y, Canvas c, int recursionCounter){
+        c.drawBitmap(explosion[recursionCounter],x,y,p);
+        if(recursionCounter<11){
+            playExplosionAnimation(x,y,c,recursionCounter+1);
+        }
+
+    }
+
 
 
     @Override
     public void update(View v) {
+        long newtime = System.nanoTime();
+        float elapsedsecs = (float) (newtime - frtime) / ONESEC_NANOS;
+        frtime = newtime;
+        fps = (int) (1 / elapsedsecs);
 
 
         if (gamestate == State.STARTROUND) {
@@ -229,12 +258,6 @@ public class PlayScreen extends Screen {
                     fighterSpeed=-fighterSpeed;
                 }
 
-                if(e.hasCollision(spaceshipLaserX, spaceshipLaserY)|| e.hasCollision(spaceshipLaserX*64/100, spaceshipLaserY)){
-                    spaceshipLaserX = 4000;
-                    enemiesFlying.remove(e);
-
-                }
-
 
             }
 
@@ -280,18 +303,26 @@ public class PlayScreen extends Screen {
             c.drawBitmap(starbackground,null,new Rect(secondaryMapAnimatorX-width, secondaryMapAnimatorY-(height*2),secondaryMapAnimatorX, secondaryMapAnimatorY-height),p);
 
 
-            //main spaceship stuff
-            c.drawBitmap(spaceshipLaser,spaceshipLaserX,spaceshipLaserY,p);
-            c.drawBitmap(spaceshipLaser,spaceshipLaserX+spaceship.getWidth()*64/100,spaceshipLaserY,p);
-            c.drawBitmap(spaceship,spaceshipX,spaceshipY,p);
-
             synchronized (enemiesFlying) {
                 for(Enemy e: enemiesFlying) {
                     c.drawBitmap(e.getBitmap(), e.x, e.y, p);
+
+                    if(e.hasCollision(spaceshipLaserX, spaceshipLaserY)|| e.hasCollision(spaceshipLaserX+spaceship.getWidth()*64/100, spaceshipLaserY)){
+                        spaceshipLaserX = 4000;
+                        enemiesFlying.remove(e);
+                        playExplosionAnimation(e.x+e.getBitmap().getWidth()/2,e.y+e.getBitmap().getHeight()/2,c,0);
+
+
+                    }
                 }
             }
 
-            //c.drawBitmap(fighter, null, scaledDst, p);
+            synchronized (spaceship) {
+                //main spaceship stuff
+                c.drawBitmap(spaceshipLaser, spaceshipLaserX, spaceshipLaserY, p);
+                c.drawBitmap(spaceshipLaser, spaceshipLaserX + spaceship.getWidth() * 64 / 100, spaceshipLaserY, p);
+                c.drawBitmap(spaceship, spaceshipX, spaceshipY, p);
+            }
 
             p.setColor(Color.WHITE);
             p.setTextSize(act.TS_NORMAL);
