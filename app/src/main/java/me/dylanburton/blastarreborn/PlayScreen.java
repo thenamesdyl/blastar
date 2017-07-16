@@ -260,19 +260,20 @@ public class PlayScreen extends Screen {
 
                 if(e.isFinishedVelocityChange){
 
-                    e.nextVelocityChangeInSeconds = (rand.nextInt(1000)+1000)/1000;
+                    e.nextVelocityChangeInSeconds = (rand.nextInt(1000)+200)/1000;
 
-                    e.setRandomVelocityGeneratorX((rand.nextInt(10000)+200)/1000);
-                    e.setRandomVelocityGeneratorY((rand.nextInt(10000)+200)/1000);
+                    e.setRandomVelocityGeneratorX((rand.nextInt(10000)+1000)/1000);
+                    e.setRandomVelocityGeneratorY((rand.nextInt(10000)+1000)/1000);
 
                     //makes it negative if it is bigger than 5
                     if(e.getRandomVelocityGeneratorX() > 5){
-                        e.setRandomVelocityGeneratorX(e.getRandomVelocityGeneratorX() - 10);
+                        e.setRandomVelocityGeneratorX(e.getRandomVelocityGeneratorX() - 11);
                     }
 
 
                     if(e.getRandomVelocityGeneratorY() > 5){
-                        e.setRandomVelocityGeneratorY(e.getRandomVelocityGeneratorY() - 10);
+                        e.setRandomVelocityGeneratorY(e.getRandomVelocityGeneratorY() - 11);
+
                     }
 
                     if(!e.isSlowingDown){
@@ -359,7 +360,7 @@ public class PlayScreen extends Screen {
         }
 
         //spaceship decay
-        if(spaceshipY<height*5/6 && !spaceshipIsMoving) {
+        if(spaceshipY<height*9/10 && !spaceshipIsMoving) {
             spaceshipY += DECAY_SPEED;
         }
 
@@ -438,7 +439,7 @@ public class PlayScreen extends Screen {
                 }
             }
 
-            //main spaceship lasers, adds a delay because for some reason it occasionally destroys spawned ships on start
+            //main spaceship lasers
             c.drawBitmap(spaceshipLaser, spaceshipLaserX, spaceshipLaserY, p);
             c.drawBitmap(spaceshipLaser, spaceshipLaserX + spaceship.getWidth() * 64 / 100, spaceshipLaserY, p);
 

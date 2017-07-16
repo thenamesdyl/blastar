@@ -108,6 +108,28 @@ public class MainActivity extends ActionBarActivity {
         mainView.resume();
     }
 
+    /*
+     * Back pressed
+     */
+    @Override
+    public void onBackPressed() {
+        if(currentScreen != entryScreen) {
+            if(currentScreen == playScreen){
+
+                currentScreen = entryScreen;
+
+
+            }
+            currentScreen = entryScreen;
+            onWindowFocusChanged(true);
+
+        }else{
+            System.exit(0);
+        }
+
+
+    }
+
     /**
      * Handle pausing of the game.
      */
