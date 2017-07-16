@@ -360,7 +360,7 @@ public class PlayScreen extends Screen {
         }
 
         //spaceship decay
-        if(spaceshipY<height*9/10 && !spaceshipIsMoving) {
+        if(spaceshipY<height*4/5 && !spaceshipIsMoving) {
             spaceshipY += DECAY_SPEED;
         }
 
