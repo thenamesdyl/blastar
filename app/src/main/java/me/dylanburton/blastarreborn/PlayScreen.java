@@ -260,15 +260,34 @@ public class PlayScreen extends Screen {
         }
 
 
-        //need a place to update enemy positions, needs some sort of AI
 
         synchronized (enemiesFlying) {
+
             Iterator<Enemy> enemiesIterator = enemiesFlying.iterator();
             while (enemiesIterator.hasNext()) {
                 Enemy e = enemiesIterator.next();
 
+                //delay of 100 ms before enemies spawn
+                if (gameStartTime + (ONESEC_NANOS / 10) < frtime) {
+                    startDelayReached = true;
+                }
 
-                //Movement AI
+
+                /*
+                 * Firing AI
+                 */
+
+                if (enemyFiringTime + randomlyGeneratedEnemyFiringTimeInSeconds < frtime) {
+                    enemyFiringTime = System.nanoTime();
+                    randomlyGeneratedEnemyFiringTimeInSeconds = (rand.nextInt(3000)) / 1000;
+
+                    //todo: make a Shiplaser class and list, then have the Shiplaser object be added to the list here, then make a for each in draw() to drawBitmap the lasers, then in update, update the coordinates of enemy lasers
+                }
+
+
+                /*
+                 * Movement AI
+                 */
 
                 //handles collision for multiple enemies
                 for (int i = 0; i < enemiesFlying.size(); i++) {
@@ -321,8 +340,8 @@ public class PlayScreen extends Screen {
                             e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
                         }
 
-                    }else if(e.getY() < height/12){
-                        if(e.getRandomVelocityGeneratorY() < 0){
+                    } else if (e.getY() < height / 12) {
+                        if (e.getRandomVelocityGeneratorY() < 0) {
                             e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
                         }
 
@@ -392,53 +411,50 @@ public class PlayScreen extends Screen {
                         e.setRandomVelocityGeneratorX(-e.getRandomVelocityGeneratorX());
                     }
 
-                }
 
-
-                //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
-
-                if( (e.getVx() > e.getRandomVelocityGeneratorX()-1 && e.getVx() < e.getRandomVelocityGeneratorX()+1) && (e.getVy() > e.getRandomVelocityGeneratorY() -1 || e.getVy() < e.getRandomVelocityGeneratorY() +1)){
-                    e.setSlowingDown(true);
-                    e.setFinishedVelocityChange(true);
-                }
-
+                    //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
+                    if ((e.getVx() > e.getRandomVelocityGeneratorX() - 1 && e.getVx() < e.getRandomVelocityGeneratorX() + 1) && (e.getVy() > e.getRandomVelocityGeneratorY() - 1 || e.getVy() < e.getRandomVelocityGeneratorY() + 1)) {
+                        e.setSlowingDown(true);
+                        e.setSpeedingUp(false);
+                        e.setFinishedVelocityChange(true);
+                    }
 
                     e.setLastSpedUpVelocityTime(System.nanoTime());
-
-
                 }
 
             }
 
-
-            //spaceship decay
-            if (spaceshipY < height * 4 / 5 && !spaceshipIsMoving) {
-                spaceshipY += DECAY_SPEED;
-            }
-
-            //resets spaceship laser
-            spaceshipLaserY -= 20.0f;
-            if (spaceshipLaserY < -height / 6) {
-                spaceshipLaserY = spaceshipY + spaceship[0].getHeight() / 3;
-                spaceshipLaserX = spaceshipX + spaceship[0].getWidth() / 8;
-            }
+        }
 
 
-            //animator for map background
-            mapAnimatorY += 2.0f;
-            secondaryMapAnimatorY += 2.0f;
-            //this means the stars are off the screen
-            if (mapAnimatorY >= height * 2) {
-                mapAnimatorY = height;
-            } else if (secondaryMapAnimatorY >= height * 2) {
-                secondaryMapAnimatorY = height;
-            }
-            //resets spaceship laser
-            spaceshipLaserY -= 20.0f;
-            if(spaceshipLaserY < -height/6){
-                spaceshipLaserY = spaceshipY+spaceship[0].getHeight()/3;
-                spaceshipLaserX = spaceshipX+spaceship[0].getWidth()/8;
-            }
+        //spaceship decay
+        if (spaceshipY < height * 4 / 5 && !spaceshipIsMoving) {
+            spaceshipY += DECAY_SPEED;
+        }
+
+        //resets spaceship laser
+        spaceshipLaserY -= 20.0f;
+        if (spaceshipLaserY < -height / 6) {
+            spaceshipLaserY = spaceshipY + spaceship[0].getHeight() / 3;
+            spaceshipLaserX = spaceshipX + spaceship[0].getWidth() / 8;
+        }
+
+
+        //animator for map background
+        mapAnimatorY += 2.0f;
+        secondaryMapAnimatorY += 2.0f;
+        //this means the stars are off the screen
+        if (mapAnimatorY >= height * 2) {
+            mapAnimatorY = height;
+        } else if (secondaryMapAnimatorY >= height * 2) {
+            secondaryMapAnimatorY = height;
+        }
+        //resets spaceship laser
+        spaceshipLaserY -= 20.0f;
+        if (spaceshipLaserY < -height / 6) {
+            spaceshipLaserY = spaceshipY + spaceship[0].getHeight() / 3;
+            spaceshipLaserX = spaceshipX + spaceship[0].getWidth() / 8;
+        }
 
 
     }
@@ -476,9 +492,6 @@ public class PlayScreen extends Screen {
 
             synchronized (enemiesFlying) {
                 for(Enemy e: enemiesFlying) {
-                    if(gameStartTime + (ONESEC_NANOS/10) < frtime){
-                        startDelayReached = true;
-                    }
 
                     if(startDelayReached) {
 
@@ -499,13 +512,6 @@ public class PlayScreen extends Screen {
                         if(enemyFiringTime== 0){
                             enemyFiringTime = System.nanoTime();
                             randomlyGeneratedEnemyFiringTimeInSeconds = (rand.nextInt(3000))/1000;
-                        }
-
-                        if(enemyFiringTime + randomlyGeneratedEnemyFiringTimeInSeconds < frtime){
-                            enemyFiringTime = System.nanoTime();
-                            randomlyGeneratedEnemyFiringTimeInSeconds = (rand.nextInt(3000))/1000;
-
-                            //todo: make a Shiplaser class and list, then have the Shiplaser object be added to the list here, then make a for each in draw() to drawBitmap the lasers, then in update, update the coordinates of enemy lasers
                         }
 
 
