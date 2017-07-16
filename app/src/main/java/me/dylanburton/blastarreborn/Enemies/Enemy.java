@@ -22,6 +22,13 @@ public class Enemy {
     private float height=0;  // height onscreen
     private float halfWidth = 0;  // convenience
     private float halfHeight = 0;
+    private boolean enemyIsHitButNotDead = false; //specific yet helpful boolean for my hit animation
+
+    /*
+     * Enemy AI Movement Variables.
+     * Enemy slows down to 0,0 Vx Vy and then speeds up to new randomly generated velocity
+     */
+
     private long finishedRandomGeneratorsTime; //after random velocities and random time assigned, this records time so we know how long we need to wait
     private long lastSlowedDownVelocityTime; //to make enemy slow down before changing direction, need the time to make delays and slow it down gradually
     private long lastSpedUpVelocityTime; //like the last variable, need this to make enemy accelerate gradually as opposed to instantly
@@ -170,5 +177,26 @@ public class Enemy {
 
     public void setAIStarted(boolean enemyHasAIStarted) {
         this.enemyHasAIStarted = enemyHasAIStarted;
+    }
+    public int getLives() {
+        return lives;
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+    public boolean isEnemyHitButNotDead() {
+        return enemyIsHitButNotDead;
+    }
+
+    public void setEnemyIsHitButNotDead(boolean enemyIsHitButNotDead) {
+        this.enemyIsHitButNotDead = enemyIsHitButNotDead;
     }
 }

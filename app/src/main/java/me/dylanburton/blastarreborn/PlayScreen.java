@@ -50,15 +50,15 @@ public class PlayScreen extends Screen {
     private enum State {        RUNNING, STARTROUND, ROUNDSUMMARY, STARTGAME, PLAYERDIED, GAMEOVER    }
     private volatile State gamestate = State.STARTGAME;
 
+    //lists
     private List<Enemy> enemiesFlying = Collections.synchronizedList(new LinkedList<Enemy>());  // enemies that are still alive
     private List<ShipExplosion> shipExplosions = new LinkedList<ShipExplosion>();  // ship explosions
-
 
     //width and height of screen
     private int width = 0;
     private int height = 0;
     //bitmap with a rect used for drawing
-    private Bitmap starbackground, spaceship, spaceshipLaser, fighter, explosion[];
+    private Bitmap starbackground, spaceship, spaceshipLaser, fighter, hitFighter, explosion[];
     private Rect scaledDst = new Rect();
 
     //main spaceships location and bound, using 1000 for spaceshipy and x because of a weird glitch where the spaceship is drawn at 0,0 for 100 ms
@@ -94,13 +94,11 @@ public class PlayScreen extends Screen {
     private Map<Integer, String> levelMap = new HashMap<Integer, String>();
 
 
-    /*
-     * Enemy AI Movement Variables.
-     * Enemy slows down to 0,0 Vx Vy and then speeds up to new randomly generated velocity
-     */
 
+    //some AI Movement vars, to see how it works, look in Enemy class
     private boolean startDelayReached = false;
     private Random rand = new Random();
+
 
 
     public PlayScreen(MainActivity act) {
@@ -120,6 +118,7 @@ public class PlayScreen extends Screen {
 
             //fighter
             fighter = act.getScaledBitmap("fighter.png");
+            hitFighter = act.getScaledBitmap("hitfighter.png");
 
             //explosion
             explosion = new Bitmap[12];
@@ -412,8 +411,6 @@ public class PlayScreen extends Screen {
         }
 
 
-
-
         //animator for map background
         mapAnimatorY+=2.0f;
         secondaryMapAnimatorY+=2.0f;
@@ -465,19 +462,41 @@ public class PlayScreen extends Screen {
 
                     if(startDelayReached) {
 
-                        c.drawBitmap(e.getBitmap(), e.getX(), e.getY(), p);
+                        //puts like a red tinge on the enemy for 100 ms if hes hit
+                        if(e.isEnemyHitButNotDead()){
+                            c.drawBitmap(hitFighter, e.getX(), e.getY(), p);
+
+                            if(hitContactTime + (ONESEC_NANOS/10) <frtime){
+                                e.setEnemyIsHitButNotDead(false);
+                            }
+
+                        }else {
+                            c.drawBitmap(e.getBitmap(), e.getX(), e.getY(), p);
+                        }
+
+
+
 
                         if ((e.hasCollision(spaceshipLaserX, spaceshipLaserY) || e.hasCollision(spaceshipLaserX + spaceship.getWidth() * 64 / 100, spaceshipLaserY))) {
                             spaceshipLaserX = 4000;
-                            enemiesFlying.remove(e);
-                            shipExplosions.add(new ShipExplosion(e.getX()-e.getBitmap().getWidth()*3/4, e.getY()-e.getBitmap().getHeight()/2, shipExplosions.size()));
                             hitContactTime = System.nanoTime();
+                            //subtract a life
+                            e.setLives(e.getLives()-1);
+
+                            //fun explosions
+                            if(e.getLives() == 0) {
+                                shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, shipExplosions.size()));
+                                enemiesFlying.remove(e);
+                            }else{
+                                e.setEnemyIsHitButNotDead(true);
+                            }
 
 
                         }
                     }
                 }
             }
+
 
             //main spaceship lasers
             c.drawBitmap(spaceshipLaser, spaceshipLaserX, spaceshipLaserY, p);
