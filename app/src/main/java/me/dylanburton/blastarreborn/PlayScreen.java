@@ -161,6 +161,15 @@ public class PlayScreen extends Screen {
     }
 
 
+    public void resetGame(){
+        gamestate = State.STARTROUND;
+        width = 0;
+        height = 0;
+        enemiesFlying.clear();
+
+    }
+
+
     /**
      * init game for current round
      */

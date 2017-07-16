@@ -116,7 +116,11 @@ public class MainActivity extends ActionBarActivity {
         if(currentScreen != entryScreen) {
             if(currentScreen == playScreen){
 
+
+                playScreen.resetGame();
                 currentScreen = entryScreen;
+
+
 
 
             }
@@ -235,6 +239,7 @@ public class MainActivity extends ActionBarActivity {
 
         public boolean onTouch(View v, MotionEvent event) {
             try {
+
                 return currentScreen.onTouch(event);
             }
             catch (Exception e) {
