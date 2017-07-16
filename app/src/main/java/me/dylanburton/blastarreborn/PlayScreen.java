@@ -247,14 +247,15 @@ public class PlayScreen extends Screen {
             Iterator<Enemy> enemiesIterator = fightersFlying.iterator();
             while (enemiesIterator.hasNext()) {
                 Enemy e = enemiesIterator.next();
-                Random random = new Random();
-                e.fighterSpeed *= random.nextBoolean() ? 1 : -1;
-                //this needs to be replaced with some sort of competent movement behavior.
-                e.x += e.fighterSpeed;
-                if(e.x  >= width*4/5 || e.x <= 0){
-                    e.fighterSpeed = -e.fighterSpeed;
-                }
+                if (e.x >= width * 4 / 5 || e.x <= 0) {
+                    e.vx = -e.vx;
 
+                }
+                if (e.y >= MIN_HEIGHT || e.y < 0) {
+                    e.vy = -e.vy;
+                }
+                e.x += e.vx;
+                e.y += e.vy;
             }
 
         }
@@ -272,8 +273,8 @@ public class PlayScreen extends Screen {
         }
 
         //animator for map background
-        mapAnimatorY+=2.0f;
-        secondaryMapAnimatorY+=2.0f;
+        mapAnimatorY += 2.0f;
+        secondaryMapAnimatorY += 2.0f;
         //this means the stars are off the screen
         if(mapAnimatorY>=height*2){
             mapAnimatorY = height;
@@ -445,6 +446,7 @@ public class PlayScreen extends Screen {
         float halfWidth = 0;  // convenience
         float halfHeight = 0;
         final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
+        Random random = new Random();
 
         Rect bounds = new Rect();
         public int fighterSpeed = 5;
@@ -456,6 +458,11 @@ public class PlayScreen extends Screen {
             this.halfWidth = width/HALF_DIVISOR;
             this.halfHeight = height/HALF_DIVISOR;
             this.points = points;
+            this.vx = vx + (random.nextBoolean() ? 1 : -1);
+            this.vy = vy + (random.nextBoolean() ? 1 : -1);
+            this.vx *= random.nextBoolean() ? 1 : -1;
+            this.vy *= random.nextBoolean() ? 1 : -1;
+            System.out.println(this.vx + ", " + this.vy);
         }
 
         public Bitmap getBitmap(){
