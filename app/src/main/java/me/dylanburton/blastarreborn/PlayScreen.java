@@ -26,6 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import me.dylanburton.blastarreborn.Enemies.Enemy;
+import me.dylanburton.blastarreborn.Enemies.EnemyType;
+
 /**
  * Represents the main screen of play for the game.
  *
@@ -145,8 +148,8 @@ public class PlayScreen extends Screen {
         highscore = 0;
 
         if(currentLevel == 1){
-            enemiesFlying.add(new Enemy(fighter,5));
-            enemiesFlying.add(new Enemy(fighter,5));
+            enemiesFlying.add(new Enemy(fighter,EnemyType.FIGHTER));
+            enemiesFlying.add(new Enemy(fighter,EnemyType.FIGHTER));
         }
 
         try {
@@ -169,8 +172,8 @@ public class PlayScreen extends Screen {
         enemiesFlying.clear();
         startDelayReached = false;
         for(Enemy e: enemiesFlying){
-            e.isFinishedVelocityChange = false;
-            e.enemyIsAIStarted=false;
+            e.setFinishedVelocityChange(false);
+            e.setAIStarted(false);
         }
 
     }
@@ -262,22 +265,22 @@ public class PlayScreen extends Screen {
 
                 //Movement AI
 
-                if(!e.enemyIsAIStarted){
-                    e.x = rand.nextInt(width*4/5);
-                    e.y = -height/10;
-                    e.isFinishedVelocityChange = true;
-                    e.enemyIsAIStarted=true;
+                if(!e.isAIStarted()){
+                    e.setX(rand.nextInt(width*4/5));
+                    e.setY(-height/10);
+                    e.setFinishedVelocityChange(true);
+                    e.setAIStarted(true);
                 }
 
                 if(startDelayReached) {
-                    e.x += e.vx;
-                    e.y += e.vy;
+                    e.setX(e.getX() + e.getVx());
+                    e.setY(e.getY() + e.getVy());
 
                 }
 
 
 
-                if(e.isFinishedVelocityChange){
+                if(e.isFinishedVelocityChange()){
 
 
                     e.setRandomVelocityGeneratorX((rand.nextInt(10000)+1000)/1000);
@@ -295,112 +298,106 @@ public class PlayScreen extends Screen {
 
                     }
 
-                    if(e.y > height/6){
+                    if(e.getY() > height/6){
                         if(e.getRandomVelocityGeneratorY() > 0){
                             e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
                         }
-                    }else if(e.y < 0){
+                    }else if(e.getY() < 0){
                         if(e.getRandomVelocityGeneratorY() < 0){
                             e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
                         }
 
                     }
 
-                    if(!e.isSlowingDown){
-                        e.isSpeedingUp = true;
+                    if(!e.isSlowingDown()){
+                        e.setSpeedingUp(true);
                     }
 
-                    e.finishedRandomGeneratorsTime = System.nanoTime();
+                    e.setFinishedRandomGeneratorsTime(System.nanoTime());
 
                     //just initiating these guys
-                    e.lastSlowedDownVelocityTime = e.finishedRandomGeneratorsTime;
-                    e.lastSpeededUpVelocityTime = e.finishedRandomGeneratorsTime;
+                    e.setLastSlowedDownVelocityTime(e.getFinishedRandomGeneratorsTime());
+                    e.setLastSpedUpVelocityTime(e.getFinishedRandomGeneratorsTime());
 
-                    e.isFinishedVelocityChange = false;
+                    e.setFinishedVelocityChange(false);
 
                 }
 
-                if (e.isSlowingDown && (frtime > e.lastSlowedDownVelocityTime + (ONESEC_NANOS/100))) {
+                if (e.isSlowingDown() && (frtime > e.getLastSlowedDownVelocityTime() + (ONESEC_NANOS/100))) {
                     //obv will never be 0. Half a second for slowing down, then speeding up
-                    e.vx = e.vx - (e.vx/50);
-                    e.vy = e.vy - (e.vy/50);
+                    e.setVx(e.getVx() - (e.getVx()/50));
+                    e.setVy(e.getVy() - (e.getVy()/50));
 
                     //borders
-                    if(e.x < 0 || e.x > width*4/5){
+                    if(e.getX() < 0 || e.getX() > width*4/5){
                         //this check disables the ability for ship to get too far and then freeze in place
-                        if(e.x < 0){
-                            e.x = 0;
-                        }else if (e.x > width*4/5){
-                            e.x = width*4/5;
+                        if(e.getX() < 0){
+                            e.setX(0);
+                        }else if (e.getX() > width*4/5){
+                            e.setX(width*4/5);
                         }
 
-                        e.vx = -e.vx;
+                        e.setVx(-e.getVx());
                         e.setRandomVelocityGeneratorX(-e.getRandomVelocityGeneratorX());
                     }
 
-                    if(e.y < -height/10){
+                    if(e.getY() < -height/10){
 
-                        e.vy = -e.vy;
+                        e.setVy(-e.getVy());
                         e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
                     }
 
                     //so we do this
-                    if( (e.vx > -1 && e.vx < 1) &&  (e.vy > -1 && e.vy < 1) ){
-                        e.isSlowingDown = false;
-                        e.isSpeedingUp = true;
+                    if( (e.getVx() > -1 && e.getVx() < 1) &&  (e.getVy() > -1 && e.getVy() < 1) ){
+                        e.setSlowingDown(false);
+                        e.setSpeedingUp(true);
 
                     }
                     //delays this slowing down process a little
-                    e.lastSlowedDownVelocityTime = System.nanoTime();
+                    e.setLastSlowedDownVelocityTime(System.nanoTime());
 
-                }else if(e.isSpeedingUp && (frtime > e.lastSpeededUpVelocityTime + (ONESEC_NANOS/100))){
+                }else if(e.isSpeedingUp() && (frtime > e.getLastSpedUpVelocityTime() + (ONESEC_NANOS/100))){
 
 
                     //will not have asymptotes like the last one
-                    e.vx = e.vx + (e.randomVelocityGeneratorX/50);
-                    e.vy = e.vy + (e.randomVelocityGeneratorY /50);
+                    e.setVx(e.getVx() + (e.getRandomVelocityGeneratorX()/50));
+                    e.setVy(e.getVy() + (e.getRandomVelocityGeneratorY() /50));
 
                     //borders for x and y
-                    if(e.x < 0 || e.x > width*4/5){
-
-                        if(e.x < 0){
-                            e.x = 0;
-                        }else if (e.x > width*4/5){
-                            e.x = width*4/5;
+                    if(e.getX() < 0 || e.getX() > width*4/5){
+                        //this check disables the ability for ship to get too far and then freeze in place
+                        if(e.getX() < 0){
+                            e.setX(0);
+                        }else if (e.getX() > width*4/5){
+                            e.setX(width*4/5);
                         }
 
-                        e.vx = -e.vx;
+                        e.setVx(-e.getVx());
                         e.setRandomVelocityGeneratorX(-e.getRandomVelocityGeneratorX());
-
                     }
-                    if(e.y < -height/10){
+                    }
+                    if(e.getY() < -height/10){
 
-                        e.vy = -e.vy;
+                        e.setVy(-e.getVy());
                         e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
 
                     }
 
-
                     //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
-                    if( (e.vx > e.getRandomVelocityGeneratorX()-1 && e.vx < e.getRandomVelocityGeneratorX()+1) && (e.vy > e.getRandomVelocityGeneratorY() -1 || e.vy < e.getRandomVelocityGeneratorY() +1)){
-                        e.isSlowingDown = true;
-                        e.isFinishedVelocityChange = true;
+                    if( (e.getVx() > e.getRandomVelocityGeneratorX()-1 && e.getVx() < e.getRandomVelocityGeneratorX()+1) && (e.getVy() > e.getRandomVelocityGeneratorY() -1 || e.getVy() < e.getRandomVelocityGeneratorY() +1)){
+                        e.setSlowingDown(true);
+                        e.setFinishedVelocityChange(true);
                     }
 
-                    e.lastSpeededUpVelocityTime = System.nanoTime();
-
-
-                }
-
-
-
-
-
+                e.setLastSpedUpVelocityTime(System.nanoTime());
 
 
             }
-
+            
         }
+
+
+
 
         //spaceship decay
         if(spaceshipY<height*9/10 && !spaceshipIsMoving) {
@@ -429,6 +426,7 @@ public class PlayScreen extends Screen {
 
 
     }
+
 
 
     @Override
@@ -467,12 +465,12 @@ public class PlayScreen extends Screen {
 
                     if(startDelayReached) {
 
-                        c.drawBitmap(e.getBitmap(), e.x, e.y, p);
+                        c.drawBitmap(e.getBitmap(), e.getX(), e.getY(), p);
 
                         if ((e.hasCollision(spaceshipLaserX, spaceshipLaserY) || e.hasCollision(spaceshipLaserX + spaceship.getWidth() * 64 / 100, spaceshipLaserY))) {
                             spaceshipLaserX = 4000;
                             enemiesFlying.remove(e);
-                            shipExplosions.add(new ShipExplosion(e.x-e.getBitmap().getWidth()*3/4, e.y-e.getBitmap().getHeight()/2, shipExplosions.size()));
+                            shipExplosions.add(new ShipExplosion(e.getX()-e.getBitmap().getWidth()*3/4, e.getY()-e.getBitmap().getHeight()/2, shipExplosions.size()));
                             hitContactTime = System.nanoTime();
 
 
@@ -579,69 +577,6 @@ public class PlayScreen extends Screen {
         return true;
     }
 
-    /**
-     * An enemy is a template for all the enemies     */
-    private class Enemy {
-        final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
-        Bitmap btm;
-        float x=0;
-        float y=0;
-        float vx=0;
-        float vy=0;
-        int points;
-        float width=0; // width onscreen
-        float height=0;  // height onscreen
-        float halfWidth = 0;  // convenience
-        float halfHeight = 0; // "
-        private long finishedRandomGeneratorsTime; //after random velocities and random time assigned, this records time so we know how long we need to wait
-        private long lastSlowedDownVelocityTime; //to make enemy slow down before changing direction, need the time to make delays and slow it down gradually
-        private long lastSpeededUpVelocityTime; //like the last variable, need this to make enemy accelerate gradually as opposed to instantly
-        private boolean isSlowingDown = false, isSpeedingUp = false, isFinishedVelocityChange = false;
-        private float randomVelocityGeneratorX = 0;
-        private float randomVelocityGeneratorY = 0; //randomly generated velocities between -5 and 5
-        private boolean enemyIsAIStarted = false;
-
-
-        Rect bounds = new Rect();
-
-        public Enemy(Bitmap bitmap, int points) {
-            this.btm = bitmap;
-            this.width = bitmap.getWidth();
-            this.height = bitmap.getHeight();
-            this.halfWidth = width/HALF_DIVISOR;
-            this.halfHeight = height/HALF_DIVISOR;
-            this.points = points;
-        }
-
-
-        public Bitmap getBitmap(){
-            return btm;
-        }
-        public boolean hasCollision(float collx, float colly) {
-            return getBounds().contains((int) collx, (int) colly);
-        }
-        public Rect getBounds() {
-            bounds.set((int)(this.x), (int)(this.y-getBitmap().getHeight()),
-                    (int)(this.x+getBitmap().getWidth()), (int)(this.y+getBitmap().getHeight()));
-            return bounds;
-        }
-
-        public void setRandomVelocityGeneratorX(float num) {
-            randomVelocityGeneratorX = num;
-        }
-
-        public void setRandomVelocityGeneratorY(float num) {
-            randomVelocityGeneratorY = num;
-        }
-
-        public float getRandomVelocityGeneratorX() {
-            return randomVelocityGeneratorX;
-        }
-
-        public float getRandomVelocityGeneratorY() {
-            return randomVelocityGeneratorY;
-        }
-    }
 
     //this is for creating multiple ship explosion animations
     private class ShipExplosion{
