@@ -76,9 +76,6 @@ public class PlayScreen extends Screen {
     private int spaceshipLaserX;
     private int spaceshipLaserY;
 
-    //fighter speed, a temp var that will be erased when movement behavior is made competent
-    private int fighterSpeed = 5;
-
     //used to move the background image, need two pairs of these vars for animation
     private int mapAnimatorX;
     private int mapAnimatorY;
@@ -323,6 +320,17 @@ public class PlayScreen extends Screen {
                         e.vx = e.vx - (e.vx/50);
                         e.vy = e.vy - (e.vy/50);
 
+                        //borders
+                        if(e.x < 0 || e.x > width*4/5){
+                            e.vx = -e.vx;
+                            randomVelocityGeneratorX = -randomVelocityGeneratorX;
+                        }
+                        
+                        if(e.y < 0 || e.y > height/4){
+                            e.vy = -e.vy;
+                            randomVelocityGeneratorY = -randomVelocityGeneratorY;
+
+                        }
 
                         //so we do this
                         if( (e.vx > -.1 && e.vx < .1) &&  (e.vy > -.1 && e.vy < .1) ){
@@ -345,7 +353,7 @@ public class PlayScreen extends Screen {
                             randomVelocityGeneratorX = -randomVelocityGeneratorX;
 
                         }
-                        if(e.y < 0 || e.y > height/3){
+                        if(e.y < 0 || e.y > height/4){
                             e.vy = -e.vy;
                             randomVelocityGeneratorY = -randomVelocityGeneratorY;
 
@@ -353,7 +361,7 @@ public class PlayScreen extends Screen {
 
 
                         //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
-                        if( (e.vx > randomVelocityGeneratorX-.01 && e.vx < randomVelocityGeneratorX+.01) && (e.vy > randomVelocityGeneratorY-.01 || e.vy < randomVelocityGeneratorY+.01)){
+                        if( (e.vx > randomVelocityGeneratorX-.1 && e.vx < randomVelocityGeneratorX+.1) && (e.vy > randomVelocityGeneratorY-.1 || e.vy < randomVelocityGeneratorY+.1)){
                             enemyIsSpeedingUp = false;
                             enemyIsSlowingDown = true;
                             enemyIsFinishedVelocityChange = true;
@@ -375,13 +383,13 @@ public class PlayScreen extends Screen {
         }
 
         //spaceship decay
-        if(spaceshipY<1600 && !spaceshipIsMoving) {
+        if(spaceshipY<height*5/6 && !spaceshipIsMoving) {
             spaceshipY += DECAY_SPEED;
         }
 
         //resets spaceship laser
         spaceshipLaserY -= 20.0f;
-        if(spaceshipLaserY < -150){
+        if(spaceshipLaserY < -height/6){
             spaceshipLaserY = spaceshipY+spaceship.getHeight()/3;
             spaceshipLaserX = spaceshipX+spaceship.getWidth()/8;
         }
