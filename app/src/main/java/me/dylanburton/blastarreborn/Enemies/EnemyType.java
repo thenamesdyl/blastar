@@ -6,19 +6,24 @@ package me.dylanburton.blastarreborn.Enemies;
 
 public enum EnemyType {
     //Name of ship followed by how many hits they can take
-    FIGHTER(2),
-    IMPERIAL(3),
-    BATTLECRUISER(3),
-    BATTLESHIP(5),
-    BERSERKER(9);
+    FIGHTER(2,20),
+    IMPERIAL(3,50),
+    BATTLECRUISER(3,100),
+    BATTLESHIP(5,200),
+    BERSERKER(9,500);
 
     private final int lives;
+    private final int points;
 
-    EnemyType(int lives) {
+    EnemyType(int lives, int points) {
         this.lives = lives;
+        this.points = points;
     }
-    int lives() {
+    int getLives() {
         return this.lives;
+    }
+    int getPoints(){
+        return this.points;
     }
 
 }
