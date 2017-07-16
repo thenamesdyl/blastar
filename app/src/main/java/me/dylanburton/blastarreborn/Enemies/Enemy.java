@@ -62,6 +62,11 @@ public class Enemy {
     public boolean hasCollision(float collx, float colly) {
         return getBounds().contains((int) collx, (int) colly);
     }
+
+    public boolean hasCollision(Rect rect) {
+        return getBounds().contains(rect);
+    }
+
     public Rect getBounds() {
         bounds.set((int)(this.x), (int)(this.y-getBitmap().getHeight()),
                 (int)(this.x+getBitmap().getWidth()), (int)(this.y+getBitmap().getHeight()));

@@ -5,7 +5,7 @@ package me.dylanburton.blastarreborn.Enemies;
  */
 
 public enum EnemyType {
-    //Name of ship followed by how many hits they can take
+    //Name of ship followed by how many lives then points
     FIGHTER(2,20),
     IMPERIAL(3,50),
     BATTLECRUISER(3,100),

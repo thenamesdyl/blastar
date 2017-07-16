@@ -266,6 +266,19 @@ public class PlayScreen extends Screen {
 
                 //Movement AI
 
+                //handles collision for multiple enemies
+                for(int i = 0; i<enemiesFlying.size(); i++){
+                    if((e != enemiesFlying.get(i))){
+                        if((e.getX()>= enemiesFlying.get(i).getX()-enemiesFlying.get(i).getBitmap().getWidth() && e.getX()<=enemiesFlying.get(i).getX()+enemiesFlying.get(i).getBitmap().getWidth()) &&
+                                (e.getY()>=enemiesFlying.get(i).getY()-enemiesFlying.get(i).getBitmap().getHeight() && e.getY() <=enemiesFlying.get(i).getY()+enemiesFlying.get(i).getBitmap().getHeight()) ) {
+                            e.setVx(-e.getVx());
+                            e.setVy(-e.getVy());
+                        }
+
+                    }
+
+                }
+
                 if(!e.isAIStarted()){
                     e.setX(rand.nextInt(width*4/5));
                     e.setY(-height/10);
@@ -299,6 +312,7 @@ public class PlayScreen extends Screen {
 
                     }
 
+                    //makes the ship change direction soon if they are in a naughty area
                     if(e.getY() > height/6){
                         if(e.getRandomVelocityGeneratorY() > 0){
                             e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
@@ -383,6 +397,7 @@ public class PlayScreen extends Screen {
                         e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
 
                     }
+
 
                     //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
                     if( (e.getVx() > e.getRandomVelocityGeneratorX()-1 && e.getVx() < e.getRandomVelocityGeneratorX()+1) && (e.getVy() > e.getRandomVelocityGeneratorY() -1 || e.getVy() < e.getRandomVelocityGeneratorY() +1)){
