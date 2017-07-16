@@ -74,87 +74,68 @@ public class Enemy {
         return bounds;
     }
 
-    public void setRandomVelocityGeneratorX(float num) {
-        randomVelocityGeneratorX = num;
-    }
+    public Bitmap getBtm() { return btm; }
 
-    public void setRandomVelocityGeneratorY(float num) {
-        randomVelocityGeneratorY = num;
-    }
-
-    public float getRandomVelocityGeneratorX() {
-        return randomVelocityGeneratorX;
-    }
-
-    public float getRandomVelocityGeneratorY() {
-        return randomVelocityGeneratorY;
-    }
-    public Bitmap getBtm() {
-        return btm;
-    }
-
-    public void setBtm(Bitmap btm) {
-        this.btm = btm;
-    }
-
-    public boolean isSpeedingUp() {
-        return isSpeedingUp;
-    }
-
-    public boolean isSlowingDown() {
-        return isSlowingDown;
-    }
-
-    public void setSlowingDown(boolean slowingDown) {
-        isSlowingDown = slowingDown;
-    }
-
-    public void setSpeedingUp(boolean speedingUp) {
-        isSpeedingUp = speedingUp;
-    }
-
-    public void setX(float num) { x = num; }
-
-    public void setY(float num) { y = num; }
-
-    public float getVy() { return vy; }
-
-    public float getVx() { return vx; }
-
-    public void setVy(float num) { vy = num; }
-
-    public void setVx(float num) { vx = num; }
-
-    public float getX() { return x; }
-
-    public float getY() { return y; }
-
-    public void setFinishedVelocityChange(boolean finishedVelocityChange) { isFinishedVelocityChange = finishedVelocityChange; }
+    public boolean getAIStarted() { return AIStarted; }
 
     public boolean getFinishedVelocityChange() { return isFinishedVelocityChange; }
 
     public boolean isEnemyHitButNotDead() { return enemyIsHitButNotDead; }
 
-    public void setEnemyIsHitButNotDead(boolean enemyIsHitButNotDead) { this.enemyIsHitButNotDead = enemyIsHitButNotDead; }
+    public boolean isSlowingDown() { return isSlowingDown; }
 
-    public void setLives(int lives) { this.lives = lives; }
+    public boolean isSpeedingUp() { return isSpeedingUp;  }
+
+    public float getRandomVelocityGeneratorX() { return randomVelocityGeneratorX; }
+
+    public float getRandomVelocityGeneratorY() { return randomVelocityGeneratorY; }
+
+    public float getVx() { return vx; }
+
+    public float getVy() { return vy; }
+
+    public float getX() { return x; }
+
+    public float getY() { return y; }
 
     public int getLives() { return lives; }
 
-    public void setLastSlowedDownVelocityTime(long lastSlowedDownVelocityTime) { this.lastSlowedDownVelocityTime = lastSlowedDownVelocityTime; }
+    public long getFinishedRandomGeneratorsTime() { return finishedRandomGeneratorsTime; }
 
     public long getLastSlowedDownVelocityTime() { return lastSlowedDownVelocityTime; }
 
     public long getLastSpedUpVelocityTime() { return lastSpedUpVelocityTime; }
 
-    public void setLastSpedUpVelocityTime(long lastSpedUpVelocityTime) { this.lastSpedUpVelocityTime = lastSpedUpVelocityTime; }
+    public void setAIStarted(boolean AIStarted) { this.AIStarted = AIStarted; }
+
+    public void setBtm(Bitmap btm) { this.btm = btm; }
+
+    public void setEnemyIsHitButNotDead(boolean enemyIsHitButNotDead) { this.enemyIsHitButNotDead = enemyIsHitButNotDead; }
 
     public void setFinishedRandomGeneratorsTime(long finishedRandomGeneratorsTime) { this.finishedRandomGeneratorsTime = finishedRandomGeneratorsTime;  }
 
-    public long getFinishedRandomGeneratorsTime() { return finishedRandomGeneratorsTime; }
+    public void setFinishedVelocityChange(boolean finishedVelocityChange) { isFinishedVelocityChange = finishedVelocityChange; }
 
-    public void setAIStarted(boolean AIStarted) { this.AIStarted = AIStarted; }
+    public void setLastSlowedDownVelocityTime(long lastSlowedDownVelocityTime) { this.lastSlowedDownVelocityTime = lastSlowedDownVelocityTime; }
 
-    public boolean getAIStarted() { return AIStarted; }
+    public void setLastSpedUpVelocityTime(long lastSpedUpVelocityTime) { this.lastSpedUpVelocityTime = lastSpedUpVelocityTime; }
+
+    public void setLives(int lives) { this.lives = lives; }
+
+    public void setRandomVelocityGeneratorX(float num) { randomVelocityGeneratorX = num; }
+
+    public void setRandomVelocityGeneratorY(float num) { randomVelocityGeneratorY = num; }
+
+    public void setSlowingDown(boolean isSlowingDown) { this.isSlowingDown = isSlowingDown; }
+
+    public void setSpeedingUp(boolean speedingUp) { isSpeedingUp = speedingUp; }
+
+    public void setVx(float num) { vx = num; }
+
+    public void setVy(float num) { vy = num; }
+
+    public void setX(float num) { x = num; }
+
+    public void setY(float num) { y = num; }
 
 }
