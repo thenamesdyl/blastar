@@ -6,17 +6,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
-import android.os.CountDownTimer;
-import android.os.Handler;
-import android.support.v4.app.ShareCompat;
-import android.support.v4.view.VelocityTrackerCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
 
 import java.io.BufferedReader;
@@ -25,7 +18,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,8 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Represents the main screen of play for the game.
@@ -84,7 +74,7 @@ public class PlayScreen extends Screen {
 
     //time stuff
     private long hitContactTime = 0;
-    private boolean enemyStartDelayReached = false;
+
     private long frtime = 0;
     private long gameStartTime = 0;
     private int fps = 0;
@@ -100,21 +90,15 @@ public class PlayScreen extends Screen {
     private static final int START_NUMLIVES = 3;
     private Map<Integer, String> levelMap = new HashMap<Integer, String>();
 
+
     /*
      * Enemy AI Movement Variables.
      * Enemy slows down to 0,0 Vx Vy and then speeds up to new randomly generated velocity
      */
 
     private Random rand = new Random();
-    private long finishedRandomGeneratorsTime; //after random velocities and random time assigned, this records time so we know how long we need to wait
-    private long lastSlowedDownVelocityTime; //to make enemy slow down before changing direction, need the time to make delays and slow it down gradually
-    private long lastSpeededUpVelocityTime; //like the last variable, need this to make enemy accelerate gradually as opposed to instantly
-    private boolean enemyIsSlowingDown = false,enemyIsSpeedingUp = false, enemyIsFinishedVelocityChange = false, enemyIsAIStarted = false; //need to know when enemy is slowing down,speeding up, and when process of decelerating and accelerating is complete
-    private float nextVelocityChangeInSeconds = 0; //randomly generated number between 1 and 3 seconds to start slowing down and changing velocity
-    private float randomVelocityGeneratorX = 0, randomVelocityGeneratorY = 0; //randomly generated velocities between -5 and 5
 
-
-
+    private boolean enemyIsAIStarted = false; //need to know when enemy is slowing down,speeding up, and when process of decelerating and accelerating is complete
 
     public PlayScreen(MainActivity act) {
         p = new Paint();
@@ -162,6 +146,7 @@ public class PlayScreen extends Screen {
 
         if(currentLevel == 1){
             enemiesFlying.add(new Enemy(fighter,5));
+            enemiesFlying.add(new Enemy(fighter, 5));
         }
 
         try {
@@ -262,49 +247,51 @@ public class PlayScreen extends Screen {
 
                 //Movement AI
 
-                if(enemyStartDelayReached) {
-                    e.x = e.x + e.vx;
-                    e.y = e.y + e.vy;
+                if(e.startDelayReached) {
+                    e.x += e.vx;
+                    e.y += e.vy;
                     if(!enemyIsAIStarted){
-                        enemyIsFinishedVelocityChange = true;
+                        e.isFinishedVelocityChange = true;
                         enemyIsAIStarted=true;
                     }
                 }
 
 
 
-                if(enemyIsFinishedVelocityChange){
+                if(e.isFinishedVelocityChange){
 
-                    nextVelocityChangeInSeconds = (rand.nextInt(1000)+1000)/1000;
+                    e.nextVelocityChangeInSeconds = (rand.nextInt(1000)+1000)/1000;
 
-                    randomVelocityGeneratorX = (rand.nextInt(10000)+200)/1000;
+                    e.setRandomVelocityGeneratorX((rand.nextInt(10000)+200)/1000);
+                    e.setRandomVelocityGeneratorY((rand.nextInt(10000)+200)/1000);
+
                     //makes it negative if it is bigger than 5
-                    if(randomVelocityGeneratorX > 5){
-                        randomVelocityGeneratorX = randomVelocityGeneratorX- 10;
+                    if(e.getRandomVelocityGeneratorX() > 5){
+                        e.setRandomVelocityGeneratorX(e.getRandomVelocityGeneratorX() - 10);
                     }
 
-                    randomVelocityGeneratorY = (rand.nextInt(10000)+200)/1000;
-                    if(randomVelocityGeneratorY > 5){
-                        randomVelocityGeneratorY = randomVelocityGeneratorY-10;
+
+                    if(e.getRandomVelocityGeneratorY() > 5){
+                        e.setRandomVelocityGeneratorY(e.getRandomVelocityGeneratorY() - 10);
                     }
 
-                    if(!enemyIsSlowingDown){
-                        enemyIsSpeedingUp = true;
+                    if(!e.isSlowingDown){
+                        e.isSpeedingUp = true;
                     }
 
-                    finishedRandomGeneratorsTime = System.nanoTime();
+                    e.finishedRandomGeneratorsTime = System.nanoTime();
 
                     //just initiating these guys
-                    lastSlowedDownVelocityTime = finishedRandomGeneratorsTime;
-                    lastSpeededUpVelocityTime = finishedRandomGeneratorsTime;
+                    e.lastSlowedDownVelocityTime = e.finishedRandomGeneratorsTime;
+                    e.lastSpeededUpVelocityTime = e.finishedRandomGeneratorsTime;
 
-                    enemyIsFinishedVelocityChange = false;
+                    e.isFinishedVelocityChange = false;
 
                 }
 
                 //wait a couple seconds for this to be true
-                if(frtime > (finishedRandomGeneratorsTime + (ONESEC_NANOS*nextVelocityChangeInSeconds))) {
-                    if (enemyIsSlowingDown && (frtime > lastSlowedDownVelocityTime + (ONESEC_NANOS/100))) {
+                if(frtime > (e.finishedRandomGeneratorsTime + (ONESEC_NANOS*e.nextVelocityChangeInSeconds))) {
+                    if (e.isSlowingDown && (frtime > e.lastSlowedDownVelocityTime + (ONESEC_NANOS/100))) {
                         //obv will never be 0. Half a second for slowing down, then speeding up
                         e.vx = e.vx - (e.vx/50);
                         e.vy = e.vy - (e.vy/50);
@@ -312,52 +299,51 @@ public class PlayScreen extends Screen {
                         //borders
                         if(e.x < 0 || e.x > width*4/5){
                             e.vx = -e.vx;
-                            randomVelocityGeneratorX = -randomVelocityGeneratorX;
+                            e.setRandomVelocityGeneratorX(-e.getRandomVelocityGeneratorX());
                         }
 
                         if(e.y < 0 || e.y > height/4){
                             e.vy = -e.vy;
-                            randomVelocityGeneratorY = -randomVelocityGeneratorY;
-
+                            e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorX());
                         }
 
                         //so we do this
                         if( (e.vx > -.1 && e.vx < .1) &&  (e.vy > -.1 && e.vy < .1) ){
-                            enemyIsSlowingDown = false;
-                            enemyIsSpeedingUp = true;
+                            e.isSlowingDown = false;
+                            e.isSpeedingUp = true;
 
                         }
                         //delays this slowing down process a little
-                        lastSlowedDownVelocityTime = System.nanoTime();
+                        e.lastSlowedDownVelocityTime = System.nanoTime();
 
-                    }else if(enemyIsSpeedingUp && (frtime > lastSpeededUpVelocityTime + (ONESEC_NANOS/100))){
+                    }else if(e.isSpeedingUp && (frtime > e.lastSpeededUpVelocityTime + (ONESEC_NANOS/100))){
 
 
                         //will not have asymptotes like the last one
-                        e.vx = e.vx + (randomVelocityGeneratorX/50);
-                        e.vy = e.vy + (randomVelocityGeneratorY/50);
+                        e.vx = e.vx + (e.randomVelocityGeneratorX/50);
+                        e.vy = e.vy + (e.randomVelocityGeneratorY /50);
 
                         //borders for x and y
                         if(e.x < 0 || e.x > width*4/5){
                             e.vx = -e.vx;
-                            randomVelocityGeneratorX = -randomVelocityGeneratorX;
+                            e.setRandomVelocityGeneratorX(-e.getRandomVelocityGeneratorX());
 
                         }
                         if(e.y < 0 || e.y > height/4){
                             e.vy = -e.vy;
-                            randomVelocityGeneratorY = -randomVelocityGeneratorY;
+                            e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
 
                         }
 
 
                         //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
-                        if( (e.vx > randomVelocityGeneratorX-.1 && e.vx < randomVelocityGeneratorX+.1) && (e.vy > randomVelocityGeneratorY-.1 || e.vy < randomVelocityGeneratorY+.1)){
-                            enemyIsSpeedingUp = false;
-                            enemyIsSlowingDown = true;
-                            enemyIsFinishedVelocityChange = true;
+                        if( (e.vx > e.getRandomVelocityGeneratorX()-.1 && e.vx < e.getRandomVelocityGeneratorX()+.1) && (e.vy > e.getRandomVelocityGeneratorY() -.1 || e.vy < e.getRandomVelocityGeneratorY() +.1)){
+                            enemyIsAIStarted = false;
+                            e.isSlowingDown = true;
+                            e.isFinishedVelocityChange = true;
                         }
 
-                        lastSpeededUpVelocityTime = System.nanoTime();
+                        e.lastSpeededUpVelocityTime = System.nanoTime();
 
 
                     }
@@ -404,9 +390,6 @@ public class PlayScreen extends Screen {
     @Override
     public void draw(Canvas c, View v) {
         try {
-            if(gameStartTime + (ONESEC_NANOS/10) < frtime){
-                enemyStartDelayReached = true;
-            }
 
             // actually draw the screen
             scaledDst.set(mapAnimatorX-width, mapAnimatorY-height, mapAnimatorX, mapAnimatorY);
@@ -435,7 +418,12 @@ public class PlayScreen extends Screen {
 
             synchronized (enemiesFlying) {
                 for(Enemy e: enemiesFlying) {
-                    if(enemyStartDelayReached) {
+                    if(gameStartTime + (ONESEC_NANOS/10) < frtime){
+                        e.startDelayReached = true;
+                    }
+
+                    if(e.startDelayReached) {
+
                         c.drawBitmap(e.getBitmap(), e.x, e.y, p);
 
                         if ((e.hasCollision(spaceshipLaserX, spaceshipLaserY) || e.hasCollision(spaceshipLaserX + spaceship.getWidth() * 64 / 100, spaceshipLaserY))) {
@@ -551,6 +539,7 @@ public class PlayScreen extends Screen {
     /**
      * An enemy is a template for all the enemies     */
     private class Enemy {
+        final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
         Bitmap btm;
         float x=0;
         float y=0;
@@ -560,8 +549,15 @@ public class PlayScreen extends Screen {
         float width=0; // width onscreen
         float height=0;  // height onscreen
         float halfWidth = 0;  // convenience
-        float halfHeight = 0;
-        final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
+        float halfHeight = 0; // "
+        private long finishedRandomGeneratorsTime; //after random velocities and random time assigned, this records time so we know how long we need to wait
+        private long lastSlowedDownVelocityTime; //to make enemy slow down before changing direction, need the time to make delays and slow it down gradually
+        private long lastSpeededUpVelocityTime; //like the last variable, need this to make enemy accelerate gradually as opposed to instantly
+        private boolean isSlowingDown = false, isSpeedingUp = false, isFinishedVelocityChange = false;
+        private float nextVelocityChangeInSeconds = 0; //randomly generated number between 1 and 3 seconds to start slowing down and changing velocity
+        private float randomVelocityGeneratorX = 0;
+        private float randomVelocityGeneratorY = 0; //randomly generated velocities between -5 and 5
+        private boolean startDelayReached = false;
 
         Rect bounds = new Rect();
 
@@ -586,6 +582,21 @@ public class PlayScreen extends Screen {
             return bounds;
         }
 
+        public void setRandomVelocityGeneratorX(float num) {
+            randomVelocityGeneratorX = num;
+        }
+
+        public void setRandomVelocityGeneratorY(float num) {
+            randomVelocityGeneratorY = num;
+        }
+
+        public float getRandomVelocityGeneratorX() {
+            return randomVelocityGeneratorX;
+        }
+
+        public float getRandomVelocityGeneratorY() {
+            return randomVelocityGeneratorY;
+        }
     }
 
     //this is for creating multiple ship explosion animations
