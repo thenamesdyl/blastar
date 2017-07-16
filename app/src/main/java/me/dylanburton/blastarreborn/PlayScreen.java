@@ -28,6 +28,7 @@ import java.util.Random;
 
 import me.dylanburton.blastarreborn.Enemies.Enemy;
 import me.dylanburton.blastarreborn.Enemies.EnemyType;
+import me.dylanburton.blastarreborn.Enemies.Fighter;
 
 /**
  * Represents the main screen of play for the game.
@@ -77,7 +78,7 @@ public class PlayScreen extends Screen {
 
     //time stuff
     private long hitContactTime = 0;
-
+    private long enemyFiringTime = 0;
     private long frtime = 0;
     private long gameStartTime = 0;
     private int fps = 0;
@@ -99,6 +100,7 @@ public class PlayScreen extends Screen {
     private boolean startDelayReached = false;
     private Random rand = new Random();
 
+    private float randomlyGeneratedEnemyFiringTimeInSeconds; //variable for enemy firing stuff
 
 
     public PlayScreen(MainActivity act) {
@@ -147,8 +149,8 @@ public class PlayScreen extends Screen {
         highscore = 0;
 
         if(currentLevel == 1){
-            enemiesFlying.add(new Enemy(fighter,EnemyType.FIGHTER));
-            enemiesFlying.add(new Enemy(fighter,EnemyType.FIGHTER));
+            enemiesFlying.add(new Fighter(fighter));
+            enemiesFlying.add(new Fighter(fighter));
         }
 
         try {
@@ -475,6 +477,18 @@ public class PlayScreen extends Screen {
                         }
 
 
+                        //enemy firing stuff
+                        if(enemyFiringTime== 0){
+                            enemyFiringTime = System.nanoTime();
+                            randomlyGeneratedEnemyFiringTimeInSeconds = (rand.nextInt(3000))/1000;
+                        }
+
+                        if(enemyFiringTime + randomlyGeneratedEnemyFiringTimeInSeconds < frtime){
+                            enemyFiringTime = System.nanoTime();
+                            randomlyGeneratedEnemyFiringTimeInSeconds = (rand.nextInt(3000))/1000;
+
+                            //todo: make a Shiplaser class and list, then have the Shiplaser object be added to the list here, then make a for each in draw() to drawBitmap the lasers, then in update, update the coordinates of enemy lasers
+                        }
 
 
                         if ((e.hasCollision(spaceshipLaserX, spaceshipLaserY) || e.hasCollision(spaceshipLaserX + spaceship.getWidth() * 64 / 100, spaceshipLaserY))) {
