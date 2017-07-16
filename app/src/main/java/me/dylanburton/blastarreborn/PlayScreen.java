@@ -245,7 +245,6 @@ public class PlayScreen extends Screen {
             mapAnimatorY = height;
             secondaryMapAnimatorX=width;
             secondaryMapAnimatorY=height;
-
         }
 
         if (gamestate == State.RUNNING) {
@@ -332,6 +331,7 @@ public class PlayScreen extends Screen {
                         lastSlowedDownVelocityTime = System.nanoTime();
 
                     }else if(enemyIsSpeedingUp && (frtime > lastSpeededUpVelocityTime + (ONESEC_NANOS/100))){
+
 
                         //will not have asymptotes like the last one
                         e.vx = e.vx + (randomVelocityGeneratorX/50);
