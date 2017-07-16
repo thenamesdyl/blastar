@@ -446,7 +446,6 @@ public class PlayScreen extends Screen {
                 for(ShipExplosion se: shipExplosions){
                     c.drawBitmap(explosion[se.currentFrame],se.x,se.y,p);
 
-
                     //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
                     if(hitContactTime + (ONESEC_NANOS/50) < frtime) {
                         hitContactTime = System.nanoTime();
@@ -473,7 +472,7 @@ public class PlayScreen extends Screen {
                         if ((e.hasCollision(spaceshipLaserX, spaceshipLaserY) || e.hasCollision(spaceshipLaserX + spaceship.getWidth() * 64 / 100, spaceshipLaserY))) {
                             spaceshipLaserX = 4000;
                             enemiesFlying.remove(e);
-                            shipExplosions.add(new ShipExplosion(e.x, e.y + e.getBitmap().getHeight() / 4, shipExplosions.size()));
+                            shipExplosions.add(new ShipExplosion(e.x-e.getBitmap().getWidth()*3/4, e.y-e.getBitmap().getHeight()/2, shipExplosions.size()));
                             hitContactTime = System.nanoTime();
 
 
