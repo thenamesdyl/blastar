@@ -285,8 +285,8 @@ public class PlayScreen extends Screen {
 
                     }
 
-                    if(!e.isSlowingDown){
-                        e.isSpeedingUp = true;
+                    if(!e.isSlowingDown()){
+                        e.setSpeedingUp(true);
                     }
 
                     e.finishedRandomGeneratorsTime = System.nanoTime();
@@ -301,7 +301,7 @@ public class PlayScreen extends Screen {
 
                 //wait a couple seconds for this to be true
                 if(frtime > (e.finishedRandomGeneratorsTime + (ONESEC_NANOS*e.nextVelocityChangeInSeconds))) {
-                    if (e.isSlowingDown && (frtime > e.lastSlowedDownVelocityTime + (ONESEC_NANOS/100))) {
+                    if (e.isSlowingDown() && (frtime > e.lastSlowedDownVelocityTime + (ONESEC_NANOS/100))) {
                         //obv will never be 0. Half a second for slowing down, then speeding up
                         e.vx = e.vx - (e.vx/50);
                         e.vy = e.vy - (e.vy/50);
@@ -319,19 +319,19 @@ public class PlayScreen extends Screen {
 
                         //so we do this
                         if( (e.vx > -.1 && e.vx < .1) &&  (e.vy > -.1 && e.vy < .1) ){
-                            e.isSlowingDown = false;
-                            e.isSpeedingUp = true;
+                            e.setSlowingDown(false);
+                            e.setSpeedingUp(true);
 
                         }
                         //delays this slowing down process a little
                         e.lastSlowedDownVelocityTime = System.nanoTime();
 
-                    }else if(e.isSpeedingUp && (frtime > e.lastSpeededUpVelocityTime + (ONESEC_NANOS/100))){
+                    }else if(e.isSpeedingUp() && (frtime > e.lastSpeededUpVelocityTime + (ONESEC_NANOS/100))){
 
 
                         //will not have asymptotes like the last one
-                        e.vx = e.vx + (e.randomVelocityGeneratorX/50);
-                        e.vy = e.vy + (e.randomVelocityGeneratorY /50);
+                        e.vx = e.vx + (e.getRandomVelocityGeneratorX()/50);
+                        e.vy = e.vy + (e.getRandomVelocityGeneratorY()/50);
 
                         //borders for x and y
                         if(e.x < 0 || e.x > width*4/5){
@@ -349,7 +349,7 @@ public class PlayScreen extends Screen {
                         //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
                         if( (e.vx > e.getRandomVelocityGeneratorX()-.1 && e.vx < e.getRandomVelocityGeneratorX()+.1) && (e.vy > e.getRandomVelocityGeneratorY() -.1 || e.vy < e.getRandomVelocityGeneratorY() +.1)){
                             enemyIsAIStarted = false;
-                            e.isSlowingDown = true;
+                            e.setSlowingDown(true);
                             e.isFinishedVelocityChange = true;
                         }
 
@@ -606,6 +606,22 @@ public class PlayScreen extends Screen {
 
         public float getRandomVelocityGeneratorY() {
             return randomVelocityGeneratorY;
+        }
+
+        public boolean isSpeedingUp() {
+            return isSpeedingUp;
+        }
+
+        public boolean isSlowingDown() {
+            return isSlowingDown;
+        }
+
+        public void setSlowingDown(boolean slowingDown) {
+            isSlowingDown = slowingDown;
+        }
+
+        public void setSpeedingUp(boolean speedingUp) {
+            isSpeedingUp = speedingUp;
         }
     }
 
