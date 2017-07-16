@@ -96,9 +96,9 @@ public class PlayScreen extends Screen {
      * Enemy slows down to 0,0 Vx Vy and then speeds up to new randomly generated velocity
      */
 
+    private boolean startDelayReached = false;
     private Random rand = new Random();
 
-    private boolean enemyIsAIStarted = false; //need to know when enemy is slowing down,speeding up, and when process of decelerating and accelerating is complete
 
     public PlayScreen(MainActivity act) {
         p = new Paint();
@@ -146,7 +146,7 @@ public class PlayScreen extends Screen {
 
         if(currentLevel == 1){
             enemiesFlying.add(new Enemy(fighter,5));
-            enemiesFlying.add(new Enemy(fighter, 5));
+            enemiesFlying.add(new Enemy(fighter,5));
         }
 
         try {
@@ -162,10 +162,16 @@ public class PlayScreen extends Screen {
 
 
     public void resetGame(){
+
         gamestate = State.STARTROUND;
         width = 0;
         height = 0;
         enemiesFlying.clear();
+        startDelayReached = false;
+        for(Enemy e: enemiesFlying){
+            e.isFinishedVelocityChange = false;
+            e.enemyIsAIStarted=false;
+        }
 
     }
 
@@ -256,23 +262,27 @@ public class PlayScreen extends Screen {
 
                 //Movement AI
 
-                if(e.startDelayReached) {
+                if(!e.enemyIsAIStarted){
+                    e.x = rand.nextInt(width*4/5);
+                    e.y = -height/10;
+                    e.isFinishedVelocityChange = true;
+                    e.enemyIsAIStarted=true;
+                }
+
+                if(startDelayReached) {
                     e.x += e.vx;
                     e.y += e.vy;
-                    if(!enemyIsAIStarted){
-                        e.isFinishedVelocityChange = true;
-                        enemyIsAIStarted=true;
-                    }
+
                 }
 
 
 
                 if(e.isFinishedVelocityChange){
 
-                    e.nextVelocityChangeInSeconds = (rand.nextInt(1000)+200)/1000;
 
                     e.setRandomVelocityGeneratorX((rand.nextInt(10000)+1000)/1000);
                     e.setRandomVelocityGeneratorY((rand.nextInt(10000)+1000)/1000);
+
 
                     //makes it negative if it is bigger than 5
                     if(e.getRandomVelocityGeneratorX() > 5){
@@ -282,6 +292,17 @@ public class PlayScreen extends Screen {
 
                     if(e.getRandomVelocityGeneratorY() > 5){
                         e.setRandomVelocityGeneratorY(e.getRandomVelocityGeneratorY() - 11);
+
+                    }
+
+                    if(e.y > height/6){
+                        if(e.getRandomVelocityGeneratorY() > 0){
+                            e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
+                        }
+                    }else if(e.y < 0){
+                        if(e.getRandomVelocityGeneratorY() < 0){
+                            e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
+                        }
 
                     }
 
@@ -299,67 +320,80 @@ public class PlayScreen extends Screen {
 
                 }
 
-                //wait a couple seconds for this to be true
-                if(frtime > (e.finishedRandomGeneratorsTime + (ONESEC_NANOS*e.nextVelocityChangeInSeconds))) {
-                    if (e.isSlowingDown && (frtime > e.lastSlowedDownVelocityTime + (ONESEC_NANOS/100))) {
-                        //obv will never be 0. Half a second for slowing down, then speeding up
-                        e.vx = e.vx - (e.vx/50);
-                        e.vy = e.vy - (e.vy/50);
+                if (e.isSlowingDown && (frtime > e.lastSlowedDownVelocityTime + (ONESEC_NANOS/100))) {
+                    //obv will never be 0. Half a second for slowing down, then speeding up
+                    e.vx = e.vx - (e.vx/50);
+                    e.vy = e.vy - (e.vy/50);
 
-                        //borders
-                        if(e.x < 0 || e.x > width*4/5){
-                            e.vx = -e.vx;
-                            e.setRandomVelocityGeneratorX(-e.getRandomVelocityGeneratorX());
+                    //borders
+                    if(e.x < 0 || e.x > width*4/5){
+                        //this check disables the ability for ship to get too far and then freeze in place
+                        if(e.x < 0){
+                            e.x = 0;
+                        }else if (e.x > width*4/5){
+                            e.x = width*4/5;
                         }
 
-                        if(e.y < 0 || e.y > height/4){
-                            e.vy = -e.vy;
-                            e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorX());
+                        e.vx = -e.vx;
+                        e.setRandomVelocityGeneratorX(-e.getRandomVelocityGeneratorX());
+                    }
+
+                    if(e.y < -height/10){
+
+                        e.vy = -e.vy;
+                        e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
+                    }
+
+                    //so we do this
+                    if( (e.vx > -1 && e.vx < 1) &&  (e.vy > -1 && e.vy < 1) ){
+                        e.isSlowingDown = false;
+                        e.isSpeedingUp = true;
+
+                    }
+                    //delays this slowing down process a little
+                    e.lastSlowedDownVelocityTime = System.nanoTime();
+
+                }else if(e.isSpeedingUp && (frtime > e.lastSpeededUpVelocityTime + (ONESEC_NANOS/100))){
+
+
+                    //will not have asymptotes like the last one
+                    e.vx = e.vx + (e.randomVelocityGeneratorX/50);
+                    e.vy = e.vy + (e.randomVelocityGeneratorY /50);
+
+                    //borders for x and y
+                    if(e.x < 0 || e.x > width*4/5){
+
+                        if(e.x < 0){
+                            e.x = 0;
+                        }else if (e.x > width*4/5){
+                            e.x = width*4/5;
                         }
 
-                        //so we do this
-                        if( (e.vx > -.1 && e.vx < .1) &&  (e.vy > -.1 && e.vy < .1) ){
-                            e.isSlowingDown = false;
-                            e.isSpeedingUp = true;
+                        e.vx = -e.vx;
+                        e.setRandomVelocityGeneratorX(-e.getRandomVelocityGeneratorX());
 
-                        }
-                        //delays this slowing down process a little
-                        e.lastSlowedDownVelocityTime = System.nanoTime();
+                    }
+                    if(e.y < -height/10){
 
-                    }else if(e.isSpeedingUp && (frtime > e.lastSpeededUpVelocityTime + (ONESEC_NANOS/100))){
-
-
-                        //will not have asymptotes like the last one
-                        e.vx = e.vx + (e.randomVelocityGeneratorX/50);
-                        e.vy = e.vy + (e.randomVelocityGeneratorY /50);
-
-                        //borders for x and y
-                        if(e.x < 0 || e.x > width*4/5){
-                            e.vx = -e.vx;
-                            e.setRandomVelocityGeneratorX(-e.getRandomVelocityGeneratorX());
-
-                        }
-                        if(e.y < 0 || e.y > height/4){
-                            e.vy = -e.vy;
-                            e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
-
-                        }
-
-
-                        //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
-                        if( (e.vx > e.getRandomVelocityGeneratorX()-.1 && e.vx < e.getRandomVelocityGeneratorX()+.1) && (e.vy > e.getRandomVelocityGeneratorY() -.1 || e.vy < e.getRandomVelocityGeneratorY() +.1)){
-                            enemyIsAIStarted = false;
-                            e.isSlowingDown = true;
-                            e.isFinishedVelocityChange = true;
-                        }
-
-                        e.lastSpeededUpVelocityTime = System.nanoTime();
-
+                        e.vy = -e.vy;
+                        e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
 
                     }
 
 
+                    //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
+                    if( (e.vx > e.getRandomVelocityGeneratorX()-1 && e.vx < e.getRandomVelocityGeneratorX()+1) && (e.vy > e.getRandomVelocityGeneratorY() -1 || e.vy < e.getRandomVelocityGeneratorY() +1)){
+                        e.isSlowingDown = true;
+                        e.isFinishedVelocityChange = true;
+                    }
+
+                    e.lastSpeededUpVelocityTime = System.nanoTime();
+
+
                 }
+
+
+
 
 
 
@@ -429,10 +463,10 @@ public class PlayScreen extends Screen {
             synchronized (enemiesFlying) {
                 for(Enemy e: enemiesFlying) {
                     if(gameStartTime + (ONESEC_NANOS/10) < frtime){
-                        e.startDelayReached = true;
+                        startDelayReached = true;
                     }
 
-                    if(e.startDelayReached) {
+                    if(startDelayReached) {
 
                         c.drawBitmap(e.getBitmap(), e.x, e.y, p);
 
@@ -564,10 +598,10 @@ public class PlayScreen extends Screen {
         private long lastSlowedDownVelocityTime; //to make enemy slow down before changing direction, need the time to make delays and slow it down gradually
         private long lastSpeededUpVelocityTime; //like the last variable, need this to make enemy accelerate gradually as opposed to instantly
         private boolean isSlowingDown = false, isSpeedingUp = false, isFinishedVelocityChange = false;
-        private float nextVelocityChangeInSeconds = 0; //randomly generated number between 1 and 3 seconds to start slowing down and changing velocity
         private float randomVelocityGeneratorX = 0;
         private float randomVelocityGeneratorY = 0; //randomly generated velocities between -5 and 5
-        private boolean startDelayReached = false;
+        private boolean enemyIsAIStarted = false;
+
 
         Rect bounds = new Rect();
 
@@ -579,6 +613,7 @@ public class PlayScreen extends Screen {
             this.halfHeight = height/HALF_DIVISOR;
             this.points = points;
         }
+
 
         public Bitmap getBitmap(){
             return btm;
