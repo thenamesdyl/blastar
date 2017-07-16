@@ -261,16 +261,6 @@ public class PlayScreen extends Screen {
                 Enemy e = enemiesIterator.next();
 
 
-                //this needs to be replaced with some sort of competent movement behavior.
-                /*e.x += fighterSpeed;
-                if(e.x >=width*4/5){
-                    fighterSpeed=-fighterSpeed;
-                }else if(e.x<=0){
-                    fighterSpeed=-fighterSpeed;
-                }*/
-
-                //
-
                 //Movement AI
 
                 if(enemyStartDelayReached) {
@@ -325,7 +315,7 @@ public class PlayScreen extends Screen {
                             e.vx = -e.vx;
                             randomVelocityGeneratorX = -randomVelocityGeneratorX;
                         }
-                        
+
                         if(e.y < 0 || e.y > height/4){
                             e.vy = -e.vy;
                             randomVelocityGeneratorY = -randomVelocityGeneratorY;
