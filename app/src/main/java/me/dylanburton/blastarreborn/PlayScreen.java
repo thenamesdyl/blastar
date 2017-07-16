@@ -324,12 +324,19 @@ public class PlayScreen extends Screen {
                             e.vy = e.vy - (e.vy / 50);
 
 
-                            //so we do this
-                            if ((e.vx > -.1 && e.vx < .1) && (e.vy > -.1 && e.vy < .1)) {
-                                enemyIsSlowingDown = false;
-                                enemyIsSpeedingUp = true;
+                            //borders
+                            if(e.x < 0 || e.x > width*4/5){
+                                e.vx = -e.vx;
+                                randomVelocityGeneratorX = -randomVelocityGeneratorX;
+                            }
+
+                            if(e.y < 0 || e.y > height/4){
+                                e.vy = -e.vy;
+                                randomVelocityGeneratorY = -randomVelocityGeneratorY;
 
                             }
+
+                        }
                             //delays this slowing down process a little
                             lastSlowedDownVelocityTime = System.nanoTime();
 
@@ -349,8 +356,11 @@ public class PlayScreen extends Screen {
                                 e.vy = -e.vy;
                                 randomVelocityGeneratorY = -randomVelocityGeneratorY;
 
-                            }
 
+                            }
+                        if(e.y < 0 || e.y > height/4){
+                            e.vy = -e.vy;
+                            randomVelocityGeneratorY = -randomVelocityGeneratorY;
 
                             //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
                             if ((e.vx > randomVelocityGeneratorX - .01 && e.vx < randomVelocityGeneratorX + .01) && (e.vy > randomVelocityGeneratorY - .01 || e.vy < randomVelocityGeneratorY + .01)) {
@@ -359,10 +369,13 @@ public class PlayScreen extends Screen {
                                 enemyIsFinishedVelocityChange = true;
                             }
 
-                            lastSpeededUpVelocityTime = System.nanoTime();
-
-
-                        }
+                            //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
+                            if( (e.vx > randomVelocityGeneratorX-.1 && e.vx < randomVelocityGeneratorX+.1) && (e.vy > randomVelocityGeneratorY-.1 || e.vy < randomVelocityGeneratorY+.1)){
+                                enemyIsSpeedingUp = false;
+                                enemyIsSlowingDown = true;
+                                enemyIsFinishedVelocityChange = true;
+                            }
+                       }
 
 
                     }
@@ -375,17 +388,28 @@ public class PlayScreen extends Screen {
 
             }
 
-            //spaceship decay
-            if (spaceshipY < MIN_HEIGHT && !spaceshipIsMoving) {
-                spaceshipY += DECAY_SPEED;
-            }
+        }
 
-            //resets spaceship laser
-            spaceshipLaserY -= 20.0f;
-            if (spaceshipLaserY < -150) {
-                spaceshipLaserY = spaceshipY + spaceship.getHeight() / 3;
-                spaceshipLaserX = spaceshipX + spaceship.getWidth() / 8;
-            }
+        //spaceship decay
+        if(spaceshipY<height*5/6 && !spaceshipIsMoving) {
+            spaceshipY += DECAY_SPEED;
+        }
+
+        //resets spaceship laser
+        spaceshipLaserY -= 20.0f;
+        if(spaceshipLaserY < -height/6){
+            spaceshipLaserY = spaceshipY+spaceship.getHeight()/3;
+            spaceshipLaserX = spaceshipX+spaceship.getWidth()/8;
+        }
+
+
+
+        //resets spaceship laser
+        spaceshipLaserY -= 20.0f;
+        if (spaceshipLaserY < -150) {
+            spaceshipLaserY = spaceshipY + spaceship.getHeight() / 3;
+            spaceshipLaserX = spaceshipX + spaceship.getWidth() / 8;
+        }
 
             //animator for map background
             mapAnimatorY += 2.0f;
@@ -397,7 +421,6 @@ public class PlayScreen extends Screen {
                 secondaryMapAnimatorY = height;
             }
         }
-    }
 
 
     @Override
