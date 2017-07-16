@@ -59,12 +59,13 @@ public class PlayScreen extends Screen {
     private int width = 0;
     private int height = 0;
     //bitmap with a rect used for drawing
-    private Bitmap starbackground, spaceship, spaceshipLaser, fighter, hitFighter, explosion[];
+    private Bitmap starbackground, spaceship[], spaceshipLaser, fighter, hitFighter, explosion[];
     private Rect scaledDst = new Rect();
 
     //main spaceships location and bound, using 1000 for spaceshipy and x because of a weird glitch where the spaceship is drawn at 0,0 for 100 ms
-    private int spaceshipY=1000;
-    private int spaceshipX=1000;
+    private int spaceshipY=0;
+    private int spaceshipX=0;
+    private int currentSpaceshipFrame=0; //frame of spaceship for animation
     private Rect spaceshipBounds;
     private boolean spaceshipIsMoving;
     private int spaceshipLaserX;
@@ -77,9 +78,10 @@ public class PlayScreen extends Screen {
     private int secondaryMapAnimatorY;
 
     //time stuff
-    private long hitContactTime = 0;
-    private long enemyFiringTime = 0;
-    private long frtime = 0;
+    private long hitContactTime = 0; //for if the laser hits the enemy
+    private long enemyFiringTime = 0; //for controlling enemy firing
+    private long spaceshipFrameSwitchTime = 0; //for spaceships fire animation
+    private long frtime = 0; //the global time
     private long gameStartTime = 0;
     private int fps = 0;
 
@@ -115,7 +117,9 @@ public class PlayScreen extends Screen {
             inputStream.close();
 
             //your spaceship and laser
-            spaceship = act.getScaledBitmap("spaceshiptopview.png");
+            spaceship = new Bitmap[2];
+            spaceship[0] = act.getScaledBitmap("spaceship/spaceshiptopview1.png");
+            spaceship[1] = act.getScaledBitmap("spaceship/spaceshiptopview2.png");
             spaceshipLaser = act.getScaledBitmap("spaceshiplaser.png");
 
             //fighter
@@ -242,8 +246,8 @@ public class PlayScreen extends Screen {
             spaceshipX = width/2;
             spaceshipY = height*2/3;
 
-            spaceshipLaserX = spaceshipX+spaceship.getWidth()/8;
-            spaceshipLaserY = spaceshipY+spaceship.getHeight()/3;
+            spaceshipLaserX = spaceshipX+spaceship[0].getWidth()/8;
+            spaceshipLaserY = spaceshipY+spaceship[0].getHeight()/3;
 
             mapAnimatorX = width;
             mapAnimatorY = height;
@@ -317,7 +321,7 @@ public class PlayScreen extends Screen {
                         if(e.getRandomVelocityGeneratorY() > 0){
                             e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
                         }
-                    }else if(e.getY() < 0){
+                    }else if(e.getY() < height/12){
                         if(e.getRandomVelocityGeneratorY() < 0){
                             e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
                         }
@@ -356,12 +360,6 @@ public class PlayScreen extends Screen {
                         e.setRandomVelocityGeneratorX(-e.getRandomVelocityGeneratorX());
                     }
 
-                    if(e.getY() < -height/10){
-
-                        e.setVy(-e.getVy());
-                        e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
-                    }
-
                     //so we do this
                     if( (e.getVx() > -1 && e.getVx() < 1) &&  (e.getVy() > -1 && e.getVy() < 1) ){
                         e.setSlowingDown(false);
@@ -390,20 +388,14 @@ public class PlayScreen extends Screen {
                         e.setVx(-e.getVx());
                         e.setRandomVelocityGeneratorX(-e.getRandomVelocityGeneratorX());
                     }
-                    }
-                    if(e.getY() < -height/10){
-
-                        e.setVy(-e.getVy());
-                        e.setRandomVelocityGeneratorY(-e.getRandomVelocityGeneratorY());
-
-                    }
+                }
 
 
                     //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
-                    if( (e.getVx() > e.getRandomVelocityGeneratorX()-1 && e.getVx() < e.getRandomVelocityGeneratorX()+1) && (e.getVy() > e.getRandomVelocityGeneratorY() -1 || e.getVy() < e.getRandomVelocityGeneratorY() +1)){
-                        e.setSlowingDown(true);
-                        e.setFinishedVelocityChange(true);
-                    }
+                if( (e.getVx() > e.getRandomVelocityGeneratorX()-1 && e.getVx() < e.getRandomVelocityGeneratorX()+1) && (e.getVy() > e.getRandomVelocityGeneratorY() -1 || e.getVy() < e.getRandomVelocityGeneratorY() +1)){
+                    e.setSlowingDown(true);
+                    e.setFinishedVelocityChange(true);
+                }
 
                 e.setLastSpedUpVelocityTime(System.nanoTime());
 
@@ -423,8 +415,8 @@ public class PlayScreen extends Screen {
         //resets spaceship laser
         spaceshipLaserY -= 20.0f;
         if(spaceshipLaserY < -height/6){
-            spaceshipLaserY = spaceshipY+spaceship.getHeight()/3;
-            spaceshipLaserX = spaceshipX+spaceship.getWidth()/8;
+            spaceshipLaserY = spaceshipY+spaceship[0].getHeight()/3;
+            spaceshipLaserX = spaceshipX+spaceship[0].getWidth()/8;
         }
 
 
@@ -506,7 +498,7 @@ public class PlayScreen extends Screen {
                         }
 
 
-                        if ((e.hasCollision(spaceshipLaserX, spaceshipLaserY) || e.hasCollision(spaceshipLaserX + spaceship.getWidth() * 64 / 100, spaceshipLaserY))) {
+                        if ((e.hasCollision(spaceshipLaserX, spaceshipLaserY) || e.hasCollision(spaceshipLaserX + spaceship[0].getWidth() * 64 / 100, spaceshipLaserY))) {
                             spaceshipLaserX = 4000;
                             hitContactTime = System.nanoTime();
                             //subtract a life
@@ -529,11 +521,24 @@ public class PlayScreen extends Screen {
 
             //main spaceship lasers
             c.drawBitmap(spaceshipLaser, spaceshipLaserX, spaceshipLaserY, p);
-            c.drawBitmap(spaceshipLaser, spaceshipLaserX + spaceship.getWidth() * 64 / 100, spaceshipLaserY, p);
+            c.drawBitmap(spaceshipLaser, spaceshipLaserX + spaceship[0].getWidth() * 64 / 100, spaceshipLaserY, p);
 
             //main spaceship
-            c.drawBitmap(spaceship, spaceshipX, spaceshipY, p);
+            for(int i = 0; i<spaceship.length; i++) {
+                if(i == currentSpaceshipFrame && frtime>spaceshipFrameSwitchTime + (ONESEC_NANOS/20)) {
+                    if(currentSpaceshipFrame == spaceship.length-1){
+                        currentSpaceshipFrame = 0;
+                    }else{
+                        currentSpaceshipFrame++;
+                    }
+                    c.drawBitmap(spaceship[i], spaceshipX, spaceshipY, p);
 
+                    spaceshipFrameSwitchTime = System.nanoTime();
+
+                }else if(i==currentSpaceshipFrame){
+                    c.drawBitmap(spaceship[i], spaceshipX, spaceshipY, p);
+                }
+            }
 
             p.setColor(Color.WHITE);
             p.setTextSize(act.TS_NORMAL);
@@ -604,12 +609,12 @@ public class PlayScreen extends Screen {
 
             case MotionEvent.ACTION_MOVE:
                 synchronized (spaceship){
-                    spaceshipBounds = new Rect(spaceshipX,spaceshipY,spaceshipX+spaceship.getWidth(),spaceshipY+spaceship.getHeight());
+                    spaceshipBounds = new Rect(spaceshipX,spaceshipY,spaceshipX+spaceship[0].getWidth(),spaceshipY+spaceship[0].getHeight());
 
                     if(spaceshipBounds.contains((int) e.getX(),(int) e.getY())){
                         spaceshipIsMoving = true;
-                        spaceshipX = (int) e.getX()-spaceship.getWidth()/2;
-                        spaceshipY = (int) e.getY()-spaceship.getHeight()/2;
+                        spaceshipX = (int) e.getX()-spaceship[0].getWidth()/2;
+                        spaceshipY = (int) e.getY()-spaceship[0].getHeight()/2;
 
                     }
                 }
