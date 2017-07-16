@@ -17,6 +17,7 @@ public class Enemy {
     private float vx=0;
     private float vy=0;
     private int points;
+    private int lives;
     private float width=0; // width onscreen
     private float height=0;  // height onscreen
     private float halfWidth = 0;  // convenience
@@ -43,7 +44,8 @@ public class Enemy {
         this.height = bitmap.getHeight();
         this.halfWidth = width/HALF_DIVISOR;
         this.halfHeight = height/HALF_DIVISOR;
-        this.points = enemyType.lives();
+        this.lives = enemyType.getLives();
+        this.points = enemyType.getPoints();
     }
 
 
