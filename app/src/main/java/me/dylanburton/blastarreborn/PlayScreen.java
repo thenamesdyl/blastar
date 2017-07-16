@@ -101,6 +101,20 @@ public class PlayScreen extends Screen {
     private static final int START_NUMLIVES = 3;
     private Map<Integer, String> levelMap = new HashMap<Integer, String>();
 
+    /*
+     * Enemy AI Movement Variables.
+     * Enemy slows down to 0,0 Vx Vy and then speeds up to new randomly generated velocity
+     */
+
+    private Random rand = new Random();
+    private long finishedRandomGeneratorsTime; //after random velocities and random time assigned, this records time so we know how long we need to wait
+    private long lastSlowedDownVelocityTime; //to make enemy slow down before changing direction, need the time to make delays and slow it down gradually
+    private long lastSpeededUpVelocityTime; //like the last variable, need this to make enemy accelerate gradually as opposed to instantly
+    private boolean enemyIsSlowingDown = false,enemyIsSpeedingUp = false, enemyIsFinishedVelocityChange = false, enemyIsAIStarted = false; //need to know when enemy is slowing down,speeding up, and when process of decelerating and accelerating is complete
+    private float nextVelocityChangeInSeconds = 0; //randomly generated number between 1 and 3 seconds to start slowing down and changing velocity
+    private float randomVelocityGeneratorX = 0, randomVelocityGeneratorY = 0; //randomly generated velocities between -5 and 5
+
+
     public PlayScreen(MainActivity act) {
         p = new Paint();
         this.act = act;
@@ -223,16 +237,16 @@ public class PlayScreen extends Screen {
             width = v.getWidth();
             height = v.getHeight();
 
-            spaceshipX = width/2;
-            spaceshipY = height*2/3;
+            spaceshipX = width / 2;
+            spaceshipY = height * 2 / 3;
 
-            spaceshipLaserX = spaceshipX+spaceship.getWidth()/8;
-            spaceshipLaserY = spaceshipY+spaceship.getHeight()/3;
+            spaceshipLaserX = spaceshipX + spaceship.getWidth() / 8;
+            spaceshipLaserY = spaceshipY + spaceship.getHeight() / 3;
 
             mapAnimatorX = width;
             mapAnimatorY = height;
-            secondaryMapAnimatorX=width;
-            secondaryMapAnimatorY=height;
+            secondaryMapAnimatorX = width;
+            secondaryMapAnimatorY = height;
 
         }
 
@@ -243,43 +257,145 @@ public class PlayScreen extends Screen {
 
         //need a place to update enemy positions, needs some sort of AI
 
-        synchronized (fightersFlying){
+        synchronized (fightersFlying) {
             Iterator<Enemy> enemiesIterator = fightersFlying.iterator();
             while (enemiesIterator.hasNext()) {
                 Enemy e = enemiesIterator.next();
                 if (e.x >= width * 4 / 5 || e.x <= 0) {
                     e.vx = -e.vx;
 
+
+                    //this needs to be replaced with some sort of competent movement behavior.
+                /*e.x += fighterSpeed;
+                if(e.x >=width*4/5){
+                    fighterSpeed=-fighterSpeed;
+                }else if(e.x<=0){
+                    fighterSpeed=-fighterSpeed;
+                }*/
+
+                    //
+
+                    //Movement AI
+
+                    if (enemyStartDelayReached) {
+                        e.x = e.x + e.vx;
+                        e.y = e.y + e.vy;
+                        if (!enemyIsAIStarted) {
+                            enemyIsFinishedVelocityChange = true;
+                            enemyIsAIStarted = true;
+                        }
+                    }
+
+
+                    if (enemyIsFinishedVelocityChange) {
+
+                        nextVelocityChangeInSeconds = (rand.nextInt(1000) + 1000) / 1000;
+
+                        randomVelocityGeneratorX = (rand.nextInt(10000) + 200) / 1000;
+                        //makes it negative if it is bigger than 5
+                        if (randomVelocityGeneratorX > 5) {
+                            randomVelocityGeneratorX = randomVelocityGeneratorX - 10;
+                        }
+
+                        randomVelocityGeneratorY = (rand.nextInt(10000) + 200) / 1000;
+                        if (randomVelocityGeneratorY > 5) {
+                            randomVelocityGeneratorY = randomVelocityGeneratorY - 10;
+                        }
+
+                        if (!enemyIsSlowingDown) {
+                            enemyIsSpeedingUp = true;
+                        }
+
+                        finishedRandomGeneratorsTime = System.nanoTime();
+
+                        //just initiating these guys
+                        lastSlowedDownVelocityTime = finishedRandomGeneratorsTime;
+                        lastSpeededUpVelocityTime = finishedRandomGeneratorsTime;
+
+                        enemyIsFinishedVelocityChange = false;
+
+                    }
+
+                    //wait a couple seconds for this to be true
+                    if (frtime > (finishedRandomGeneratorsTime + (ONESEC_NANOS * nextVelocityChangeInSeconds))) {
+                        if (enemyIsSlowingDown && (frtime > lastSlowedDownVelocityTime + (ONESEC_NANOS / 100))) {
+                            //obv will never be 0. Half a second for slowing down, then speeding up
+                            e.vx = e.vx - (e.vx / 50);
+                            e.vy = e.vy - (e.vy / 50);
+
+
+                            //so we do this
+                            if ((e.vx > -.1 && e.vx < .1) && (e.vy > -.1 && e.vy < .1)) {
+                                enemyIsSlowingDown = false;
+                                enemyIsSpeedingUp = true;
+
+                            }
+                            //delays this slowing down process a little
+                            lastSlowedDownVelocityTime = System.nanoTime();
+
+                        } else if (enemyIsSpeedingUp && (frtime > lastSpeededUpVelocityTime + (ONESEC_NANOS / 100))) {
+
+                            //will not have asymptotes like the last one
+                            e.vx = e.vx + (randomVelocityGeneratorX / 50);
+                            e.vy = e.vy + (randomVelocityGeneratorY / 50);
+
+                            //borders for x and y
+                            if (e.x < 0 || e.x > width * 4 / 5) {
+                                e.vx = -e.vx;
+                                randomVelocityGeneratorX = -randomVelocityGeneratorX;
+
+                            }
+                            if (e.y < 0 || e.y > height / 3) {
+                                e.vy = -e.vy;
+                                randomVelocityGeneratorY = -randomVelocityGeneratorY;
+
+                            }
+
+
+                            //just adding a margin of error regardless though, if the nanoseconds were slightly off it would not work
+                            if ((e.vx > randomVelocityGeneratorX - .01 && e.vx < randomVelocityGeneratorX + .01) && (e.vy > randomVelocityGeneratorY - .01 || e.vy < randomVelocityGeneratorY + .01)) {
+                                enemyIsSpeedingUp = false;
+                                enemyIsSlowingDown = true;
+                                enemyIsFinishedVelocityChange = true;
+                            }
+
+                            lastSpeededUpVelocityTime = System.nanoTime();
+
+
+                        }
+
+
+                    }
+                    if (e.y >= MIN_HEIGHT || e.y < 0) {
+                        e.vy = -e.vy;
+                    }
+                    e.x += e.vx;
+                    e.y += e.vy;
                 }
-                if (e.y >= MIN_HEIGHT || e.y < 0) {
-                    e.vy = -e.vy;
-                }
-                e.x += e.vx;
-                e.y += e.vy;
+
             }
 
-        }
+            //spaceship decay
+            if (spaceshipY < MIN_HEIGHT && !spaceshipIsMoving) {
+                spaceshipY += DECAY_SPEED;
+            }
 
-        //spaceship decay
-        if(spaceshipY < MIN_HEIGHT && !spaceshipIsMoving) {
-            spaceshipY += DECAY_SPEED;
-        }
+            //resets spaceship laser
+            spaceshipLaserY -= 20.0f;
+            if (spaceshipLaserY < -150) {
+                spaceshipLaserY = spaceshipY + spaceship.getHeight() / 3;
+                spaceshipLaserX = spaceshipX + spaceship.getWidth() / 8;
+            }
 
-        //resets spaceship laser
-        spaceshipLaserY -= 20.0f;
-        if(spaceshipLaserY < -150){
-            spaceshipLaserY = spaceshipY+spaceship.getHeight()/3;
-            spaceshipLaserX = spaceshipX+spaceship.getWidth()/8;
-        }
-
-        //animator for map background
-        mapAnimatorY += 2.0f;
-        secondaryMapAnimatorY += 2.0f;
-        //this means the stars are off the screen
-        if(mapAnimatorY>=height*2){
-            mapAnimatorY = height;
-        }else if(secondaryMapAnimatorY>=height*2){
-            secondaryMapAnimatorY = height;
+            //animator for map background
+            mapAnimatorY += 2.0f;
+            secondaryMapAnimatorY += 2.0f;
+            //this means the stars are off the screen
+            if (mapAnimatorY >= height * 2) {
+                mapAnimatorY = height;
+            } else if (secondaryMapAnimatorY >= height * 2) {
+                secondaryMapAnimatorY = height;
+            }
         }
     }
 
@@ -436,10 +552,10 @@ public class PlayScreen extends Screen {
      * An enemy is a template for all the enemies     */
     private class Enemy {
         Bitmap btm;
-        float x = 0;
-        float y = 0;
-        double vx = 0.1;
-        double vy = 0.1;
+        float x=0;
+        float y=0;
+        float vx=0;
+        float vy=0;
         int points;
         float width = 0; // width onscreen
         float height = 0;  // height onscreen
@@ -449,7 +565,6 @@ public class PlayScreen extends Screen {
         Random random = new Random();
 
         Rect bounds = new Rect();
-        public int fighterSpeed = 5;
 
         public Enemy(Bitmap bitmap, int points) {
             this.btm = bitmap;
@@ -473,7 +588,7 @@ public class PlayScreen extends Screen {
         }
         public Rect getBounds() {
             bounds.set((int)(this.x), (int)(this.y-getBitmap().getHeight()),
-                    (int)(this.x+getBitmap().getWidth()/2), (int)(this.y+getBitmap().getHeight()));
+                    (int)(this.x+getBitmap().getWidth()), (int)(this.y+getBitmap().getHeight()));
             return bounds;
         }
 
