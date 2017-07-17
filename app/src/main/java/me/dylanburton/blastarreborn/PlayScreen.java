@@ -242,16 +242,16 @@ public class PlayScreen extends Screen {
             width = v.getWidth();
             height = v.getHeight();
 
-            spaceshipX = width / 2;
-            spaceshipY = height * 2 / 3;
+            spaceshipX = width/2;
+            spaceshipY = height*2/3;
 
             spaceshipLaserX = spaceshipX+spaceship[0].getWidth()/8;
             spaceshipLaserY = spaceshipY+spaceship[0].getHeight()/3;
 
             mapAnimatorX = width;
             mapAnimatorY = height;
-            secondaryMapAnimatorX = width;
-            secondaryMapAnimatorY = height;
+            secondaryMapAnimatorX=width;
+            secondaryMapAnimatorY=height;
         }
 
         if (gamestate == State.RUNNING) {
@@ -259,9 +259,7 @@ public class PlayScreen extends Screen {
         }
 
 
-
-        synchronized (enemiesFlying) {
-
+        synchronized (enemiesFlying){
             Iterator<Enemy> enemiesIterator = enemiesFlying.iterator();
             while (enemiesIterator.hasNext()) {
                 Enemy e = enemiesIterator.next();
@@ -291,6 +289,8 @@ public class PlayScreen extends Screen {
                 /*
                  * Movement AI
                  */
+
+                //handles collision for multiple enemies
                 for(int i = 0; i<enemiesFlying.size(); i++){
                     if((e != enemiesFlying.get(i))){
                         if((e.getX()>= enemiesFlying.get(i).getX()-enemiesFlying.get(i).getBitmap().getWidth() && e.getX()<=enemiesFlying.get(i).getX()+enemiesFlying.get(i).getBitmap().getWidth()) &&
