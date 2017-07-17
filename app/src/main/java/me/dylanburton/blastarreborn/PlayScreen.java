@@ -241,6 +241,7 @@ public class PlayScreen extends Screen {
 
             shipMain.spawnShipLaser(shipMain.getSpaceshipX()+spaceship[0].getWidth()/8, shipMain.getSpaceshipY()+spaceship[0].getHeight()/3);
             shipMain.spawnShipLaser(shipMain.getShipLaserArray().get(0).getX() + spaceship[0].getWidth() * 64 / 100, shipMain.getSpaceshipY()+spaceship[0].getHeight()/3);
+            shipMain.setLastLaserSpawnTime(System.nanoTime());
 
             mapAnimatorX = width;
             mapAnimatorY = height;
