@@ -1,4 +1,4 @@
-package me.dylanburton.blastarreborn.Enemies;
+package me.dylanburton.blastarreborn.enemies;
 
 /**
  * Created by Dylan on 7/16/2017.
@@ -7,13 +7,18 @@ package me.dylanburton.blastarreborn.Enemies;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import me.dylanburton.blastarreborn.lasers.ShipLaser;
+
 /**
  * An enemy is a template for all the enemies     */
 public class Enemy {
     private final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
     private Bitmap btm;
     private float x=0;
-    private float y=0;
+    private float y=500;
     private float vx=0;
     private float vy=0;
     private int points;
@@ -23,6 +28,11 @@ public class Enemy {
     private float halfWidth = 0;  // convenience
     private float halfHeight = 0;
     private boolean enemyIsHitButNotDead = false; //specific yet helpful boolean for my hit animation
+
+    // firing stuff
+    private List<ShipLaser> shipLasers = new LinkedList<ShipLaser>(); //the lasers for the ship
+    private float randomlyGeneratedEnemyFiringTimeInSeconds; //variable for enemy firing stuff
+    private long enemyFiringTime = 0; //for controlling enemy firing
 
     /*
      * Enemy AI Movement Variables.
@@ -53,6 +63,26 @@ public class Enemy {
         this.halfHeight = height/HALF_DIVISOR;
         this.lives = enemyType.getLives();
         this.points = enemyType.getPoints();
+    }
+
+    public void spawnShipLasers(){} //to be overwritten by specific enemy classes
+
+    //update method in playscreen
+    public void updateShipLaserPositions(){
+        for(ShipLaser sl: shipLasers){
+            sl.setX(sl.getX() + sl.getDx());
+            sl.setY(sl.getY() + sl.getDy());
+        }
+
+    }
+
+    public List getShipLaserPositionsList(){
+        return shipLasers;
+    }
+
+    public void addToShipLaserPositionsList(ShipLaser sl){
+        shipLasers.add(sl);
+
     }
 
 
@@ -203,5 +233,20 @@ public class Enemy {
 
     public void setEnemyIsHitButNotDead(boolean enemyIsHitButNotDead) {
         this.enemyIsHitButNotDead = enemyIsHitButNotDead;
+    }
+    public float getRandomlyGeneratedEnemyFiringTimeInSeconds() {
+        return randomlyGeneratedEnemyFiringTimeInSeconds;
+    }
+
+    public void setRandomlyGeneratedEnemyFiringTimeInSeconds(float randomlyGeneratedEnemyFiringTimeInSeconds) {
+        this.randomlyGeneratedEnemyFiringTimeInSeconds = randomlyGeneratedEnemyFiringTimeInSeconds;
+    }
+
+    public long getEnemyFiringTime() {
+        return enemyFiringTime;
+    }
+
+    public void setEnemyFiringTime(long enemyFiringTime) {
+        this.enemyFiringTime = enemyFiringTime;
     }
 }
