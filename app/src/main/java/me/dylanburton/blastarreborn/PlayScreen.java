@@ -260,7 +260,7 @@ public class PlayScreen extends Screen {
                 Enemy e = enemiesIterator.next();
 
                 //delay of 100 ms before enemies spawn
-                if(gameStartTime + (ONESEC_NANOS/10) < frtime){
+                if (gameStartTime + (ONESEC_NANOS / 10) < frtime) {
                     startDelayReached = true;
                 }
 

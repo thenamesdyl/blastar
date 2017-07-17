@@ -45,6 +45,7 @@ public class Enemy {
     private long lastSlowedDownVelocityTime; //to make enemy slow down before changing direction, need the time to make delays and slow it down gradually
     private long lastSpedUpVelocityTime; //like the last variable, need this to make enemy accelerate gradually as opposed to instantly
     private boolean isSlowingDown = false, isSpeedingUp = false, isFinishedVelocityChange = false;
+
     private float randomVelocityGeneratorX = 0;
     private float randomVelocityGeneratorY = 0; //randomly generated velocities between -5 and 5
     private boolean enemyHasAIStarted = false; //has the AI for this enemy object started yet
