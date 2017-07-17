@@ -41,4 +41,12 @@ public class Level1 extends Level{
         }
 
     }
+
+    public int getUpdateCheckerBoundary() {
+        return updateCheckerBoundary;
+    }
+
+    public void setUpdateCheckerBoundary(int updateCheckerBoundary) {
+        this.updateCheckerBoundary = updateCheckerBoundary;
+    }
 }
