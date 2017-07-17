@@ -29,6 +29,8 @@ import java.util.Random;
 import me.dylanburton.blastarreborn.enemies.Enemy;
 import me.dylanburton.blastarreborn.enemies.Fighter;
 import me.dylanburton.blastarreborn.lasers.ShipLaser;
+import me.dylanburton.blastarreborn.spaceships.ShipExplosion;
+import me.dylanburton.blastarreborn.spaceships.ShipMain;
 
 /**
  * Represents the main screen of play for the game.
@@ -63,14 +65,8 @@ public class PlayScreen extends Screen {
     private Bitmap starbackground, spaceship[], spaceshipLaser, fighter, fighterOrb, hitFighter, explosion[];
     private Rect scaledDst = new Rect();
 
-    //main spaceships location and bound, using 1000 for spaceshipy and x because of a weird glitch where the spaceship is drawn at 0,0 for 100 ms
-    private int spaceshipY=0;
-    private int spaceshipX=0;
-    private int currentSpaceshipFrame=0; //frame of spaceship for animation
-    private Rect spaceshipBounds;
-    private boolean spaceshipIsMoving;
-    private int spaceshipLaserX;
-    private int spaceshipLaserY;
+    //main spaceship
+    ShipMain shipMain;
 
     //used to move the background image, need two pairs of these vars for animation
     private int mapAnimatorX;
@@ -79,7 +75,6 @@ public class PlayScreen extends Screen {
     private int secondaryMapAnimatorY;
 
     //time stuff
-    private long hitContactTime = 0; //for if the laser hits the enemy
     private long spaceshipFrameSwitchTime = 0; //for spaceships fire animation
     private long frtime = 0; //the global time
     private long gameStartTime = 0;
@@ -242,11 +237,10 @@ public class PlayScreen extends Screen {
             width = v.getWidth();
             height = v.getHeight();
 
-            spaceshipX = width/2;
-            spaceshipY = height*2/3;
+            shipMain = new ShipMain(spaceship, spaceshipLaser, (width/2), (height*2/3));
 
-            spaceshipLaserX = spaceshipX+spaceship[0].getWidth()/8;
-            spaceshipLaserY = spaceshipY+spaceship[0].getHeight()/3;
+            shipMain.spawnShipLaser(shipMain.getSpaceshipX()+spaceship[0].getWidth()/8, shipMain.getSpaceshipY()+spaceship[0].getHeight()/3);
+            shipMain.spawnShipLaser(shipMain.getShipLaserArray().get(0).getX() + spaceship[0].getWidth() * 64 / 100, shipMain.getSpaceshipY()+spaceship[0].getHeight()/3);
 
             mapAnimatorX = width;
             mapAnimatorY = height;
@@ -427,15 +421,20 @@ public class PlayScreen extends Screen {
 
 
         //spaceship decay
-        if(spaceshipY<height*9/10 && !spaceshipIsMoving) {
-            spaceshipY += DECAY_SPEED;
+        if(shipMain.getSpaceshipY()<height*9/10 && !shipMain.isSpaceshipMoving()){
+            shipMain.setSpaceshipY(shipMain.getSpaceshipY()+ DECAY_SPEED);
         }
 
-        //resets spaceship laser
-        spaceshipLaserY -= 20.0f;
-        if(spaceshipLaserY < -height/6){
-            spaceshipLaserY = spaceshipY+spaceship[0].getHeight()/3;
-            spaceshipLaserX = spaceshipX+spaceship[0].getWidth()/8;
+        //makes main spaceship lasers
+        for(int i = 0; i < shipMain.getShipLaserArray().size(); i++) {
+            shipMain.getShipLaserArray().get(i).updateMainShipLaserPositions();
+            if (shipMain.getLastLaserSpawnTime() + (ONESEC_NANOS/2) < frtime) {
+
+                shipMain.spawnShipLaser(shipMain.getSpaceshipX()+spaceship[0].getWidth()/8, shipMain.getSpaceshipY()+spaceship[0].getHeight()/3);
+                shipMain.spawnShipLaser(shipMain.getShipLaserArray().get(shipMain.getShipLaserArray().size()-1).getX() + spaceship[0].getWidth() * 64 / 100, shipMain.getSpaceshipY()+spaceship[0].getHeight()/3);
+
+                shipMain.setLastLaserSpawnTime(System.nanoTime());
+            }
         }
 
 
@@ -465,23 +464,6 @@ public class PlayScreen extends Screen {
             c.drawBitmap(starbackground,null,new Rect(secondaryMapAnimatorX-width, secondaryMapAnimatorY-(height*2),secondaryMapAnimatorX, secondaryMapAnimatorY-height),p);
 
 
-            synchronized (shipExplosions) {
-                for(ShipExplosion se: shipExplosions){
-                    c.drawBitmap(explosion[se.currentFrame],se.x,se.y,p);
-
-                    //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
-                    if(hitContactTime + (ONESEC_NANOS/50) < frtime) {
-                        hitContactTime = System.nanoTime();
-                        se.nextFrame();
-
-                    }
-
-                    if(se.currentFrame == 11){
-                        shipExplosions.remove(se.getExplosionNumber());
-                    }
-                }
-            }
-
             synchronized (enemiesFlying) {
                 for(Enemy e: enemiesFlying) {
 
@@ -500,7 +482,7 @@ public class PlayScreen extends Screen {
                         if(e.isEnemyHitButNotDead()){
                             c.drawBitmap(hitFighter, e.getX(), e.getY(), p);
 
-                            if(hitContactTime + (ONESEC_NANOS/10) <frtime){
+                            if(e.getHitContactTime() + (ONESEC_NANOS/10) <frtime){
                                 e.setEnemyIsHitButNotDead(false);
                             }
 
@@ -508,29 +490,47 @@ public class PlayScreen extends Screen {
                             c.drawBitmap(e.getBitmap(), e.getX(), e.getY(), p);
                         }
 
-                        if ((e.hasCollision(spaceshipLaserX, spaceshipLaserY) || e.hasCollision(spaceshipLaserX + spaceship[0].getWidth() * 64 / 100, spaceshipLaserY))) {
-                            spaceshipLaserX = 4000;
-                            hitContactTime = System.nanoTime();
-                            //subtract a life
-                            e.setLives(e.getLives()-1);
+                        for(int i = 0; i < shipMain.getShipLaserArray().size(); i++) {
+                            if ((e.hasCollision(shipMain.getShipLaserArray().get(i).getX(), shipMain.getShipLaserArray().get(i).getY()))) {
+                                shipMain.getShipLaserArray().get(i).setX(4000);
+                                shipMain.getShipLaserArray().remove(i);
+                                e.setHitContactTime(System.nanoTime());
+                                //subtract a life
+                                e.setLives(e.getLives() - 1);
 
-                            //fun explosions
-                            if(e.getLives() == 0) {
-                                shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, shipExplosions.size()));
-                                //bye bye
-                                e.setX(10000);
-                                e.setY(10000);
+                                //fun explosions
+                                if (e.getLives() == 0) {
+                                    shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, shipExplosions.size()));
+                                    //bye bye
+                                    e.setX(10000);
+                                    e.setY(10000);
 
-                                e.setExplosionActivateTime(System.nanoTime());
-                            }else{
-                                e.setEnemyIsHitButNotDead(true);
+                                    e.setExplosionActivateTime(System.nanoTime()); //used to delay deletion so orbs dont disappear
+                                } else {
+                                    e.setEnemyIsHitButNotDead(true);
+                                }
+
+
                             }
-
-
                         }
 
-                        //deletes ship in 5 seconds
-                        if(e.getExplosionActivateTime() + (ONESEC_NANOS*5) < frtime && e.getLives() == 0){
+                        for(ShipExplosion se: shipExplosions){
+                            c.drawBitmap(explosion[se.getCurrentFrame()],se.getX(),se.getY(),p);
+
+                            //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
+                            if(e.getHitContactTime() + (ONESEC_NANOS/50) < frtime) {
+                                e.setHitContactTime(System.nanoTime());
+                                se.nextFrame();
+
+                            }
+
+                            if(se.getCurrentFrame() == 11){
+                                shipExplosions.remove(se.getExplosionNumber());
+                            }
+                        }
+
+                        //deletes ship
+                        if(e.getExplosionActivateTime() + (ONESEC_NANOS*10) < frtime && e.getLives() == 0){
                             enemiesFlying.remove(e);
                         }
                     }
@@ -539,23 +539,23 @@ public class PlayScreen extends Screen {
 
 
             //main spaceship lasers
-            c.drawBitmap(spaceshipLaser, spaceshipLaserX, spaceshipLaserY, p);
-            c.drawBitmap(spaceshipLaser, spaceshipLaserX + spaceship[0].getWidth() * 64 / 100, spaceshipLaserY, p);
-
+            for (int i = 0; i < shipMain.getShipLaserArray().size(); i++) {
+                c.drawBitmap(spaceshipLaser, shipMain.getShipLaserArray().get(i).getX(), shipMain.getShipLaserArray().get(i).getY(), p);
+            }
             //main spaceship
             for(int i = 0; i<spaceship.length; i++) {
-                if(i == currentSpaceshipFrame && frtime>spaceshipFrameSwitchTime + (ONESEC_NANOS/10)) {
-                    if(currentSpaceshipFrame == spaceship.length-1){
-                        currentSpaceshipFrame = 0;
+                if(i == shipMain.getCurrentSpaceshipFrame() && frtime>spaceshipFrameSwitchTime + (ONESEC_NANOS/10)) {
+                    if(shipMain.getCurrentSpaceshipFrame() == spaceship.length-1){
+                        shipMain.setCurrentSpaceshipFrame(0);
                     }else{
-                        currentSpaceshipFrame++;
+                        shipMain.setCurrentSpaceshipFrame(shipMain.getCurrentSpaceshipFrame()+1);
                     }
-                    c.drawBitmap(spaceship[i], spaceshipX, spaceshipY, p);
+                    c.drawBitmap(spaceship[i], shipMain.getSpaceshipX(), shipMain.getSpaceshipY(), p);
 
                     spaceshipFrameSwitchTime = System.nanoTime();
 
-                }else if(i==currentSpaceshipFrame){
-                    c.drawBitmap(spaceship[i], spaceshipX, spaceshipY, p);
+                }else if(i==shipMain.getCurrentSpaceshipFrame()){
+                    c.drawBitmap(spaceship[i], shipMain.getSpaceshipX(), shipMain.getSpaceshipY(), p);
                 }
             }
 
@@ -628,12 +628,12 @@ public class PlayScreen extends Screen {
 
             case MotionEvent.ACTION_MOVE:
                 synchronized (spaceship){
-                    spaceshipBounds = new Rect(spaceshipX,spaceshipY,spaceshipX+spaceship[0].getWidth(),spaceshipY+spaceship[0].getHeight());
+                    shipMain.setSpaceshipBounds(new Rect((int) shipMain.getSpaceshipX(),(int) shipMain.getSpaceshipY(),(int) shipMain.getSpaceshipX()+spaceship[0].getWidth(),(int) shipMain.getSpaceshipY()+spaceship[0].getHeight()));
 
-                    if(spaceshipBounds.contains((int) e.getX(),(int) e.getY())){
-                        spaceshipIsMoving = true;
-                        spaceshipX = (int) e.getX()-spaceship[0].getWidth()/2;
-                        spaceshipY = (int) e.getY()-spaceship[0].getHeight()/2;
+                    if(shipMain.getSpaceshipBounds().contains((int) e.getX(),(int) e.getY())){
+                        shipMain.setSpaceshipIsMoving(true);
+                        shipMain.setSpaceshipX(e.getX()-spaceship[0].getWidth()/2);
+                        shipMain.setSpaceshipY(e.getY()-spaceship[0].getHeight()/2);
 
                     }
                 }
@@ -641,7 +641,7 @@ public class PlayScreen extends Screen {
                 break;
 
             case MotionEvent.ACTION_UP:
-                spaceshipIsMoving=false;
+                shipMain.setSpaceshipIsMoving(false);
 
                 break;
         }
@@ -649,32 +649,6 @@ public class PlayScreen extends Screen {
         return true;
     }
 
-
-    //this is for creating multiple ship explosion animations
-    private class ShipExplosion{
-        float x=0;
-        float y=0;
-        int currentFrame = 0;
-        int explosionNumber = 0;
-
-        public ShipExplosion(float x, float y, int explosionNumber){
-            this.x = x;
-            this.y = y;
-            this.explosionNumber = explosionNumber;
-        }
-
-        public int getCurrentFrame(){
-            return currentFrame;
-        }
-
-        public void nextFrame(){
-            currentFrame++;
-        }
-
-        public int getExplosionNumber(){
-            return explosionNumber;
-        }
-    }
 
 
 }
