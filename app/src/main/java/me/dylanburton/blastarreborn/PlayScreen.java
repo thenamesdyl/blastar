@@ -463,7 +463,6 @@ public class PlayScreen extends Screen {
 
 
 
-
     @Override
     public void draw(Canvas c, View v) {
         try {

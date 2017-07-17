@@ -27,7 +27,6 @@ public class Enemy {
     private float height=0;  // height onscreen
     private float halfWidth = 0;  // convenience
     private float halfHeight = 0;
-
     private boolean enemyIsHitButNotDead = false; //specific yet helpful boolean for my hit animation
     private long explosionActivateTime; //adding so I dont have to delete the enemy after explosion for a couple seconds, this way their orbs dont dissapear
 
@@ -35,7 +34,6 @@ public class Enemy {
     private List<ShipLaser> shipLasers = new LinkedList<ShipLaser>(); //the lasers for the ship
     private float randomlyGeneratedEnemyFiringTimeInSeconds; //variable for enemy firing stuff
     private long enemyFiringTime = 0; //for controlling enemy firing
-
 
     /*
      * Enemy AI Movement Variables.
@@ -49,7 +47,8 @@ public class Enemy {
 
     private float randomVelocityGeneratorX = 0;
     private float randomVelocityGeneratorY = 0; //randomly generated velocities between -5 and 5
-    private boolean enemyHasAIStarted = false;
+    private boolean enemyHasAIStarted = false; //has the AI for this enemy object started yet
+
 
     Rect bounds = new Rect();
 
