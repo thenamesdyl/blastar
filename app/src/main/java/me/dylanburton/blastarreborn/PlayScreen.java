@@ -517,12 +517,21 @@ public class PlayScreen extends Screen {
                             //fun explosions
                             if(e.getLives() == 0) {
                                 shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, shipExplosions.size()));
-                                enemiesFlying.remove(e);
+                                //bye bye
+                                e.setX(10000);
+                                e.setY(10000);
+
+                                e.setExplosionActivateTime(System.nanoTime());
                             }else{
                                 e.setEnemyIsHitButNotDead(true);
                             }
 
 
+                        }
+
+                        //deletes ship in 5 seconds
+                        if(e.getExplosionActivateTime() + (ONESEC_NANOS*5) < frtime && e.getLives() == 0){
+                            enemiesFlying.remove(e);
                         }
                     }
                 }
