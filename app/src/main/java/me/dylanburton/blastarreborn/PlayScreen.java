@@ -304,7 +304,7 @@ public class PlayScreen extends Screen {
 
                 }
 
-                if (!e.getAIStarted()) {
+                if (!e.isAIStarted()) {
                     e.setX(rand.nextInt(width * 4 / 5));
                     e.setY(-height / 10);
                     e.setFinishedVelocityChange(true);
@@ -318,7 +318,7 @@ public class PlayScreen extends Screen {
                 }
 
 
-                if (e.getFinishedVelocityChange()) {
+                if (e.isFinishedVelocityChange()) {
 
 
                     e.setRandomVelocityGeneratorX((rand.nextInt(10000) + 1000) / 1000);
