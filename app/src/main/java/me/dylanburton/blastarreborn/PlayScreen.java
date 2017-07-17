@@ -64,7 +64,7 @@ public class PlayScreen extends Screen {
     private int width = 0;
     private int height = 0;
     //bitmap with a rect used for drawing
-    private Bitmap starbackground, spaceship[], spaceshipLaser, fighter, fighterOrb, hitFighter, explosion[];
+    private Bitmap starbackground, spaceship[], spaceshipHit[], spaceshipLaser, fighter, fighterOrb, hitFighter, explosion[];
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -117,6 +117,12 @@ public class PlayScreen extends Screen {
             spaceship[0] = act.getScaledBitmap("spaceship/spaceshiptopview1.png");
             spaceship[1] = act.getScaledBitmap("spaceship/spaceshiptopview2.png");
             spaceshipLaser = act.getScaledBitmap("spaceshiplaser.png");
+
+            spaceshipHit = new Bitmap[2];
+            spaceshipHit[0] = act.getScaledBitmap("spaceship/hitspaceshiptopview1.png");
+            spaceshipHit[1] = act.getScaledBitmap("spaceship/hitspaceshiptopview1.png");
+
+            //todo implement hit main spaceship into update/draw
 
             //fighter
             fighter = act.getScaledBitmap("fighter.png");
