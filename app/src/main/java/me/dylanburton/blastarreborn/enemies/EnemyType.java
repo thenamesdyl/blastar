@@ -1,4 +1,4 @@
-package me.dylanburton.blastarreborn.Enemies;
+package me.dylanburton.blastarreborn.enemies;
 
 /**
  * Created by Dylan on 7/16/2017.

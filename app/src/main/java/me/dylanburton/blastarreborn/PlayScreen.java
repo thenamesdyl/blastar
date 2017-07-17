@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import me.dylanburton.blastarreborn.Enemies.Enemy;
-import me.dylanburton.blastarreborn.Enemies.EnemyType;
-import me.dylanburton.blastarreborn.Enemies.Fighter;
+import me.dylanburton.blastarreborn.enemies.Enemy;
+import me.dylanburton.blastarreborn.enemies.Fighter;
+import me.dylanburton.blastarreborn.lasers.ShipLaser;
 
 /**
  * Represents the main screen of play for the game.
@@ -54,12 +54,13 @@ public class PlayScreen extends Screen {
     //lists
     private List<Enemy> enemiesFlying = Collections.synchronizedList(new LinkedList<Enemy>());  // enemies that are still alive
     private List<ShipExplosion> shipExplosions = new LinkedList<ShipExplosion>();  // ship explosions
+    private List<ShipLaser> enemyShipLasers;  // Enemy ships lasers
 
     //width and height of screen
     private int width = 0;
     private int height = 0;
     //bitmap with a rect used for drawing
-    private Bitmap starbackground, spaceship[], spaceshipLaser, fighter, hitFighter, explosion[];
+    private Bitmap starbackground, spaceship[], spaceshipLaser, fighter, fighterOrb, hitFighter, explosion[];
     private Rect scaledDst = new Rect();
 
     //main spaceships location and bound, using 1000 for spaceshipy and x because of a weird glitch where the spaceship is drawn at 0,0 for 100 ms
@@ -79,7 +80,6 @@ public class PlayScreen extends Screen {
 
     //time stuff
     private long hitContactTime = 0; //for if the laser hits the enemy
-    private long enemyFiringTime = 0; //for controlling enemy firing
     private long spaceshipFrameSwitchTime = 0; //for spaceships fire animation
     private long frtime = 0; //the global time
     private long gameStartTime = 0;
@@ -102,8 +102,6 @@ public class PlayScreen extends Screen {
     private boolean startDelayReached = false;
     private Random rand = new Random();
 
-    private float randomlyGeneratedEnemyFiringTimeInSeconds; //variable for enemy firing stuff
-
 
     public PlayScreen(MainActivity act) {
         p = new Paint();
@@ -125,6 +123,7 @@ public class PlayScreen extends Screen {
             //fighter
             fighter = act.getScaledBitmap("fighter.png");
             hitFighter = act.getScaledBitmap("hitfighter.png");
+            fighterOrb = act.getScaledBitmap("enemyorbs.png");
 
             //explosion
             explosion = new Bitmap[12];
@@ -153,8 +152,8 @@ public class PlayScreen extends Screen {
         highscore = 0;
 
         if(currentLevel == 1){
-            enemiesFlying.add(new Fighter(fighter));
-            enemiesFlying.add(new Fighter(fighter));
+            enemiesFlying.add(new Fighter(fighter, fighterOrb));
+            enemiesFlying.add(new Fighter(fighter, fighterOrb));
         }
 
         try {
@@ -274,12 +273,16 @@ public class PlayScreen extends Screen {
                 /*
                  * Firing AI
                  */
+                if(e.getEnemyFiringTime()+ (e.getRandomlyGeneratedEnemyFiringTimeInSeconds()*ONESEC_NANOS) < frtime && startDelayReached){
+                    e.setEnemyFiringTime(System.nanoTime());
+                    e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(3000))/1000);
+                    e.spawnShipLasers();
 
-                if(enemyFiringTime + randomlyGeneratedEnemyFiringTimeInSeconds < frtime){
-                    enemyFiringTime = System.nanoTime();
-                    randomlyGeneratedEnemyFiringTimeInSeconds = (rand.nextInt(3000))/1000;
+                }
 
-                    //todo: make a Shiplaser class and list, then have the Shiplaser object be added to the list here, then make a for each in draw() to drawBitmap the lasers, then in update, update the coordinates of enemy lasers
+                //updates ships laser positions
+                if(e.getShipLaserPositionsList().size() > 0){
+                    e.updateShipLaserPositions();
                 }
 
 
@@ -293,7 +296,6 @@ public class PlayScreen extends Screen {
                         if((e.getX()>= enemiesFlying.get(i).getX()-enemiesFlying.get(i).getBitmap().getWidth() && e.getX()<=enemiesFlying.get(i).getX()+enemiesFlying.get(i).getBitmap().getWidth()) &&
                                 (e.getY()>=enemiesFlying.get(i).getY()-enemiesFlying.get(i).getBitmap().getHeight() && e.getY() <=enemiesFlying.get(i).getY()+enemiesFlying.get(i).getBitmap().getHeight()) ) {
                             e.setVx(-e.getVx());
-                            e.setVy(-e.getVy());
                         }
 
                     }
@@ -485,6 +487,15 @@ public class PlayScreen extends Screen {
 
                     if(startDelayReached) {
 
+                        //drawing enemy lasers
+                        if(e.getShipLaserPositionsList().size() > 0){
+                            this.enemyShipLasers = e.getShipLaserPositionsList();
+                            for(ShipLaser sl: enemyShipLasers){
+                                c.drawBitmap(sl.getBmp(), sl.getX(), sl.getY(), p);
+                            }
+                        }
+
+
                         //puts like a red tinge on the enemy for 100 ms if hes hit
                         if(e.isEnemyHitButNotDead()){
                             c.drawBitmap(hitFighter, e.getX(), e.getY(), p);
@@ -496,14 +507,6 @@ public class PlayScreen extends Screen {
                         }else {
                             c.drawBitmap(e.getBitmap(), e.getX(), e.getY(), p);
                         }
-
-
-                        //enemy firing stuff
-                        if(enemyFiringTime== 0){
-                            enemyFiringTime = System.nanoTime();
-                            randomlyGeneratedEnemyFiringTimeInSeconds = (rand.nextInt(3000))/1000;
-                        }
-
 
                         if ((e.hasCollision(spaceshipLaserX, spaceshipLaserY) || e.hasCollision(spaceshipLaserX + spaceship[0].getWidth() * 64 / 100, spaceshipLaserY))) {
                             spaceshipLaserX = 4000;
@@ -532,7 +535,7 @@ public class PlayScreen extends Screen {
 
             //main spaceship
             for(int i = 0; i<spaceship.length; i++) {
-                if(i == currentSpaceshipFrame && frtime>spaceshipFrameSwitchTime + (ONESEC_NANOS/20)) {
+                if(i == currentSpaceshipFrame && frtime>spaceshipFrameSwitchTime + (ONESEC_NANOS/10)) {
                     if(currentSpaceshipFrame == spaceship.length-1){
                         currentSpaceshipFrame = 0;
                     }else{
