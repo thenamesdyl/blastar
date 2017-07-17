@@ -25,6 +25,7 @@ public class ShipMain {
     private List<MainShipLaser> shipLasers = new LinkedList<MainShipLaser>();
     //timer for spawning new laser
     private long lastLaserSpawnTime = 0;
+    private long spaceshipFrameSwitchTime = 0; //for spaceships fire animation
 
 
     public ShipMain(Bitmap mainSpaceShip[], Bitmap mainSpaceShipLaser, float x, float y){
@@ -96,5 +97,12 @@ public class ShipMain {
 
     public void setLastLaserSpawnTime(long lastLaserSpawnTime) {
         this.lastLaserSpawnTime = lastLaserSpawnTime;
+    }
+    public long getSpaceshipFrameSwitchTime() {
+        return spaceshipFrameSwitchTime;
+    }
+
+    public void setSpaceshipFrameSwitchTime(long spaceshipFrameSwitchTime) {
+        this.spaceshipFrameSwitchTime = spaceshipFrameSwitchTime;
     }
 }

@@ -1,5 +1,7 @@
 package me.dylanburton.blastarreborn.spaceships;
 
+import me.dylanburton.blastarreborn.enemies.Enemy;
+
 /**
  * Created by Dylan on 7/16/2017.
  */
@@ -9,12 +11,13 @@ public class ShipExplosion{
     float x=0;
     float y=0;
     int currentFrame = 0;
-    int explosionNumber = 0;
+    private long inBetweenFrameTime = 0; //for if the laser hits the enemy
+    private Enemy e;
 
-    public ShipExplosion(float x, float y, int explosionNumber){
+    public ShipExplosion(float x, float y, Enemy e){
         this.x = x;
         this.y = y;
-        this.explosionNumber = explosionNumber;
+        this.e = e;
     }
 
     public int getCurrentFrame(){
@@ -25,9 +28,6 @@ public class ShipExplosion{
         currentFrame++;
     }
 
-    public int getExplosionNumber(){
-        return explosionNumber;
-    }
     public float getX() {
         return x;
     }
@@ -42,5 +42,12 @@ public class ShipExplosion{
 
     public void setY(float y) {
         this.y = y;
+    }
+    public Enemy getEnemy() {
+        return e;
+    }
+
+    public void setEnemy(Enemy e) {
+        this.e = e;
     }
 }

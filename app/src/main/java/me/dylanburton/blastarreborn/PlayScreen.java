@@ -29,6 +29,8 @@ import java.util.Random;
 import me.dylanburton.blastarreborn.enemies.Enemy;
 import me.dylanburton.blastarreborn.enemies.Fighter;
 import me.dylanburton.blastarreborn.lasers.ShipLaser;
+import me.dylanburton.blastarreborn.levels.Level;
+import me.dylanburton.blastarreborn.levels.Level1;
 import me.dylanburton.blastarreborn.spaceships.ShipExplosion;
 import me.dylanburton.blastarreborn.spaceships.ShipMain;
 
@@ -50,7 +52,7 @@ public class PlayScreen extends Screen {
     private final int LEVEL_BERSERKER = 6;
     static final long ONESEC_NANOS = 1000000000L;
 
-    private enum State {        RUNNING, STARTROUND, ROUNDSUMMARY, STARTGAME, PLAYERDIED, GAMEOVER    }
+    private enum State {        RUNNING, STARTROUND, STARTGAME, PLAYERDIED, WIN    }
     private volatile State gamestate = State.STARTGAME;
 
     //lists
@@ -75,13 +77,13 @@ public class PlayScreen extends Screen {
     private int secondaryMapAnimatorY;
 
     //time stuff
-    private long spaceshipFrameSwitchTime = 0; //for spaceships fire animation
     private long frtime = 0; //the global time
     private long gameStartTime = 0;
     private int fps = 0;
 
 
     //various game things
+    private int enemiesDestroyed = 0;
     private int minRoundPass;
     private int currentLevel;
     private int score;
@@ -90,6 +92,7 @@ public class PlayScreen extends Screen {
     private static final String HIGHSCORE_FILE = "highscore.dat";
     private static final int START_NUMLIVES = 3;
     private Map<Integer, String> levelMap = new HashMap<Integer, String>();
+    private Level level;
 
 
 
@@ -147,8 +150,11 @@ public class PlayScreen extends Screen {
         highscore = 0;
 
         if(currentLevel == 1){
-            enemiesFlying.add(new Fighter(fighter, fighterOrb));
-            enemiesFlying.add(new Fighter(fighter, fighterOrb));
+
+            level = new Level1(this);
+            level.checkLevelSequence();
+
+
         }
 
         try {
@@ -203,7 +209,7 @@ public class PlayScreen extends Screen {
 
         if (lives == 0) {
             // game over!  wrap things up and write high score file
-            gamestate = State.GAMEOVER;
+            gamestate = State.PLAYERDIED;
             try {
                 BufferedWriter f = new BufferedWriter(new FileWriter(act.getFilesDir() + HIGHSCORE_FILE));
                 f.write(Integer.toString(highscore)+"\n");
@@ -212,10 +218,8 @@ public class PlayScreen extends Screen {
             } catch (Exception e) { // if we can't write the high score file...oh well.
                 Log.d(MainActivity.LOG_ID, "WriteHiScore", e);
             }
-        } else
-            gamestate = State.PLAYERDIED;
+        }
     }
-
 
 
     @Override
@@ -225,6 +229,7 @@ public class PlayScreen extends Screen {
         frtime = newtime;
         fps = (int) (1 / elapsedsecs);
 
+        level.checkLevelSequence();//updates level spawning enemies
 
         if (gamestate == State.STARTROUND) {
 
@@ -483,7 +488,7 @@ public class PlayScreen extends Screen {
                         if(e.isEnemyHitButNotDead()){
                             c.drawBitmap(hitFighter, e.getX(), e.getY(), p);
 
-                            if(e.getHitContactTime() + (ONESEC_NANOS/10) <frtime){
+                            if(e.getHitContactTimeForTinge() + (ONESEC_NANOS/10) <frtime){
                                 e.setEnemyIsHitButNotDead(false);
                             }
 
@@ -495,16 +500,18 @@ public class PlayScreen extends Screen {
                             if ((e.hasCollision(shipMain.getShipLaserArray().get(i).getX(), shipMain.getShipLaserArray().get(i).getY()))) {
                                 shipMain.getShipLaserArray().get(i).setX(4000);
                                 shipMain.getShipLaserArray().remove(i);
-                                e.setHitContactTime(System.nanoTime());
+                                e.setHitContactTimeForTinge(System.nanoTime());
+                                e.setHitContactTimeForExplosions(System.nanoTime());
                                 //subtract a life
                                 e.setLives(e.getLives() - 1);
 
                                 //fun explosions
                                 if (e.getLives() == 0) {
-                                    shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, shipExplosions.size()));
+                                    shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e));
                                     //bye bye
                                     e.setX(10000);
                                     e.setY(10000);
+                                    enemiesDestroyed++;
 
                                     e.setExplosionActivateTime(System.nanoTime()); //used to delay deletion so orbs dont disappear
                                 } else {
@@ -515,24 +522,26 @@ public class PlayScreen extends Screen {
                             }
                         }
 
-                        for(ShipExplosion se: shipExplosions){
-                            c.drawBitmap(explosion[se.getCurrentFrame()],se.getX(),se.getY(),p);
+                        for(ShipExplosion se: shipExplosions) {
+                            if (se.getEnemy() == e) {
+                                c.drawBitmap(explosion[se.getCurrentFrame()], se.getX(), se.getY(), p);
 
-                            //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
-                            if(e.getHitContactTime() + (ONESEC_NANOS/50) < frtime) {
-                                e.setHitContactTime(System.nanoTime());
-                                se.nextFrame();
+                                //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
+                                if (e.getHitContactTimeForExplosions() + (ONESEC_NANOS / 20) < frtime) {
+                                    e.setHitContactTimeForExplosions(System.nanoTime());
+                                    se.nextFrame();
 
+                                }
+
+                                if (se.getCurrentFrame() == 11) {
+                                    shipExplosions.remove(se);
+                                }
                             }
 
-                            if(se.getCurrentFrame() == 11){
-                                shipExplosions.remove(se.getExplosionNumber());
+                            //deletes ship
+                            if (e.getExplosionActivateTime() + (ONESEC_NANOS * 10) < frtime && e.getLives() == 0) {
+                                enemiesFlying.remove(e);
                             }
-                        }
-
-                        //deletes ship
-                        if(e.getExplosionActivateTime() + (ONESEC_NANOS*10) < frtime && e.getLives() == 0){
-                            enemiesFlying.remove(e);
                         }
                     }
                 }
@@ -545,7 +554,7 @@ public class PlayScreen extends Screen {
             }
             //main spaceship
             for(int i = 0; i<spaceship.length; i++) {
-                if(i == shipMain.getCurrentSpaceshipFrame() && frtime>spaceshipFrameSwitchTime + (ONESEC_NANOS/10)) {
+                if(i == shipMain.getCurrentSpaceshipFrame() && frtime>shipMain.getSpaceshipFrameSwitchTime() + (ONESEC_NANOS/10)) {
                     if(shipMain.getCurrentSpaceshipFrame() == spaceship.length-1){
                         shipMain.setCurrentSpaceshipFrame(0);
                     }else{
@@ -553,7 +562,7 @@ public class PlayScreen extends Screen {
                     }
                     c.drawBitmap(spaceship[i], shipMain.getSpaceshipX(), shipMain.getSpaceshipY(), p);
 
-                    spaceshipFrameSwitchTime = System.nanoTime();
+                    shipMain.setSpaceshipFrameSwitchTime(System.nanoTime());
 
                 }else if(i==shipMain.getCurrentSpaceshipFrame()){
                     c.drawBitmap(spaceship[i], shipMain.getSpaceshipX(), shipMain.getSpaceshipY(), p);
@@ -570,32 +579,7 @@ public class PlayScreen extends Screen {
             }
 
 
-            if (gamestate == State.ROUNDSUMMARY
-                    || gamestate == State.STARTGAME
-                    || gamestate == State.PLAYERDIED
-                    || gamestate == State.GAMEOVER) {
-                if (gamestate != State.STARTGAME) {
-                    // round ended, by completion or player death, display stats
-
-                    if (gamestate == State.ROUNDSUMMARY) {
-
-                    } else if (gamestate == State.PLAYERDIED
-                            || gamestate == State.GAMEOVER){
-
-                    }
-
-                }
-
-                if (gamestate != State.PLAYERDIED
-                        && gamestate != State.GAMEOVER) {
-
-                }
-
-                if (gamestate != State.GAMEOVER) {
-
-                }
-            }
-            if (gamestate == State.GAMEOVER) {
+            if (gamestate == State.WIN || gamestate == State.PLAYERDIED) {
                 /*p.setTextSize(act.TS_BIG);
                 p.setColor(Color.RED);
                 drawCenteredText(c, "GamE oVeR!", height /2, p, -2);
@@ -612,6 +596,19 @@ public class PlayScreen extends Screen {
         }
 
     }
+
+    public void playerWon(){
+        gamestate = State.WIN;
+    }
+
+    public void spawnFighter(){
+        enemiesFlying.add(new Fighter(fighter, fighterOrb));
+    }
+
+    public int getEnemiesDestroyed() {
+        return enemiesDestroyed;
+    }
+
 
 
     //center text
