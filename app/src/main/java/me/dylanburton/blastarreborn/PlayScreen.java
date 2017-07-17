@@ -94,7 +94,7 @@ public class PlayScreen extends Screen {
     private int highscore=0, highlev=1;
     private static final String HIGHSCORE_FILE = "highscore.dat";
     private static final int START_NUMLIVES = 3;
-    private Map<Integer, String> levelMap = new HashMap<>();
+    private Map<Integer, String> levelMap = new HashMap<Integer, String>();
 
 
 
