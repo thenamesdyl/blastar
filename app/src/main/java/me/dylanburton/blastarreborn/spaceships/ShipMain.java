@@ -39,7 +39,6 @@ public class ShipMain {
     public void spawnShipLaser(float x, float y){
 
         shipLasers.add(new MainShipLaser(x,y));
-        shipLasers.add(new MainShipLaser(x,y));
 
     }
 
