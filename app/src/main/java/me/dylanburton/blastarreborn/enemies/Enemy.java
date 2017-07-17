@@ -28,6 +28,7 @@ public class Enemy {
     private float halfWidth = 0;  // convenience
     private float halfHeight = 0;
     private boolean enemyIsHitButNotDead = false; //specific yet helpful boolean for my hit animation
+    private long explosionActivateTime; //adding so I dont have to delete the enemy after explosion for a couple seconds, this way their orbs dont dissapear
 
     // firing stuff
     private List<ShipLaser> shipLasers = new LinkedList<ShipLaser>(); //the lasers for the ship
@@ -249,4 +250,12 @@ public class Enemy {
     public void setEnemyFiringTime(long enemyFiringTime) {
         this.enemyFiringTime = enemyFiringTime;
     }
+    public long getExplosionActivateTime() {
+        return explosionActivateTime;
+    }
+
+    public void setExplosionActivateTime(long explosionActivateTime) {
+        this.explosionActivateTime = explosionActivateTime;
+    }
+
 }
