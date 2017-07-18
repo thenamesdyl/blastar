@@ -309,17 +309,23 @@ public class PlayScreen extends Screen {
                   /*
                    * Firing AI
                    */
-                    if (e.getEnemyFiringTime() + (e.getRandomlyGeneratedEnemyFiringTimeInSeconds() * ONESEC_NANOS) < frtime && startDelayReached) {
-                        e.setEnemyFiringTime(System.nanoTime());
-                        e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(3000)) / 1000);
-                        e.spawnShipLasers();
 
-                    }
+
+                  //if enemy is not at starting position, spawn lasers. The problem was lasers was spawning before the enemy ship was
+                    if(e.getX() != 0 && e.getY() != 500) {
+                        if (e.getEnemyFiringTime() + (e.getRandomlyGeneratedEnemyFiringTimeInSeconds() * ONESEC_NANOS) < frtime && startDelayReached) {
+                           e.setEnemyFiringTime(System.nanoTime());
+                           e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(3000)) / 1000);
+                            e.spawnShipLasers();
+
+                         }
+                      }
 
                     //updates ships laser positions
                     if (e.getShipLaserPositionsList().size() > 0) {
                         e.updateShipLaserPositions();
                     }
+
 
 
                 /*
