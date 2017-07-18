@@ -22,7 +22,6 @@ public class PlayerShip extends Ship{
     private float width;
     private float height;
     private int currentSpaceshipFrame=0; //frame of spaceship for animation
-    private Rect spaceshipBounds;
     private boolean spaceshipIsMoving;
     private List<MainShipLaser> shipLasers = new LinkedList<MainShipLaser>();
     //timer for spawning new laser
@@ -108,14 +107,6 @@ public class PlayerShip extends Ship{
 
     public void setCurrentSpaceshipFrame(int currentSpaceshipFrame) {
         this.currentSpaceshipFrame = currentSpaceshipFrame;
-    }
-
-    public Rect getSpaceshipBounds() {
-        return spaceshipBounds;
-    }
-
-    public void setSpaceshipBounds(Rect spaceshipBounds) {
-        this.spaceshipBounds = spaceshipBounds;
     }
 
     public boolean isSpaceshipMoving() {

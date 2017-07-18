@@ -19,10 +19,10 @@ public enum EnemyType {
         this.lives = lives;
         this.points = points;
     }
-    int getLives() {
+    public int getLives() {
         return this.lives;
     }
-    int getPoints(){
+    public int getPoints(){
         return this.points;
     }
 

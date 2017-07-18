@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Random;
 
 import me.dylanburton.blastarreborn.enemies.Enemy;
+import me.dylanburton.blastarreborn.enemies.EnemyType;
 import me.dylanburton.blastarreborn.enemies.Fighter;
 import me.dylanburton.blastarreborn.levels.Level;
 import me.dylanburton.blastarreborn.levels.Level1;
@@ -224,6 +225,16 @@ public class PlayScreen extends Screen {
         }
     }
 
+    public void addEnemyExplosion(Enemy e){
+        shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e));
+        e.setX(10000);
+        e.setY(10000);
+        e.setAIDisabled(true);
+        enemiesDestroyed++;
+
+        e.setExplosionActivateTime(System.nanoTime());
+    }
+
 
     @Override
     public void update(View v) {
@@ -270,8 +281,40 @@ public class PlayScreen extends Screen {
                     }
 
 
-
                     /*
+                     * Charging behavior
+                     * What happens when PlayerShip has collision with EnemyShip
+                     */
+
+                    //for some reason it wont work with rectangles, just doing it like this for an accurate hitbox
+                    if((e.hasCollision(playerShip.getSpaceshipX() + spaceship[0].getWidth()/2, playerShip.getSpaceshipY()+ spaceship[0].getHeight()/3) ||
+                             e.hasCollision(playerShip.getSpaceshipX() + spaceship[0].getWidth()/2, playerShip.getSpaceshipY()+ spaceship[0].getHeight()) ||
+                             e.hasCollision(playerShip.getSpaceshipX() + spaceship[0].getWidth()/2, playerShip.getSpaceshipY()+ spaceship[0].getHeight()/2))
+                                     && lives > 0) {
+                        
+                        int playerShipLivesLost = e.getEnemyType().getLives() / 5;
+                        lives = lives - playerShipLivesLost;
+                        if(lives > 0){
+                            addEnemyExplosion(e);
+
+                        }else{
+
+                            //for red tinge on enemy, not like it matters though, players dead
+                            e.setHitContactTimeForTinge(System.nanoTime());
+
+                            playerShip.setShipExplosionActivateTime(System.nanoTime());
+                            shipExplosions.add(new ShipExplosion(playerShip.getSpaceshipX(), playerShip.getSpaceshipY(), playerShip));
+                            playerShip.setEndOfTheRoad(true);
+
+                        }
+
+                    }
+
+
+
+
+
+                     /*
                      * Explosions update
                      */
 
@@ -315,9 +358,9 @@ public class PlayScreen extends Screen {
                     }
 
 
-                  /*
-                   * Firing AI
-                   */
+                    /*
+                     * Firing AI
+                     */
 
 
                   //if enemy is not at starting position, spawn lasers. The problem was lasers was spawning before the enemy ship was
@@ -327,8 +370,8 @@ public class PlayScreen extends Screen {
                             e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(5000)+1000) / 1000);
                             e.spawnShipLasers();
 
-                         }
-                      }
+                        }
+                    }
 
                     //updates ships laser positions
                     if (e.getShipLaserPositionsList().size() > 0) {
@@ -757,9 +800,8 @@ public class PlayScreen extends Screen {
 
             case MotionEvent.ACTION_MOVE:
                 synchronized (spaceship){
-                    playerShip.setSpaceshipBounds(new Rect((int) playerShip.getSpaceshipX(),(int) playerShip.getSpaceshipY(),(int) playerShip.getSpaceshipX()+spaceship[0].getWidth(),(int) playerShip.getSpaceshipY()+spaceship[0].getHeight()));
 
-                    if(playerShip.getSpaceshipBounds().contains((int) e.getX(),(int) e.getY())){
+                    if(playerShip.hasCollision(e.getX(),e.getY())){
                         playerShip.setSpaceshipIsMoving(true);
                         playerShip.setSpaceshipX(e.getX()-spaceship[0].getWidth()/2);
                         playerShip.setSpaceshipY(e.getY()-spaceship[0].getHeight()/2);

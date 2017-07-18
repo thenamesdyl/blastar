@@ -17,6 +17,7 @@ import me.dylanburton.blastarreborn.spaceships.Ship;
  * An enemy is a template for all the enemies     */
 public class Enemy extends Ship {
     private final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
+    private EnemyType enemyType;
     private Bitmap btm;
     private float x=0;
     private float y=500;
@@ -68,6 +69,7 @@ public class Enemy extends Ship {
         this.halfHeight = height/HALF_DIVISOR;
         this.lives = enemyType.getLives();
         this.points = enemyType.getPoints();
+        this.enemyType = enemyType;
     }
 
     public void spawnShipLasers(){} //to be overwritten by specific enemy classes
@@ -103,7 +105,7 @@ public class Enemy extends Ship {
     }
 
     public Rect getBounds() {
-        bounds.set((int)(this.x), (int)(this.y-getBitmap().getHeight()),
+        bounds.set((int)(this.x), (int)(this.y),
                 (int)(this.x+getBitmap().getWidth()), (int)(this.y+getBitmap().getHeight()));
         return bounds;
     }
@@ -285,5 +287,14 @@ public class Enemy extends Ship {
     public void setAIDisabled(boolean AIDisabled) {
         isAIDisabled = AIDisabled;
     }
+
+    public EnemyType getEnemyType() {
+        return enemyType;
+    }
+
+    public void setEnemyType(EnemyType enemyType) {
+        this.enemyType = enemyType;
+    }
+
 
 }
