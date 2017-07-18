@@ -19,5 +19,6 @@ public class MainShipLaser extends ShipLaser {
     public void updateMainShipLaserPositions(){
         setX(getX() + getDx());
         setY(getY() + getDy());
+
     }
 }

@@ -75,6 +75,7 @@ public class Enemy {
         for(ShipLaser sl: shipLasers){
             sl.setX(sl.getX() + sl.getDx());
             sl.setY(sl.getY() + sl.getDy());
+
         }
 
     }
@@ -270,8 +271,11 @@ public class Enemy {
         return hitContactTimeForTinge;
     }
 
-    public void setHitContactTimeForExplosions(long hitContactTime) {
-        this.hitContactTimeForExplosions = hitContactTime;
+    public void setHitContactTimeForExpl(long hitContactTime) {
+        this.hitContactTimeForTinge = hitContactTime;
+    }
+    public void setHitContactTimeForExplosions(long hitContactTimeForExplosions) {
+        this.hitContactTimeForExplosions = hitContactTimeForExplosions;
     }
 
 }

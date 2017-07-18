@@ -275,9 +275,40 @@ public class PlayScreen extends Screen {
                     }
 
 
-                /*
-                 * Firing AI
-                 */
+
+                    /*
+                     * Explosions
+                     */
+
+                    for(int i = 0; i < shipMain.getShipLaserArray().size(); i++) {
+                        if ((e.hasCollision(shipMain.getShipLaserArray().get(i).getX(), shipMain.getShipLaserArray().get(i).getY()))) {
+                            shipMain.getShipLaserArray().get(i).setX(4000);
+                            shipMain.getShipLaserArray().remove(i);
+                            e.setHitContactTimeForTinge(System.nanoTime());
+                            //subtract a life
+                            e.setLives(e.getLives() - 1);
+
+                            //fun explosions
+                            if (e.getLives() == 0) {
+                                shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e));
+                                //bye bye
+                                e.setX(10000);
+                                e.setY(10000);
+                                enemiesDestroyed++;
+
+                                e.setExplosionActivateTime(System.nanoTime()); //used to delay deletion so orbs dont disappear
+                            } else {
+                                e.setEnemyIsHitButNotDead(true);
+                            }
+
+
+                        }
+                    }
+
+
+                  /*
+                   * Firing AI
+                   */
                     if (e.getEnemyFiringTime() + (e.getRandomlyGeneratedEnemyFiringTimeInSeconds() * ONESEC_NANOS) < frtime && startDelayReached) {
                         e.setEnemyFiringTime(System.nanoTime());
                         e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(3000)) / 1000);
@@ -463,6 +494,7 @@ public class PlayScreen extends Screen {
 
     @Override
     public void draw(Canvas c, View v) {
+
         try {
 
             // actually draw the screen
@@ -498,39 +530,13 @@ public class PlayScreen extends Screen {
                             c.drawBitmap(e.getBitmap(), e.getX(), e.getY(), p);
                         }
 
-                        for(int i = 0; i < shipMain.getShipLaserArray().size(); i++) {
-                            if ((e.hasCollision(shipMain.getShipLaserArray().get(i).getX(), shipMain.getShipLaserArray().get(i).getY()))) {
-                                shipMain.getShipLaserArray().get(i).setX(4000);
-                                shipMain.getShipLaserArray().remove(i);
-                                e.setHitContactTimeForTinge(System.nanoTime());
-                                e.setHitContactTimeForExplosions(System.nanoTime());
-                                //subtract a life
-                                e.setLives(e.getLives() - 1);
-
-                                //fun explosions
-                                if (e.getLives() == 0) {
-                                    shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e));
-                                    //bye bye
-                                    e.setX(10000);
-                                    e.setY(10000);
-                                    enemiesDestroyed++;
-
-                                    e.setExplosionActivateTime(System.nanoTime()); //used to delay deletion so orbs dont disappear
-                                } else {
-                                    e.setEnemyIsHitButNotDead(true);
-                                }
-
-
-                            }
-                        }
-
                         for(ShipExplosion se: shipExplosions) {
                             if (se.getEnemy() == e) {
                                 c.drawBitmap(explosion[se.getCurrentFrame()], se.getX(), se.getY(), p);
 
                                 //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
-                                if (e.getHitContactTimeForExplosions() + (ONESEC_NANOS / 20) < frtime) {
-                                    e.setHitContactTimeForExplosions(System.nanoTime());
+                                if (e.getExplosionActivateTime() + (ONESEC_NANOS / 20) < frtime) {
+                                    e.setExplosionActivateTime(System.nanoTime());
                                     se.nextFrame();
 
                                 }
