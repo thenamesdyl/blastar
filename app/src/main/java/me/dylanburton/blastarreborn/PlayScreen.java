@@ -213,9 +213,12 @@ public class PlayScreen extends Screen {
     private void loseLife() {
         lives--;
 
-        if (lives == 0) {
-            playerShip.setShipExplosionActivateTime(System.nanoTime());
-            shipExplosions.add(new ShipExplosion(playerShip.getSpaceshipX(), playerShip.getSpaceshipY(), playerShip));
+        if (lives <= 0) {
+            if(!playerShip.isEndOfTheRoad()) {
+                playerShip.setShipExplosionActivateTime(System.nanoTime());
+                shipExplosions.add(new ShipExplosion(playerShip.getSpaceshipX(), playerShip.getSpaceshipY(), playerShip));
+                playerShip.setEndOfTheRoad(true);
+            }
 
             //the rest of this will happen when explosion is completed in draw
         }
@@ -335,7 +338,13 @@ public class PlayScreen extends Screen {
 
                             }
 
-                            if(e.getShipLaserPositionsList().get(i).getY() > height || e.getShipLaserPositionsList().get(i).getX() < -100 || e.getShipLaserPositionsList().get(i).getX() > width*4/3){
+
+                        }
+                    }
+                    if(e.getShipLaserPositionsList().size()> 0) {
+                        //had to make another if because of problems with the last one when they were both deleting the orbs
+                        for( int i = 0; i < e.getShipLaserPositionsList().size(); i++) {
+                            if (e.getShipLaserPositionsList().size() != 0 && e.getShipLaserPositionsList().get(i).getY() > height || e.getShipLaserPositionsList().get(i).getX() < -100 || e.getShipLaserPositionsList().get(i).getX() > width * 4 / 3) {
                                 e.getShipLaserPositionsList().remove(i);
                             }
                         }
@@ -490,13 +499,15 @@ public class PlayScreen extends Screen {
             }
 
             //makes main spaceship lasers
+
             for (int i = 0; i < playerShip.getShipLaserArray().size(); i++) {
                 playerShip.getShipLaserArray().get(i).updateMainShipLaserPositions();
                 if (playerShip.getLastLaserSpawnTime() + (ONESEC_NANOS / 2) < frtime) {
 
-                    playerShip.spawnShipLaser(playerShip.getSpaceshipX() + spaceship[0].getWidth() / 8, playerShip.getSpaceshipY() + spaceship[0].getHeight() / 3);
-                    playerShip.spawnShipLaser(playerShip.getShipLaserArray().get(playerShip.getShipLaserArray().size() - 1).getX() + spaceship[0].getWidth() * 64 / 100, playerShip.getSpaceshipY() + spaceship[0].getHeight() / 3);
-
+                    if(lives > 0) {
+                        playerShip.spawnShipLaser(playerShip.getSpaceshipX() + spaceship[0].getWidth() / 8, playerShip.getSpaceshipY() + spaceship[0].getHeight() / 3);
+                        playerShip.spawnShipLaser(playerShip.getShipLaserArray().get(playerShip.getShipLaserArray().size() - 1).getX() + spaceship[0].getWidth() * 64 / 100, playerShip.getSpaceshipY() + spaceship[0].getHeight() / 3);
+                    }
                     playerShip.setLastLaserSpawnTime(System.nanoTime());
                 }
 
@@ -592,7 +603,7 @@ public class PlayScreen extends Screen {
             }
 
             //main spaceship if lives does not equal 0 it shows spaceship, if it does, it shows boom boom
-            if(lives != 0) {
+            if(lives > 0) {
                 for (int i = 0; i < spaceship.length; i++) {
                     if (i == playerShip.getCurrentSpaceshipFrame() && frtime > playerShip.getSpaceshipFrameSwitchTime() + (ONESEC_NANOS / 10)) {
 
