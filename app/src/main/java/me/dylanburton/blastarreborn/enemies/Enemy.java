@@ -19,8 +19,6 @@ public class Enemy extends Ship {
     private final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
     private EnemyType enemyType;
     private Bitmap btm;
-    private float x=0;
-    private float y=500;
     private float vx=0;
     private float vy=0;
     private int points;
@@ -62,6 +60,8 @@ public class Enemy extends Ship {
     }
 
     public Enemy(Bitmap bitmap, EnemyType enemyType) {
+        setX(0);
+        setY(500);
         this.btm = bitmap;
         this.width = bitmap.getWidth();
         this.height = bitmap.getHeight();
@@ -105,8 +105,8 @@ public class Enemy extends Ship {
     }
 
     public Rect getBounds() {
-        bounds.set((int)(this.x), (int)(this.y),
-                (int)(this.x+getBitmap().getWidth()), (int)(this.y+getBitmap().getHeight()));
+        bounds.set((int)(this.getX()), (int)(this.getY()),
+                (int)(this.getX()+getBitmap().getWidth()), (int)(this.getY()+getBitmap().getHeight()));
         return bounds;
     }
 
@@ -131,22 +131,6 @@ public class Enemy extends Ship {
 
     public void setBtm(Bitmap btm) {
         this.btm = btm;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
     }
 
     public float getVx() {

@@ -17,8 +17,6 @@ public class PlayerShip extends Ship{
 
     //main spaceships location and bound
     private Bitmap mainSpaceShip[];
-    private float spaceshipY=0;
-    private float spaceshipX=0;
     private float width;
     private float height;
     private int currentSpaceshipFrame=0; //frame of spaceship for animation
@@ -45,8 +43,8 @@ public class PlayerShip extends Ship{
             //screw you
         }
 
-        this.spaceshipX = x;
-        this.spaceshipY = y;
+        this.setX(x);
+        this.setY(y);
         for(int i = 0; i< shipLasers.size(); i++){
             shipLasers.get(i).setBmp(mainSpaceShipLaser);
         }
@@ -67,8 +65,8 @@ public class PlayerShip extends Ship{
     }
 
     public Rect getBounds() {
-        bounds.set((int)(this.spaceshipX), (int)(this.spaceshipY),
-                (int)(this.spaceshipX+width), (int)(this.spaceshipY+height));
+        bounds.set((int)(this.getX()), (int)(this.getY()),
+                (int)(this.getX()+width), (int)(this.getY()+height));
         return bounds;
     }
 
@@ -83,22 +81,6 @@ public class PlayerShip extends Ship{
 
     public void setShipLaserArray(List<MainShipLaser> shipLaser) {
         this.shipLasers = shipLaser;
-    }
-
-    public float getSpaceshipY() {
-        return spaceshipY;
-    }
-
-    public void setSpaceshipY(float spaceshipY) {
-        this.spaceshipY = spaceshipY;
-    }
-
-    public float getSpaceshipX() {
-        return spaceshipX;
-    }
-
-    public void setSpaceshipX(float spaceshipX) {
-        this.spaceshipX = spaceshipX;
     }
 
     public int getCurrentSpaceshipFrame() {

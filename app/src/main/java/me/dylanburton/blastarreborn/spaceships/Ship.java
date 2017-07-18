@@ -7,7 +7,27 @@ package me.dylanburton.blastarreborn.spaceships;
 //will eventually integrate this, but for now its just for inheritance
 public class Ship {
 
+    float x;
+    float y;
+
     public Ship(){}
+
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
 
 
 }
