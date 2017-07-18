@@ -324,7 +324,7 @@ public class PlayScreen extends Screen {
                     if(e.getX() != 0 && e.getY() != 500) {
                         if (e.getEnemyFiringTime() + (e.getRandomlyGeneratedEnemyFiringTimeInSeconds() * ONESEC_NANOS) < frtime && startDelayReached) {
                             e.setEnemyFiringTime(System.nanoTime());
-                            e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(3000)) / 1000);
+                            e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(5000)+1000) / 1000);
                             e.spawnShipLasers();
 
                          }
