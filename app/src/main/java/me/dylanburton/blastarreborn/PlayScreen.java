@@ -311,7 +311,7 @@ public class PlayScreen extends Screen {
                    */
 
 
-                  //if enemy is not at starting position, spawn lasers. The problem was lasers was spawning before the enemy ship was
+                  //if enemy is not at starting position, spawn lasers. The problem was lasers was spawning before the enemy ship was+
                     if(e.getX() != 0 && e.getY() != 500) {
                         if (e.getEnemyFiringTime() + (e.getRandomlyGeneratedEnemyFiringTimeInSeconds() * ONESEC_NANOS) < frtime && startDelayReached) {
                            e.setEnemyFiringTime(System.nanoTime());
@@ -324,6 +324,12 @@ public class PlayScreen extends Screen {
                     //updates ships laser positions
                     if (e.getShipLaserPositionsList().size() > 0) {
                         e.updateShipLaserPositions();
+                        //deletes orbs if they are off the screen
+                        for( int i = 0; i < e.getShipLaserPositionsList().size(); i++){
+                            if(e.getShipLaserPositionsList().get(i).getY() > height || e.getShipLaserPositionsList().get(i).getX() < -100 || e.getShipLaserPositionsList().get(i).getX() > width*4/3){
+                                e.getShipLaserPositionsList().remove(i);
+                            }
+                        }
                     }
 
 
@@ -344,12 +350,6 @@ public class PlayScreen extends Screen {
 
                     }
 
-                    if (!e.isAIStarted()) {
-                        e.setX(rand.nextInt(width * 4 / 5));
-                        e.setY(-height / 10);
-                        e.setFinishedVelocityChange(true);
-                        e.setAIStarted(true);
-                    }
 
                     if (startDelayReached) {
                         e.setX(e.getX() + e.getVx());
@@ -357,7 +357,16 @@ public class PlayScreen extends Screen {
 
                     }
 
+                    //this starts the next stage of enemy movement
+                    if (!e.isAIStarted()) {
+                        e.setX(rand.nextInt(width * 4 / 5));
+                        e.setY(-height / 10);
+                        e.setFinishedVelocityChange(true);
+                        e.setAIStarted(true);
+                    }
 
+
+                    //I present to you, next stage of enemy movement and all its glory
                     if (e.isFinishedVelocityChange()) {
 
 
@@ -403,7 +412,7 @@ public class PlayScreen extends Screen {
                     }
 
                     if (e.isSlowingDown() && (frtime > e.getLastSlowedDownVelocityTime() + (ONESEC_NANOS / 100))) {
-                        //obv will never be 0. Half a second for slowing down, then speeding up
+                        //obv will never be 0. Half a second for slowing down, then speeding up later on
                         e.setVx(e.getVx() - (e.getVx() / 50));
                         e.setVy(e.getVy() - (e.getVy() / 50));
 
@@ -456,6 +465,7 @@ public class PlayScreen extends Screen {
                             e.setFinishedVelocityChange(true);
                         }
 
+                        //delays speeding up process
                         e.setLastSpedUpVelocityTime(System.nanoTime());
                     }
 
@@ -479,6 +489,11 @@ public class PlayScreen extends Screen {
                     shipMain.spawnShipLaser(shipMain.getShipLaserArray().get(shipMain.getShipLaserArray().size() - 1).getX() + spaceship[0].getWidth() * 64 / 100, shipMain.getSpaceshipY() + spaceship[0].getHeight() / 3);
 
                     shipMain.setLastLaserSpawnTime(System.nanoTime());
+                }
+
+                //removes laser if off the screen
+                if(shipMain.getShipLaserArray().get(i).getY() < -height/6){
+                    shipMain.getShipLaserArray().remove(i);
                 }
             }
 
@@ -504,39 +519,39 @@ public class PlayScreen extends Screen {
         try {
 
             // actually draw the screen
-            scaledDst.set(mapAnimatorX-width, mapAnimatorY-height, mapAnimatorX, mapAnimatorY);
-            c.drawBitmap(starbackground,null,scaledDst,p);
+            scaledDst.set(mapAnimatorX - width, mapAnimatorY - height, mapAnimatorX, mapAnimatorY);
+            c.drawBitmap(starbackground, null, scaledDst, p);
             //secondary background for animation. Same as last draw, but instead, these are a height-length higher
-            c.drawBitmap(starbackground,null,new Rect(secondaryMapAnimatorX-width, secondaryMapAnimatorY-(height*2),secondaryMapAnimatorX, secondaryMapAnimatorY-height),p);
+            c.drawBitmap(starbackground, null, new Rect(secondaryMapAnimatorX - width, secondaryMapAnimatorY - (height * 2), secondaryMapAnimatorX, secondaryMapAnimatorY - height), p);
 
 
             synchronized (enemiesFlying) {
-                for(Enemy e: enemiesFlying) {
+                for (Enemy e : enemiesFlying) {
 
-                    if(startDelayReached) {
+                    if (startDelayReached) {
 
                         //drawing enemy lasers
-                        if(e.getShipLaserPositionsList().size() > 0){
+                        if (e.getShipLaserPositionsList().size() > 0) {
                             this.enemyShipLasers = e.getShipLaserPositionsList();
-                            for(ShipLaser sl: enemyShipLasers){
+                            for (ShipLaser sl : enemyShipLasers) {
                                 c.drawBitmap(sl.getBmp(), sl.getX(), sl.getY(), p);
                             }
                         }
 
 
                         //puts like a red tinge on the enemy for 100 ms if hes hit
-                        if(e.isEnemyHitButNotDead()){
+                        if (e.isEnemyHitButNotDead()) {
                             c.drawBitmap(hitFighter, e.getX(), e.getY(), p);
 
-                            if(e.getHitContactTimeForTinge() + (ONESEC_NANOS/10) <frtime){
+                            if (e.getHitContactTimeForTinge() + (ONESEC_NANOS / 10) < frtime) {
                                 e.setEnemyIsHitButNotDead(false);
                             }
 
-                        }else {
+                        } else {
                             c.drawBitmap(e.getBitmap(), e.getX(), e.getY(), p);
                         }
 
-                        for(ShipExplosion se: shipExplosions) {
+                        for (ShipExplosion se : shipExplosions) {
                             if (se.getEnemy() == e) {
                                 c.drawBitmap(explosion[se.getCurrentFrame()], se.getX(), se.getY(), p);
 
@@ -566,6 +581,7 @@ public class PlayScreen extends Screen {
             for (int i = 0; i < shipMain.getShipLaserArray().size(); i++) {
                 c.drawBitmap(spaceshipLaser, shipMain.getShipLaserArray().get(i).getX(), shipMain.getShipLaserArray().get(i).getY(), p);
             }
+
             //main spaceship
             for(int i = 0; i<spaceship.length; i++) {
                 if(i == shipMain.getCurrentSpaceshipFrame() && frtime>shipMain.getSpaceshipFrameSwitchTime() + (ONESEC_NANOS/10)) {

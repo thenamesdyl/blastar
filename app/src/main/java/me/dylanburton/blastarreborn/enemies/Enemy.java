@@ -75,12 +75,11 @@ public class Enemy {
         for(ShipLaser sl: shipLasers){
             sl.setX(sl.getX() + sl.getDx());
             sl.setY(sl.getY() + sl.getDy());
-
         }
 
     }
 
-    public List getShipLaserPositionsList(){
+    public List<ShipLaser> getShipLaserPositionsList(){
         return shipLasers;
     }
 
