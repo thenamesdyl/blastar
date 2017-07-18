@@ -13,7 +13,7 @@ import me.dylanburton.blastarreborn.lasers.ShipLaser;
  * Created by Dylan on 7/16/2017.
  */
 
-public class PlayerShip {
+public class PlayerShip extends Ship{
 
     //main spaceships location and bound
     private Bitmap mainSpaceShip[];
@@ -30,6 +30,7 @@ public class PlayerShip {
     private long spaceshipFrameSwitchTime = 0; //for spaceships fire animation
     private long shipHitForTingeTime = 0; //for red tinge on your spaceship
     private boolean playerHitButNotDead = false; //also for red tinge
+    private long shipExplosionActivateTime = 0;
 
     Rect bounds = new Rect();//bounds for the PlayerShip
 
@@ -152,6 +153,14 @@ public class PlayerShip {
 
     public void setPlayerHitButNotDead(boolean playerHitButNotDead) {
         this.playerHitButNotDead = playerHitButNotDead;
+    }
+
+    public long getShipExplosionActivateTime() {
+        return shipExplosionActivateTime;
+    }
+
+    public void setShipExplosionActivateTime(long shipExplosionActivateTime) {
+        this.shipExplosionActivateTime = shipExplosionActivateTime;
     }
 
 

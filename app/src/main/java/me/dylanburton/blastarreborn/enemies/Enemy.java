@@ -11,10 +11,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import me.dylanburton.blastarreborn.lasers.ShipLaser;
+import me.dylanburton.blastarreborn.spaceships.Ship;
 
 /**
  * An enemy is a template for all the enemies     */
-public class Enemy {
+public class Enemy extends Ship {
     private final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
     private Bitmap btm;
     private float x=0;

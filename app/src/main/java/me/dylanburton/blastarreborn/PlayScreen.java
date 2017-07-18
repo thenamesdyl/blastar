@@ -88,7 +88,7 @@ public class PlayScreen extends Screen {
     private int lives;
     private int highscore=0, highlev=1;
     private static final String HIGHSCORE_FILE = "highscore.dat";
-    private static final int START_NUMLIVES = 3;
+    private static final int START_NUMLIVES = 5;
     private Map<Integer, String> levelMap = new HashMap<Integer, String>();
     private Level level;
 
@@ -214,16 +214,10 @@ public class PlayScreen extends Screen {
         lives--;
 
         if (lives == 0) {
-            // game over!  wrap things up and write high score file
-            gamestate = State.PLAYERDIED;
-            try {
-                BufferedWriter f = new BufferedWriter(new FileWriter(act.getFilesDir() + HIGHSCORE_FILE));
-                f.write(Integer.toString(highscore)+"\n");
-                f.write(Integer.toString(highlev)+"\n");
-                f.close();
-            } catch (Exception e) { // if we can't write the high score file...oh well.
-                Log.d(MainActivity.LOG_ID, "WriteHiScore", e);
-            }
+            playerShip.setShipExplosionActivateTime(System.nanoTime());
+            shipExplosions.add(new ShipExplosion(playerShip.getSpaceshipX(), playerShip.getSpaceshipY(), playerShip));
+
+            //the rest of this will happen when explosion is completed in draw
         }
     }
 
@@ -275,7 +269,7 @@ public class PlayScreen extends Screen {
 
 
                     /*
-                     * Explosions
+                     * Explosions update
                      */
 
                     for(int i = 0; i < playerShip.getShipLaserArray().size(); i++) {
@@ -312,8 +306,8 @@ public class PlayScreen extends Screen {
                   //if enemy is not at starting position, spawn lasers. The problem was lasers was spawning before the enemy ship was
                     if(e.getX() != 0 && e.getY() != 500) {
                         if (e.getEnemyFiringTime() + (e.getRandomlyGeneratedEnemyFiringTimeInSeconds() * ONESEC_NANOS) < frtime && startDelayReached) {
-                           e.setEnemyFiringTime(System.nanoTime());
-                           e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(3000)) / 1000);
+                            e.setEnemyFiringTime(System.nanoTime());
+                            e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(3000)) / 1000);
                             e.spawnShipLasers();
 
                          }
@@ -507,7 +501,7 @@ public class PlayScreen extends Screen {
                 }
 
                 //removes laser if off the screen
-                if(playerShip.getShipLaserArray().get(i).getY() < -height/6){
+                if(playerShip.getShipLaserArray().get(i).getY() < -height){
                     playerShip.getShipLaserArray().remove(i);
                 }
             }
@@ -565,8 +559,9 @@ public class PlayScreen extends Screen {
                             c.drawBitmap(e.getBitmap(), e.getX(), e.getY(), p);
                         }
 
+                        //explosion draw
                         for (ShipExplosion se : shipExplosions) {
-                            if (se.getEnemy() == e) {
+                            if (se.getShip() == e) {
                                 c.drawBitmap(explosion[se.getCurrentFrame()], se.getX(), se.getY(), p);
 
                                 //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
@@ -596,41 +591,84 @@ public class PlayScreen extends Screen {
                 c.drawBitmap(spaceshipLaser, playerShip.getShipLaserArray().get(i).getX(), playerShip.getShipLaserArray().get(i).getY(), p);
             }
 
-            //main spaceship
-            for(int i = 0; i<spaceship.length; i++) {
-                if(i == playerShip.getCurrentSpaceshipFrame() && frtime> playerShip.getSpaceshipFrameSwitchTime() + (ONESEC_NANOS/10)) {
+            //main spaceship if lives does not equal 0 it shows spaceship, if it does, it shows boom boom
+            if(lives != 0) {
+                for (int i = 0; i < spaceship.length; i++) {
+                    if (i == playerShip.getCurrentSpaceshipFrame() && frtime > playerShip.getSpaceshipFrameSwitchTime() + (ONESEC_NANOS / 10)) {
 
 
-                    if(playerShip.getCurrentSpaceshipFrame() == spaceship.length-1){
-                        playerShip.setCurrentSpaceshipFrame(0);
-                    }else{
-                        playerShip.setCurrentSpaceshipFrame(playerShip.getCurrentSpaceshipFrame()+1);
-                    }
-
-
-                    //drawing either the tinge or the normal spaceship, based off of delays
-                    if(playerShip.isPlayerHitButNotDead()){
-                        c.drawBitmap(spaceshipHit[i], playerShip.getSpaceshipX(), playerShip.getSpaceshipY(), p);
-                        if(playerShip.getShipHitForTingeTime()+(ONESEC_NANOS/10) < frtime){
-                            playerShip.setPlayerHitButNotDead(false);
+                        //if frame = 1, make it 0
+                        if (playerShip.getCurrentSpaceshipFrame() == spaceship.length - 1) {
+                            playerShip.setCurrentSpaceshipFrame(0);
+                        } else {
+                            //else make it 1
+                            playerShip.setCurrentSpaceshipFrame(playerShip.getCurrentSpaceshipFrame() + 1);
                         }
-                    }else {
-                        c.drawBitmap(spaceship[i], playerShip.getSpaceshipX(), playerShip.getSpaceshipY(), p);
-                    }
 
-                    playerShip.setSpaceshipFrameSwitchTime(System.nanoTime());
 
-                }else if(i== playerShip.getCurrentSpaceshipFrame()){
-
-                    if(playerShip.isPlayerHitButNotDead()){
-                        c.drawBitmap(spaceshipHit[i], playerShip.getSpaceshipX(), playerShip.getSpaceshipY(), p);
-                        if(playerShip.getShipHitForTingeTime()+(ONESEC_NANOS/5) < frtime){
-                            playerShip.setPlayerHitButNotDead(false);
+                        //drawing either the tinge or the normal spaceship, based off of delays
+                        if (playerShip.isPlayerHitButNotDead()) {
+                            c.drawBitmap(spaceshipHit[i], playerShip.getSpaceshipX(), playerShip.getSpaceshipY(), p);
+                            if (playerShip.getShipHitForTingeTime() + (ONESEC_NANOS / 10) < frtime) {
+                                playerShip.setPlayerHitButNotDead(false);
+                            }
+                        } else {
+                            c.drawBitmap(spaceship[i], playerShip.getSpaceshipX(), playerShip.getSpaceshipY(), p);
                         }
-                    }else {
-                        c.drawBitmap(spaceship[i], playerShip.getSpaceshipX(), playerShip.getSpaceshipY(), p);
+
+                        //delay for frames
+                        playerShip.setSpaceshipFrameSwitchTime(System.nanoTime());
+
+                    } else if (i == playerShip.getCurrentSpaceshipFrame()) {
+
+                        if (playerShip.isPlayerHitButNotDead()) {
+                            c.drawBitmap(spaceshipHit[i], playerShip.getSpaceshipX(), playerShip.getSpaceshipY(), p);
+                            if (playerShip.getShipHitForTingeTime() + (ONESEC_NANOS / 5) < frtime) {
+                                playerShip.setPlayerHitButNotDead(false);
+                            }
+                        } else {
+                            c.drawBitmap(spaceship[i], playerShip.getSpaceshipX(), playerShip.getSpaceshipY(), p);
+                        }
                     }
+
                 }
+            }else{
+                /*
+                 * Explosion for main ship
+                 */
+
+                for (ShipExplosion se : shipExplosions) {
+                    if (se.getShip() == playerShip) {
+                        c.drawBitmap(explosion[se.getCurrentFrame()], se.getX(), se.getY(), p);
+
+                        //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
+                        if (playerShip.getShipExplosionActivateTime() + (ONESEC_NANOS / 20) < frtime) {
+                            playerShip.setShipExplosionActivateTime(System.nanoTime());
+                            se.nextFrame();
+
+                        }
+
+                        if (se.getCurrentFrame() == 11) {
+                            shipExplosions.remove(se);
+
+                            //end of game folks, thanks for playing
+                            gamestate = State.PLAYERDIED;
+                            try {
+                                BufferedWriter f = new BufferedWriter(new FileWriter(act.getFilesDir() + HIGHSCORE_FILE));
+                                f.write(Integer.toString(highscore)+"\n");
+                                f.write(Integer.toString(highlev)+"\n");
+                                f.close();
+                            } catch (Exception e) { // if we can't write the high score file...oh well.
+                                Log.d(MainActivity.LOG_ID, "WriteHiScore", e);
+                            }
+
+                        }
+                    }
+
+                }
+
+
+
 
             }
 
