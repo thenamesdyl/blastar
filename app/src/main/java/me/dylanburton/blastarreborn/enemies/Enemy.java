@@ -50,6 +50,7 @@ public class Enemy extends Ship {
     private float randomVelocityGeneratorX = 0;
     private float randomVelocityGeneratorY = 0; //randomly generated velocities between -5 and 5
     private boolean enemyHasAIStarted = false; //has the AI for this enemy object started yet
+    private boolean isAIDisabled = false;
 
 
     Rect bounds = new Rect();
@@ -276,6 +277,13 @@ public class Enemy extends Ship {
     }
     public void setHitContactTimeForExplosions(long hitContactTimeForExplosions) {
         this.hitContactTimeForExplosions = hitContactTimeForExplosions;
+    }
+    public boolean isAIDisabled() {
+        return isAIDisabled;
+    }
+
+    public void setAIDisabled(boolean AIDisabled) {
+        isAIDisabled = AIDisabled;
     }
 
 }
