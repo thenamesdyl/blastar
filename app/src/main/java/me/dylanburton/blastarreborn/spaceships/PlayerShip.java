@@ -13,12 +13,14 @@ import me.dylanburton.blastarreborn.lasers.ShipLaser;
  * Created by Dylan on 7/16/2017.
  */
 
-public class ShipMain {
+public class PlayerShip {
 
     //main spaceships location and bound
     private Bitmap mainSpaceShip[];
     private float spaceshipY=0;
     private float spaceshipX=0;
+    private float width;
+    private float height;
     private int currentSpaceshipFrame=0; //frame of spaceship for animation
     private Rect spaceshipBounds;
     private boolean spaceshipIsMoving;
@@ -26,10 +28,22 @@ public class ShipMain {
     //timer for spawning new laser
     private long lastLaserSpawnTime = 0;
     private long spaceshipFrameSwitchTime = 0; //for spaceships fire animation
+    private long shipHitForTingeTime = 0; //for red tinge on your spaceship
+    private boolean playerHitButNotDead = false; //also for red tinge
+
+    Rect bounds = new Rect();//bounds for the PlayerShip
 
 
-    public ShipMain(Bitmap mainSpaceShip[], Bitmap mainSpaceShipLaser, float x, float y){
+    public PlayerShip(Bitmap mainSpaceShip[], Bitmap mainSpaceShipLaser, float x, float y){
         this.mainSpaceShip = mainSpaceShip;
+
+        if(mainSpaceShip.length > 0) {
+            this.width = mainSpaceShip[0].getWidth();
+            this.height = mainSpaceShip[0].getHeight();
+        }else{
+            //screw you
+        }
+
         this.spaceshipX = x;
         this.spaceshipY = y;
         for(int i = 0; i< shipLasers.size(); i++){
@@ -42,6 +56,24 @@ public class ShipMain {
         shipLasers.add(new MainShipLaser(x,y));
 
     }
+
+    public boolean hasCollision(float collx, float colly) {
+        return getBounds().contains((int) collx, (int) colly);
+    }
+
+    public boolean hasCollision(Rect rect) {
+        return getBounds().contains(rect);
+    }
+
+    public Rect getBounds() {
+        bounds.set((int)(this.spaceshipX), (int)(this.spaceshipY),
+                (int)(this.spaceshipX+width), (int)(this.spaceshipY+height));
+        return bounds;
+    }
+
+
+
+    //getters and setters
 
 
     public List<MainShipLaser> getShipLaserArray() {
@@ -105,4 +137,22 @@ public class ShipMain {
     public void setSpaceshipFrameSwitchTime(long spaceshipFrameSwitchTime) {
         this.spaceshipFrameSwitchTime = spaceshipFrameSwitchTime;
     }
+
+    public long getShipHitForTingeTime() {
+        return shipHitForTingeTime;
+    }
+
+    public void setShipHitForTingeTime(long shipHitForTinge) {
+        this.shipHitForTingeTime = shipHitForTinge;
+    }
+
+    public boolean isPlayerHitButNotDead() {
+        return playerHitButNotDead;
+    }
+
+    public void setPlayerHitButNotDead(boolean playerHitButNotDead) {
+        this.playerHitButNotDead = playerHitButNotDead;
+    }
+
+
 }
