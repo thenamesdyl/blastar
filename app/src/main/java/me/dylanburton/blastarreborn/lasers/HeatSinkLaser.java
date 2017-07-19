@@ -17,6 +17,7 @@ public class HeatSinkLaser extends ShipLaser {
     private int dy;
 
     public HeatSinkLaser(Bitmap bmp, int x , int y){
+        setEnemyLaser(true);
         this.bmp = bmp;
         this.x = x;
         this.y = y;

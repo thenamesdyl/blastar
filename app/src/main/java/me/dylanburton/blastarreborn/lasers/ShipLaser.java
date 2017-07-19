@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
  * Ship Laser will be used for all enemies
  */
 public class ShipLaser {
+    private boolean isEnemyLaser = true;
     private float x = 0;
     private float y = 0;
     private float dx = 0;
@@ -24,6 +25,15 @@ public class ShipLaser {
         this.x = x;
         this.y = y;
 
+    }
+
+    public boolean isEnemyLaser(){
+
+        return isEnemyLaser;
+    }
+
+    public void setEnemyLaser(boolean isEnemyLaser){
+        this.isEnemyLaser = isEnemyLaser;
     }
 
     public Bitmap getBmp() {

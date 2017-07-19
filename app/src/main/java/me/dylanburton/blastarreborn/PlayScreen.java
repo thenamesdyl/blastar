@@ -30,6 +30,7 @@ import me.dylanburton.blastarreborn.enemies.Enemy;
 import me.dylanburton.blastarreborn.enemies.EnemyType;
 import me.dylanburton.blastarreborn.enemies.Fighter;
 import me.dylanburton.blastarreborn.lasers.DiagonalLaser;
+import me.dylanburton.blastarreborn.lasers.MainShipLaser;
 import me.dylanburton.blastarreborn.lasers.ShipLaser;
 import me.dylanburton.blastarreborn.levels.Level;
 import me.dylanburton.blastarreborn.levels.Level1;
@@ -273,10 +274,6 @@ public class PlayScreen extends Screen {
 
             playerShip = new PlayerShip(spaceship, spaceshipLaser, (width/2), (height*2/3));
 
-            playerShip.spawnShipLaser(playerShip.getX()+spaceship[0].getWidth()/8, playerShip.getY()+spaceship[0].getHeight()/3);
-            playerShip.spawnShipLaser(playerShip.getShipLaserArray().get(0).getX() + spaceship[0].getWidth() * 64 / 100, playerShip.getY()+spaceship[0].getHeight()/3);
-            playerShip.setLastLaserSpawnTime(System.nanoTime());
-
             mapAnimatorX = width;
             mapAnimatorY = height;
             secondaryMapAnimatorX=width;
@@ -349,30 +346,32 @@ public class PlayScreen extends Screen {
                         e.setExplosionActivateTime(System.nanoTime());
                     }
 
-                    for(int i = 0; i < playerShip.getShipLaserArray().size(); i++) {
-                        if ((e.hasCollision(playerShip.getShipLaserArray().get(i).getX(), playerShip.getShipLaserArray().get(i).getY()))) {
-                            //setting it to 4000 immediately just so it doesnt register collision more than once
-                            playerShip.getShipLaserArray().get(i).setX(4000);
-                            playerShip.getShipLaserArray().remove(i);
-                            e.setHitContactTimeForTinge(System.nanoTime());
-                            //subtract a life
-                            e.setLives(e.getLives() - 1);
+                    for(int i = 0; i < shipLasers.size(); i++) {
+                        if (!shipLasers.get(i).isEnemyLaser()) {
+                            if ((e.hasCollision(shipLasers.get(i).getX(), shipLasers.get(i).getY()))) {
+                                //setting it to 4000 immediately just so it doesnt register collision more than once
+                                shipLasers.get(i).setX(4000);
+                                shipLasers.remove(i);
+                                e.setHitContactTimeForTinge(System.nanoTime());
+                                //subtract a life
+                                e.setLives(e.getLives() - 1);
 
-                            //fun explosions
-                            if (e.getLives() == 0) {
-                                shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e));
-                                //bye bye and disable ai
-                                e.setX(10000);
-                                e.setY(10000);
-                                e.setAIDisabled(true);
-                                enemiesDestroyed++;
+                                //fun explosions
+                                if (e.getLives() == 0) {
+                                    shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e));
+                                    //bye bye and disable ai
+                                    e.setX(10000);
+                                    e.setY(10000);
+                                    e.setAIDisabled(true);
+                                    enemiesDestroyed++;
 
-                                e.setExplosionActivateTime(System.nanoTime()); //used to delay deletion so orbs dont disappear
-                            } else {
-                                e.setEnemyIsHitButNotDead(true);
+                                    e.setExplosionActivateTime(System.nanoTime()); //used to delay deletion so orbs dont disappear
+                                } else {
+                                    e.setEnemyIsHitButNotDead(true);
+                                }
+
+
                             }
-
-
                         }
                     }
 
@@ -551,19 +550,21 @@ public class PlayScreen extends Screen {
                 for( int i = 0; i < shipLasers.size(); i++){
 
                     //PLAYER HIT ***********
-                    if(playerShip.hasCollision(shipLasers.get(i).getX(), shipLasers.get(i).getY())){
+                    if(shipLasers.get(i).isEnemyLaser()) {
+                        if (playerShip.hasCollision(shipLasers.get(i).getX(), shipLasers.get(i).getY())) {
 
-                        //bye bye
-                        shipLasers.remove(shipLasers.get(i));
+                            //bye bye
+                            shipLasers.remove(shipLasers.get(i));
 
-                        //need that red tinge which will be in draw method
-                        if(lives != 0){
-                            playerShip.setShipHitForTingeTime(System.nanoTime());
-                            playerShip.setPlayerHitButNotDead(true);
-                            loseLife();
+                            //need that red tinge which will be in draw method
+                            if (lives != 0) {
+                                playerShip.setShipHitForTingeTime(System.nanoTime());
+                                playerShip.setPlayerHitButNotDead(true);
+                                loseLife();
+                            }
+
+
                         }
-
-
                     }
 
 
@@ -574,7 +575,7 @@ public class PlayScreen extends Screen {
             if(shipLasers.size()> 0) {
                 //had to make another if because of problems with the last one when they were both deleting the orbs
                 for( int i = 0; i < shipLasers.size(); i++) {
-                    if (shipLasers.size() != 0 && shipLasers.get(i).getY() > height || shipLasers.get(i).getX() < -100 || shipLasers.get(i).getX() > width * 4 / 3) {
+                    if (shipLasers.size() != 0 && shipLasers.get(i).getY() > height || shipLasers.get(i).getX() < -100 || shipLasers.get(i).getX() > width * 4 / 3|| shipLasers.get(i).getY() < -height ) {
                         shipLasers.remove(i);
                     }
                 }
@@ -588,22 +589,15 @@ public class PlayScreen extends Screen {
 
             //makes main spaceship lasers
 
-            for (int i = 0; i < playerShip.getShipLaserArray().size(); i++) {
-                playerShip.getShipLaserArray().get(i).updateMainShipLaserPositions();
-                if (playerShip.getLastLaserSpawnTime() + (ONESEC_NANOS / 2) < frtime) {
+            if (playerShip.getLastLaserSpawnTime() + (ONESEC_NANOS / 2) < frtime) {
 
-                    if(lives > 0) {
-                        playerShip.spawnShipLaser(playerShip.getX() + spaceship[0].getWidth() / 8, playerShip.getY() + spaceship[0].getHeight() / 3);
-                        playerShip.spawnShipLaser(playerShip.getShipLaserArray().get(playerShip.getShipLaserArray().size() - 1).getX() + spaceship[0].getWidth() * 64 / 100, playerShip.getY() + spaceship[0].getHeight() / 3);
-                    }
-                    playerShip.setLastLaserSpawnTime(System.nanoTime());
+                if(lives > 0) {
+                    shipLasers.add(new MainShipLaser(spaceshipLaser, playerShip.getX() + spaceship[0].getWidth() / 8, playerShip.getY() + spaceship[0].getHeight() / 3));
+                    shipLasers.add(new MainShipLaser(spaceshipLaser, shipLasers.get(shipLasers.size() - 1).getX() + spaceship[0].getWidth() * 64 / 100, playerShip.getY() + spaceship[0].getHeight() / 3));
                 }
-
-                //removes laser if off the screen
-                if(playerShip.getShipLaserArray().get(i).getY() < -height){
-                    playerShip.getShipLaserArray().remove(i);
-                }
+                playerShip.setLastLaserSpawnTime(System.nanoTime());
             }
+
 
 
             //animator for map background
@@ -636,13 +630,6 @@ public class PlayScreen extends Screen {
                 for (Enemy e : enemiesFlying) {
 
                     if (startDelayReached) {
-
-                        //drawing enemy lasers
-                        if (shipLasers.size() > 0) {
-                            for (int i = 0; i < shipLasers.size(); i++) {
-                                c.drawBitmap(shipLasers.get(i).getBmp(), shipLasers.get(i).getX(), shipLasers.get(i).getY(), p);
-                            }
-                        }
 
 
                         //puts like a red tinge on the enemy for 100 ms if hes hit
@@ -683,12 +670,13 @@ public class PlayScreen extends Screen {
                 }
             }
 
-
-
-            //main spaceship lasers
-            for (int i = 0; i < playerShip.getShipLaserArray().size(); i++) {
-                c.drawBitmap(spaceshipLaser, playerShip.getShipLaserArray().get(i).getX(), playerShip.getShipLaserArray().get(i).getY(), p);
+            //drawing enemy lasers
+            if (shipLasers.size() > 0) {
+                for (int i = 0; i < shipLasers.size(); i++) {
+                    c.drawBitmap(shipLasers.get(i).getBmp(), shipLasers.get(i).getX(), shipLasers.get(i).getY(), p);
+                }
             }
+
 
             //main spaceship if lives does not equal 0 it shows spaceship, if it does, it shows boom boom
             if(lives > 0) {

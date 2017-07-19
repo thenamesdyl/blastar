@@ -1,13 +1,20 @@
 package me.dylanburton.blastarreborn.lasers;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by Dylan on 7/16/2017.
  */
 
 public class MainShipLaser extends ShipLaser {
 
+    private static final boolean isMainShipLaser = true;
+
     //simple yet effective
-    public MainShipLaser(float x, float y){
+    public MainShipLaser(Bitmap laserBitmap, float x, float y){
+
+        setEnemyLaser(false);
+        setBmp(laserBitmap);
 
         this.setX(x);
         this.setY(y);
@@ -16,9 +23,8 @@ public class MainShipLaser extends ShipLaser {
 
     }
 
-    public void updateMainShipLaserPositions(){
-        setX(getX() + getDx());
-        setY(getY() + getDy());
-
+    public static boolean isMainShipLaser() {
+        return isMainShipLaser;
     }
+
 }

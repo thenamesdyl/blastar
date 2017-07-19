@@ -21,7 +21,6 @@ public class PlayerShip extends Ship{
     private float height;
     private int currentSpaceshipFrame=0; //frame of spaceship for animation
     private boolean spaceshipIsMoving;
-    private List<MainShipLaser> shipLasers = new LinkedList<MainShipLaser>();
     //timer for spawning new laser
     private long lastLaserSpawnTime = 0;
     private long spaceshipFrameSwitchTime = 0; //for spaceships fire animation
@@ -45,16 +44,8 @@ public class PlayerShip extends Ship{
 
         this.setX(x);
         this.setY(y);
-        for(int i = 0; i< shipLasers.size(); i++){
-            shipLasers.get(i).setBmp(mainSpaceShipLaser);
-        }
     }
 
-    public void spawnShipLaser(float x, float y){
-
-        shipLasers.add(new MainShipLaser(x,y));
-
-    }
 
     public boolean hasCollision(float collx, float colly) {
         return getBounds().contains((int) collx, (int) colly);
@@ -73,15 +64,6 @@ public class PlayerShip extends Ship{
 
 
     //getters and setters
-
-
-    public List<MainShipLaser> getShipLaserArray() {
-        return shipLasers;
-    }
-
-    public void setShipLaserArray(List<MainShipLaser> shipLaser) {
-        this.shipLasers = shipLaser;
-    }
 
     public int getCurrentSpaceshipFrame() {
         return currentSpaceshipFrame;
