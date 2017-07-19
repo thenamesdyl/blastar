@@ -196,6 +196,7 @@ public class PlayScreen extends Screen {
         width = 0;
         height = 0;
         enemiesFlying.clear();
+        shipLasers.clear();
         startDelayReached = false;
         for(Enemy e: enemiesFlying){
             e.setFinishedVelocityChange(false);
@@ -779,16 +780,16 @@ public class PlayScreen extends Screen {
                     c.drawBitmap(playerWonText, width / 5, height / 3, p);
 
                    if(starsEarned == 3){
-                       c.drawBitmap(filledstar, width*4/10, height/2,p);
                        c.drawBitmap(filledstar, width/10, height/2,p);
+                       c.drawBitmap(filledstar, width*4/10, height/2,p);
                        c.drawBitmap(filledstar, width*7/10, height/2,p);
                    }else if (starsEarned == 2){
-                       c.drawBitmap(filledstar, width*4/10, height/2,p);
                        c.drawBitmap(filledstar, width/10, height/2,p);
+                       c.drawBitmap(filledstar, width*4/10, height/2,p);
                        c.drawBitmap(emptystar, width*7/10, height/2,p);
                    }else{
-                       c.drawBitmap(filledstar, width*4/10, height/2,p);
-                       c.drawBitmap(emptystar, width/10, height/2,p);
+                       c.drawBitmap(filledstar, width/10, height/2,p);
+                       c.drawBitmap(emptystar, width*4/10, height/2,p);
                        c.drawBitmap(emptystar, width*7/10, height/2,p);
                    }
                     /*c.drawBitmap(filledstar, width*4/10, height/2,p);
