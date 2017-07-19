@@ -206,7 +206,7 @@ public class MainActivity extends ActionBarActivity {
                 while(isRendering){
                     while(!holder.getSurface().isValid()) {
                         try {
-                            Thread.sleep(5);
+                            Thread.sleep(10);
                         } catch (Exception e) { /* we don't care */  }
                     }
 

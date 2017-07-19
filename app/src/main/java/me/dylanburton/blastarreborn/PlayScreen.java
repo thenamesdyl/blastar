@@ -43,13 +43,13 @@ public class PlayScreen extends Screen {
     private MainActivity act;
     private Paint p;
     //how fast the spaceship moves backwards
-    private final int DECAY_SPEED=5;
-    private final int LEVEL_FIGHTER = 1;  // level where different ships are added
-    private final int LEVEL_IMPERIAL = 3;
-    private final int LEVEL_BATTLECRUISER = 4;
-    private final int LEVEL_BATTLESHIP = 5;
-    private final int LEVEL_BERSERKER = 6;
-    static final long ONESEC_NANOS = 1000000000L;
+    private static final int DECAY_SPEED=5;
+    private static final int LEVEL_FIGHTER = 1;  // level where different ships are added
+    private static final int LEVEL_IMPERIAL = 3;
+    private static final int LEVEL_BATTLECRUISER = 4;
+    private static final int LEVEL_BATTLESHIP = 5;
+    private static final int LEVEL_BERSERKER = 6;
+    private static final long ONESEC_NANOS = 1000000000L;
 
     private enum State {        RUNNING, STARTGAME, PLAYERDIED, WIN    }
     private volatile State gamestate = State.STARTGAME;
@@ -654,7 +654,7 @@ public class PlayScreen extends Screen {
                             }
 
                             //deletes ship
-                            if (e.getExplosionActivateTime() + (ONESEC_NANOS * 10) < frtime && e.getLives() == 0) {
+                            if (e.getExplosionActivateTime() + (ONESEC_NANOS * 5) < frtime && e.getLives() == 0) {
                                 enemiesFlying.remove(e);
                             }
                         }
