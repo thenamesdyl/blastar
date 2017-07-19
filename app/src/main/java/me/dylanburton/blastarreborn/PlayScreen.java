@@ -106,7 +106,7 @@ public class PlayScreen extends Screen {
         try {
 
             //background
-            InputStream inputStream = assetManager.open("sidescrollingstars.jpg");
+            InputStream inputStream = assetManager.open("maps/sidescrollingstars.jpg");
             starbackground = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
 
