@@ -62,7 +62,7 @@ public class PlayScreen extends Screen {
     private int width = 0;
     private int height = 0;
     //bitmap with a rect used for drawing
-    private Bitmap starbackground, spaceship[], spaceshipHit[], spaceshipLaser, fighter, fighterOrb, hitFighter, explosion[];
+    private Bitmap starbackground, spaceship[], spaceshipHit[], spaceshipLaser, fighter, fighterOrb, hitFighter, explosion[], gameOverOverlay, playerDiedText, playerWonText,filledstar,emptystar;
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -121,15 +121,22 @@ public class PlayScreen extends Screen {
             spaceshipHit[1] = act.getScaledBitmap("spaceship/hitspaceshiptopview1.png");
 
             //fighter
-            fighter = act.getScaledBitmap("fighter.png");
-            hitFighter = act.getScaledBitmap("hitfighter.png");
-            fighterOrb = act.getScaledBitmap("enemyorbs.png");
+            fighter = act.getScaledBitmap("enemies/fighter.png");
+            hitFighter = act.getScaledBitmap("enemies/hitfighter.png");
+            fighterOrb = act.getScaledBitmap("enemies/fighterorbs.png");
 
             //explosion
             explosion = new Bitmap[12];
             for(int i = 0; i < 12; i++) {
                 explosion[i] = act.getScaledBitmap("explosion/explosion"+(i+1)+".png");
             }
+
+            //game over stuff
+            gameOverOverlay = act.getScaledBitmap("slightlytransparentoverlay.png");
+            playerDiedText = act.getScaledBitmap("playerdiedtext.png");
+            playerWonText = act.getScaledBitmap("playerwontext.png");
+            filledstar = act.getScaledBitmap("filledstar.png");
+            emptystar = act.getScaledBitmap("emptystar.png");
 
             p.setTypeface(act.getGameFont());
             currentLevel = 1;
@@ -753,6 +760,22 @@ public class PlayScreen extends Screen {
 
 
             if (gamestate == State.WIN || gamestate == State.PLAYERDIED) {
+
+                if(gamestate == State.PLAYERDIED) {
+                    c.drawBitmap(playerDiedText, width / 6, height / 3, p);
+
+                }else{
+                    c.drawBitmap(playerWonText, width / 5, height / 3, p);
+
+                    //todo add some sort of system for determining performance
+                    c.drawBitmap(filledstar, width*4/10, height/2,p);
+                    c.drawBitmap(filledstar, width/10, height/2,p);
+                    c.drawBitmap(emptystar, width*7/10, height/2,p);
+                }
+                c.drawBitmap(gameOverOverlay,null,new Rect(0,0,width,height),p);
+
+                drawCenteredText(c, "Press to continue", height*4/5,p,0);
+
                 /*p.setTextSize(act.TS_BIG);
                 p.setColor(Color.RED);
                 drawCenteredText(c, "GamE oVeR!", height /2, p, -2);
@@ -794,18 +817,21 @@ public class PlayScreen extends Screen {
     public boolean onTouch(MotionEvent e) {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                if(gamestate == State.PLAYERDIED || gamestate == State.WIN){
+                    act.onBackPressed(); //just simulates them pressing the back button, resets the game stats and whatnot
+                }
+
 
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                synchronized (spaceship){
 
-                    if(playerShip.hasCollision(e.getX(),e.getY())){
-                        playerShip.setSpaceshipIsMoving(true);
-                        playerShip.setX(e.getX()-spaceship[0].getWidth()/2);
-                        playerShip.setY(e.getY()-spaceship[0].getHeight()/2);
 
-                    }
+                if(playerShip.hasCollision(e.getX(),e.getY()) && gamestate == State.RUNNING){
+                    playerShip.setSpaceshipIsMoving(true);
+                    playerShip.setX(e.getX()-spaceship[0].getWidth()/2);
+                    playerShip.setY(e.getY()-spaceship[0].getHeight()/2);
+
                 }
 
                 break;
