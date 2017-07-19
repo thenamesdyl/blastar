@@ -8,7 +8,7 @@ import android.graphics.Bitmap;
 
 public class DiagonalLaser extends ShipLaser{
 
-    public DiagonalLaser(float slope, Bitmap laserBitmap){ //slope, dont input 0 into parameter because thats not a diagonal line, thats horizontal
+    public DiagonalLaser(Bitmap laserBitmap, float x, float y, int slope ){ //slope, dont input 0 into parameter because thats not a diagonal line, thats horizontal
 
 
         setBmp(laserBitmap);
@@ -30,6 +30,9 @@ public class DiagonalLaser extends ShipLaser{
 
             //if slope = 0, then dx and dy are already set to 5
         }
+
+        setX(x);
+        setY(y);
 
     }
 

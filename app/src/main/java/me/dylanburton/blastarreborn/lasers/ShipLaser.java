@@ -19,8 +19,10 @@ public class ShipLaser {
 
     public ShipLaser(){}
 
-    public ShipLaser(Bitmap bmp){
+    public ShipLaser(Bitmap bmp, float x , float y){
         this.bmp = bmp;
+        this.x = x;
+        this.y = y;
 
     }
 

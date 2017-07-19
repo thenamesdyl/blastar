@@ -27,7 +27,10 @@ import java.util.Map;
 import java.util.Random;
 
 import me.dylanburton.blastarreborn.enemies.Enemy;
+import me.dylanburton.blastarreborn.enemies.EnemyType;
 import me.dylanburton.blastarreborn.enemies.Fighter;
+import me.dylanburton.blastarreborn.lasers.DiagonalLaser;
+import me.dylanburton.blastarreborn.lasers.ShipLaser;
 import me.dylanburton.blastarreborn.levels.Level;
 import me.dylanburton.blastarreborn.levels.Level1;
 import me.dylanburton.blastarreborn.spaceships.PlayerShip;
@@ -91,6 +94,7 @@ public class PlayScreen extends Screen {
     private static final int START_NUMLIVES = 5;
     private Map<Integer, String> levelMap = new HashMap<Integer, String>();
     private Level level;
+    private List<ShipLaser> shipLasers = new LinkedList<ShipLaser>();
 
 
 
@@ -372,48 +376,14 @@ public class PlayScreen extends Screen {
                         if (e.getEnemyFiringTime() + (e.getRandomlyGeneratedEnemyFiringTimeInSeconds() * ONESEC_NANOS) < frtime && startDelayReached) {
                             e.setEnemyFiringTime(System.nanoTime());
                             e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(5000)+1000) / 1000);
-                            e.spawnShipLasers();
-
-                        }
-                    }
-
-                    //updates ships laser positions
-                    if (e.getShipLaserPositionsList().size() > 0) {
-                        e.updateShipLaserPositions();
-                        //deletes orbs if they are off the screen and checks if the orb has hit player
-                        for( int i = 0; i < e.getShipLaserPositionsList().size(); i++){
-
-                            //PLAYER HIT ***********
-                            if(playerShip.hasCollision(e.getShipLaserPositionsList().get(i).getX(), e.getShipLaserPositionsList().get(i).getY())){
-
-                                //bye bye
-                                e.getShipLaserPositionsList().remove(e.getShipLaserPositionsList().get(i));
-
-                                //need that red tinge which will be in draw method
-                                if(lives != 0){
-                                    playerShip.setShipHitForTingeTime(System.nanoTime());
-                                    playerShip.setPlayerHitButNotDead(true);
-                                    loseLife();
-                                }
-
-
+                            if(e.getEnemyType() == EnemyType.FIGHTER) {
+                                shipLasers.add(new DiagonalLaser(fighterOrb, e.getX()+e.getBitmap().getWidth()*3/5, e.getY()+e.getBitmap().getHeight()/2,1));
+                                shipLasers.add(new ShipLaser(fighterOrb, e.getX()+e.getBitmap().getWidth()/3, e.getY()+e.getBitmap().getHeight()*3/4));
+                                shipLasers.add(new DiagonalLaser(fighterOrb, e.getX()+e.getBitmap().getWidth()/6, e.getY()+e.getBitmap().getHeight()/2,-1));
                             }
 
-
                         }
                     }
-
-                    //deletes enemy orbs
-                    if(e.getShipLaserPositionsList().size()> 0) {
-                        //had to make another if because of problems with the last one when they were both deleting the orbs
-                        for( int i = 0; i < e.getShipLaserPositionsList().size(); i++) {
-                            if (e.getShipLaserPositionsList().size() != 0 && e.getShipLaserPositionsList().get(i).getY() > height || e.getShipLaserPositionsList().get(i).getX() < -100 || e.getShipLaserPositionsList().get(i).getX() > width * 4 / 3) {
-                                e.getShipLaserPositionsList().remove(i);
-                            }
-                        }
-                    }
-
-
 
                 /*
                  * Movement AI
@@ -559,6 +529,47 @@ public class PlayScreen extends Screen {
             }
 
 
+
+            //ship laser positions
+            if (shipLasers.size() > 0) {
+                for(ShipLaser sl: shipLasers){
+                    sl.setX(sl.getX() + sl.getDx());
+                    sl.setY(sl.getY() + sl.getDy());
+                }
+                //checks if the orb has hit player
+                for( int i = 0; i < shipLasers.size(); i++){
+
+                    //PLAYER HIT ***********
+                    if(playerShip.hasCollision(shipLasers.get(i).getX(), shipLasers.get(i).getY())){
+
+                        //bye bye
+                        shipLasers.remove(shipLasers.get(i));
+
+                        //need that red tinge which will be in draw method
+                        if(lives != 0){
+                            playerShip.setShipHitForTingeTime(System.nanoTime());
+                            playerShip.setPlayerHitButNotDead(true);
+                            loseLife();
+                        }
+
+
+                    }
+
+
+                }
+            }
+
+            //deletes enemy orbs
+            if(shipLasers.size()> 0) {
+                //had to make another if because of problems with the last one when they were both deleting the orbs
+                for( int i = 0; i < shipLasers.size(); i++) {
+                    if (shipLasers.size() != 0 && shipLasers.get(i).getY() > height || shipLasers.get(i).getX() < -100 || shipLasers.get(i).getX() > width * 4 / 3) {
+                        shipLasers.remove(i);
+                    }
+                }
+            }
+
+
             //spaceship decay
             if (playerShip.getY() < height * 9 / 10 && !playerShip.isSpaceshipMoving()) {
                 playerShip.setY(playerShip.getY() + DECAY_SPEED);
@@ -617,9 +628,9 @@ public class PlayScreen extends Screen {
                     if (startDelayReached) {
 
                         //drawing enemy lasers
-                        if (e.getShipLaserPositionsList().size() > 0) {
-                            for (int i = 0; i < e.getShipLaserPositionsList().size(); i++) {
-                                c.drawBitmap(e.getShipLaserPositionsList().get(i).getBmp(), e.getShipLaserPositionsList().get(i).getX(), e.getShipLaserPositionsList().get(i).getY(), p);
+                        if (shipLasers.size() > 0) {
+                            for (int i = 0; i < shipLasers.size(); i++) {
+                                c.drawBitmap(shipLasers.get(i).getBmp(), shipLasers.get(i).getX(), shipLasers.get(i).getY(), p);
                             }
                         }
 
