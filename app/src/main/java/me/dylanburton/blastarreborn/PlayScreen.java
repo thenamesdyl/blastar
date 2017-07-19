@@ -80,6 +80,7 @@ public class PlayScreen extends Screen {
     //time stuff
     private long frtime = 0; //the global time
     private long gameStartTime = 0;
+    private float elapsedSecs;
     private int fps = 0;
 
 
@@ -95,6 +96,12 @@ public class PlayScreen extends Screen {
     private Map<Integer, String> levelMap = new HashMap<Integer, String>();
     private Level level;
     private List<ShipLaser> shipLasers = new LinkedList<ShipLaser>();
+
+    private int livesPercentage; //for lives counter
+
+    private long lastStarDrawTime = 0;
+    private int starsEarned = 0;
+    private int starPositionCounter = 3;
 
 
 
@@ -247,9 +254,9 @@ public class PlayScreen extends Screen {
     @Override
     public void update(View v) {
         long newtime = System.nanoTime();
-        float elapsedsecs = (float) (newtime - frtime) / ONESEC_NANOS;
+        elapsedSecs = (float) (newtime - frtime) / ONESEC_NANOS;
         frtime = newtime;
-        fps = (int) (1 / elapsedsecs);
+        fps = (int) (1 / elapsedSecs);
 
         level.checkLevelSequence();//updates level spawning enemies
 
@@ -274,9 +281,13 @@ public class PlayScreen extends Screen {
             mapAnimatorY = height;
             secondaryMapAnimatorX=width;
             secondaryMapAnimatorY=height;
+
         }
 
         if (gamestate == State.RUNNING ) {
+
+            //live percentages for lives rectangle
+            livesPercentage = width/12 - (((width/12-width/2)/5)*lives);
 
             synchronized (enemiesFlying) {
                 Iterator<Enemy> enemiesIterator = enemiesFlying.iterator();
@@ -621,7 +632,6 @@ public class PlayScreen extends Screen {
             //secondary background for animation. Same as last draw, but instead, these are a height-length higher
             c.drawBitmap(starbackground, null, new Rect(secondaryMapAnimatorX - width, secondaryMapAnimatorY - (height * 2), secondaryMapAnimatorX, secondaryMapAnimatorY - height), p);
 
-
             synchronized (enemiesFlying) {
                 for (Enemy e : enemiesFlying) {
 
@@ -672,6 +682,7 @@ public class PlayScreen extends Screen {
                     }
                 }
             }
+
 
 
             //main spaceship lasers
@@ -754,11 +765,12 @@ public class PlayScreen extends Screen {
                     }
 
                 }
-
-
-
-
             }
+
+            p.setColor(Color.rgb(128,128,128));
+            c.drawRect(0, 0 , width, height/17, p);
+            p.setColor(Color.rgb(255,0,0));
+            c.drawRect(width/12, height/30, livesPercentage, height/20, p);
 
             p.setColor(Color.WHITE);
             p.setTextSize(act.TS_NORMAL);
@@ -778,10 +790,22 @@ public class PlayScreen extends Screen {
                 }else{
                     c.drawBitmap(playerWonText, width / 5, height / 3, p);
 
-                    //todo add some sort of system for determining performance
-                    c.drawBitmap(filledstar, width*4/10, height/2,p);
+                   if(starsEarned == 3){
+                       c.drawBitmap(filledstar, width*4/10, height/2,p);
+                       c.drawBitmap(filledstar, width/10, height/2,p);
+                       c.drawBitmap(filledstar, width*7/10, height/2,p);
+                   }else if (starsEarned == 2){
+                       c.drawBitmap(filledstar, width*4/10, height/2,p);
+                       c.drawBitmap(filledstar, width/10, height/2,p);
+                       c.drawBitmap(emptystar, width*7/10, height/2,p);
+                   }else{
+                       c.drawBitmap(filledstar, width*4/10, height/2,p);
+                       c.drawBitmap(emptystar, width/10, height/2,p);
+                       c.drawBitmap(emptystar, width*7/10, height/2,p);
+                   }
+                    /*c.drawBitmap(filledstar, width*4/10, height/2,p);
                     c.drawBitmap(filledstar, width/10, height/2,p);
-                    c.drawBitmap(emptystar, width*7/10, height/2,p);
+                    c.drawBitmap(emptystar, width*7/10, height/2,p);*/
                 }
                 c.drawBitmap(gameOverOverlay,null,new Rect(0,0,width,height),p);
 
@@ -805,6 +829,13 @@ public class PlayScreen extends Screen {
     }
 
     public void playerWon(){
+        if(elapsedSecs < 20 && lives >= 3){
+            starsEarned = 3;
+        }else if(elapsedSecs < 30 && lives >= 2){
+            starsEarned = 2;
+        }else{
+            starsEarned = 1;
+        }
         gamestate = State.WIN;
     }
 
