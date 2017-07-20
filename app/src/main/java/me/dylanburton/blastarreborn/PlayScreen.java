@@ -800,7 +800,7 @@ public class PlayScreen extends Screen {
                 }
             }
 
-            p.setColor(Color.rgb(128,128,128));
+            p.setColor(Color.rgb(150,150,150));
             c.drawRect(0, 0 , width, height/17, p);
             p.setColor(Color.rgb(255,0,0));
             c.drawRect(width/12, height/30, livesPercentage, height/20, p);
