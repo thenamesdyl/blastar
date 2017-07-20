@@ -11,6 +11,7 @@ public class Battleship extends Enemy {
     public Battleship(Bitmap shipBitmap){
         //calls main Enemy constructor
         super(shipBitmap, EnemyType.BATTLESHIP);
+        setAIDisabled(true);
 
     }
 

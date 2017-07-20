@@ -7,17 +7,17 @@ package me.dylanburton.blastarreborn.utils;
 public class HeatSinker {
     private int currentPlayershipLocationX;
     private int currentPlayershipLocationY;
-    private int x;
-    private int y;
-    private int dx;
-    private int dy;
+    private float x;
+    private float y;
+    private float dx;
+    private float dy;
 
 
     public void HeatSink() {
     }
 
     //surprisingly simple. Thanks basic geometry
-    public void updateHeatsink(int x, int y, int cpx, int cpy) {
+    public void updateHeatsink(float x, float y, float cpx, float cpy) {
         cpy = cpy - y;
         cpx = cpx - x;
 
@@ -27,19 +27,19 @@ public class HeatSinker {
     }
 
 
-    public int getDx() {
+    public float getDx() {
         return dx;
     }
 
-    public void setDx(int dx) {
+    public void setDx(float dx) {
         this.dx = dx;
     }
 
-    public int getDy() {
+    public float getDy() {
         return dy;
     }
 
-    public void setDy(int dy) {
+    public void setDy(float dy) {
         this.dy = dy;
     }
 

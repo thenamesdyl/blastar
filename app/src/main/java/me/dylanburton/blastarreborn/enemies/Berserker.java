@@ -11,21 +11,22 @@ import me.dylanburton.blastarreborn.utils.HeatSinker;
 //berserkers behavior will be charging playership, that's why heatsinker is used
 public class Berserker extends Enemy {
     private HeatSinker hs;
-    private int x;
-    private int y;
-    private int dx;
-    private int dy;
+    private float x;
+    private float y;
 
     public Berserker(Bitmap shipBitmap){
-        super(shipBitmap, EnemyType.FIGHTER);
+        super(shipBitmap, EnemyType.BERSERKER);
         hs = new HeatSinker();
+
 
     }
 
-    public void updateShipVelocity(int cpx, int cpy){
+
+    @Override
+    public void updateShipVelocity(float cpx, float cpy){
         hs.updateHeatsink(x, y, cpx, cpy);
-        this.dx = hs.getDx();
-        this.dy = hs.getDy();
+        setVx(hs.getDx());
+        setVy(hs.getDy());
     }
 
 }

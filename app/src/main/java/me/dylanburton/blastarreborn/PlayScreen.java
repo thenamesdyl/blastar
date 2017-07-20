@@ -555,6 +555,11 @@ public class PlayScreen extends Screen {
                             //delays speeding up process
                             e.setLastSpedUpVelocityTime(System.nanoTime());
                         }
+                    }else if(e.getEnemyType() == EnemyType.BERSERKER){
+                        e.updateShipVelocity(playerShip.getX(), playerShip.getY());
+
+
+
                     }
 
 
@@ -659,7 +664,11 @@ public class PlayScreen extends Screen {
 
                         //puts like a red tinge on the enemy for 100 ms if hes hit
                         if (e.isEnemyHitButNotDead()) {
-                            c.drawBitmap(hitFighter, e.getX(), e.getY(), p);
+                            if(e.getEnemyType() == EnemyType.BERSERKER){
+                                c.drawBitmap(berserkerHit, e.getX(), e.getY(), p);
+                            }else if(e.getEnemyType() == EnemyType.FIGHTER) {
+                                c.drawBitmap(hitFighter, e.getX(), e.getY(), p);
+                            }
 
                             if (e.getHitContactTimeForTinge() + (ONESEC_NANOS / 10) < frtime) {
                                 e.setEnemyIsHitButNotDead(false);
@@ -813,6 +822,7 @@ public class PlayScreen extends Screen {
 
                 }else{
 
+                    c.drawBitmap(gameOverOverlay,null,new Rect(0,0,width,height),p);
                     //playerwon
                     c.drawBitmap(playerWonText, width / 5, height / 3, p);
 
@@ -864,12 +874,7 @@ public class PlayScreen extends Screen {
                    }
 
 
-
-                    /*c.drawBitmap(filledstar, width*4/10, height/2,p);
-                    c.drawBitmap(filledstar, width/10, height/2,p);
-                    c.drawBitmap(emptystar, width*7/10, height/2,p);*/
                 }
-                c.drawBitmap(gameOverOverlay,null,new Rect(0,0,width,height),p);
 
                 drawCenteredText(c, "Press to continue", height*4/5,p,0);
 

@@ -11,10 +11,10 @@ import me.dylanburton.blastarreborn.utils.HeatSinker;
 public class HeatSinkLaser extends ShipLaser {
     HeatSinker hs;
     Bitmap bmp;
-    private int x;
-    private int y;
-    private int dx;
-    private int dy;
+    private float x;
+    private float y;
+    private float dx;
+    private float dy;
 
     public HeatSinkLaser(Bitmap bmp, int x , int y){
         setEnemyLaser(true);
@@ -25,7 +25,7 @@ public class HeatSinkLaser extends ShipLaser {
 
     }
 
-    public void updateHeatsink(int x, int y, int cpx, int cpy){
+    public void updateHeatsink(float x, float y, float cpx, float cpy){
         hs.updateHeatsink(x,y,cpx,cpy);
         this.dy = hs.getDy();
         this.dx = hs.getDx();

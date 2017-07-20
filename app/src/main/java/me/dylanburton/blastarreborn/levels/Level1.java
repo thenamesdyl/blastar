@@ -24,6 +24,7 @@ public class Level1 extends Level{
             for (int i = 0; i < 3; i++) {
                 ps.spawnEnemy(EnemyType.FIGHTER);
             }
+            ps.spawnEnemy(EnemyType.BERSERKER);
             updateCheckerBoundary = 2;
         }else if(ps.getEnemiesDestroyed() >= 2 && ps.getEnemiesDestroyed() < 4 && updateCheckerBoundary == 2){
             for(int i = 0; i < 3; i++){
