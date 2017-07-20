@@ -26,9 +26,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import me.dylanburton.blastarreborn.enemies.Battlecruiser;
+import me.dylanburton.blastarreborn.enemies.Battleship;
+import me.dylanburton.blastarreborn.enemies.Berserker;
 import me.dylanburton.blastarreborn.enemies.Enemy;
 import me.dylanburton.blastarreborn.enemies.EnemyType;
 import me.dylanburton.blastarreborn.enemies.Fighter;
+import me.dylanburton.blastarreborn.enemies.Imperial;
 import me.dylanburton.blastarreborn.lasers.DiagonalLaser;
 import me.dylanburton.blastarreborn.lasers.MainShipLaser;
 import me.dylanburton.blastarreborn.lasers.ShipLaser;
@@ -67,6 +71,7 @@ public class PlayScreen extends Screen {
     private int height = 0;
     //bitmap with a rect used for drawing
     private Bitmap starbackground, spaceship[], spaceshipHit[], spaceshipLaser, fighter, fighterOrb, hitFighter, explosion[], gameOverOverlay, playerDiedText, playerWonText,filledstar,emptystar;
+    private Bitmap imperial, imperialHit, berserker, berserkerHit, battlecruiser, battlecruiserHit, battleship, battleshipHit;
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -80,6 +85,8 @@ public class PlayScreen extends Screen {
 
     //time stuff
     private long frtime = 0; //the global time
+    private long firstStarTimeCheck = 0;
+    private long secondStarTimeCheck = 0;
     private long gameStartTime = 0;
     private float elapsedSecs;
     private int fps = 0;
@@ -132,10 +139,25 @@ public class PlayScreen extends Screen {
             spaceshipHit[0] = act.getScaledBitmap("spaceship/hitspaceshiptopview1.png");
             spaceshipHit[1] = act.getScaledBitmap("spaceship/hitspaceshiptopview1.png");
 
-            //fighter
+            //enemies
             fighter = act.getScaledBitmap("enemies/fighter.png");
             hitFighter = act.getScaledBitmap("enemies/hitfighter.png");
             fighterOrb = act.getScaledBitmap("enemies/fighterorbs.png");
+
+            imperial = act.getScaledBitmap("enemies/imperial.png");
+            imperialHit = act.getScaledBitmap("enemies/hitimperial.png");
+
+            berserker = act.getScaledBitmap("enemies/berserker.png");
+            berserkerHit = act.getScaledBitmap("enemies/hitberserker.png");
+
+            battlecruiser = act.getScaledBitmap("enemies/battlecruiser.png");
+            battlecruiserHit = act.getScaledBitmap("enemies/hitbattlecruiser.png");
+
+            battleship = act.getScaledBitmap("enemies/battleship.png");
+            battleshipHit = act.getScaledBitmap("enemies/hitbattleship.png");
+
+
+
 
             //explosion
             explosion = new Bitmap[12];
@@ -391,6 +413,8 @@ public class PlayScreen extends Screen {
                                 shipLasers.add(new DiagonalLaser(fighterOrb, e.getX()+e.getBitmap().getWidth()*3/5, e.getY()+e.getBitmap().getHeight()/2,1));
                                 shipLasers.add(new ShipLaser(fighterOrb, e.getX()+e.getBitmap().getWidth()/3, e.getY()+e.getBitmap().getHeight()*3/4));
                                 shipLasers.add(new DiagonalLaser(fighterOrb, e.getX()+e.getBitmap().getWidth()/6, e.getY()+e.getBitmap().getHeight()/2,-1));
+                            }else if(e.getEnemyType() == EnemyType.IMPERIAL){
+                                //todo add implementation of imperial
                             }
 
                         }
@@ -645,10 +669,9 @@ public class PlayScreen extends Screen {
                             c.drawBitmap(e.getBitmap(), e.getX(), e.getY(), p);
                         }
 
-                        //explosion draw
+                        //explosion time checker
                         for (ShipExplosion se : shipExplosions) {
                             if (se.getShip() == e) {
-                                c.drawBitmap(explosion[se.getCurrentFrame()], se.getX(), se.getY(), p);
 
                                 //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
                                 if (e.getExplosionActivateTime() + (ONESEC_NANOS / 20) < frtime) {
@@ -657,19 +680,31 @@ public class PlayScreen extends Screen {
 
                                 }
 
-                                if (se.getCurrentFrame() == 11) {
-                                    shipExplosions.remove(se);
-                                }
                             }
 
-                            //deletes ship
-                            if (e.getExplosionActivateTime() + (ONESEC_NANOS * 5) < frtime && e.getLives() == 0) {
-                                enemiesFlying.remove(e);
-                            }
+                        }
+
+                        //deletes ship
+                        if (e.getExplosionActivateTime() + (ONESEC_NANOS * 5) < frtime && e.getLives() == 0) {
+                            enemiesFlying.remove(e);
                         }
                     }
                 }
             }
+
+
+
+            //explosion drawer
+            for (ShipExplosion se : shipExplosions) {
+                c.drawBitmap(explosion[se.getCurrentFrame()], se.getX(), se.getY(), p);
+
+                if (se.getCurrentFrame() == 11) {
+                    shipExplosions.remove(se);
+                }
+
+            }
+
+
 
             //drawing enemy lasers
             if (shipLasers.size() > 0) {
@@ -727,7 +762,7 @@ public class PlayScreen extends Screen {
 
                 for (ShipExplosion se : shipExplosions) {
                     if (se.getShip() == playerShip) {
-                        c.drawBitmap(explosion[se.getCurrentFrame()], se.getX(), se.getY(), p);
+                        c.drawBitmap(explosion[se.getCurrentFrame()], se.getX() , se.getY(), p);
 
                         //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
                         if (playerShip.getShipExplosionActivateTime() + (ONESEC_NANOS / 20) < frtime) {
@@ -777,21 +812,59 @@ public class PlayScreen extends Screen {
                     c.drawBitmap(playerDiedText, width / 6, height / 3, p);
 
                 }else{
+
+                    //playerwon
                     c.drawBitmap(playerWonText, width / 5, height / 3, p);
 
                    if(starsEarned == 3){
                        c.drawBitmap(filledstar, width/10, height/2,p);
-                       c.drawBitmap(filledstar, width*4/10, height/2,p);
-                       c.drawBitmap(filledstar, width*7/10, height/2,p);
+                       if(firstStarTimeCheck == 0) {
+                           firstStarTimeCheck = System.nanoTime();
+                       }
+                       if(firstStarTimeCheck + (ONESEC_NANOS/2) < frtime) {
+                           c.drawBitmap(filledstar, width * 4 / 10, height / 2, p);
+                           if(secondStarTimeCheck == 0) {
+                               secondStarTimeCheck = System.nanoTime();
+                           }
+
+                           if(secondStarTimeCheck + (ONESEC_NANOS/2) < frtime) {
+                               c.drawBitmap(filledstar, width * 7 / 10, height / 2, p);
+                           }
+                       }
                    }else if (starsEarned == 2){
                        c.drawBitmap(filledstar, width/10, height/2,p);
-                       c.drawBitmap(filledstar, width*4/10, height/2,p);
-                       c.drawBitmap(emptystar, width*7/10, height/2,p);
+                       if(firstStarTimeCheck == 0) {
+                           firstStarTimeCheck = System.nanoTime();
+                       }
+                       if(firstStarTimeCheck + (ONESEC_NANOS/2) < frtime) {
+                           c.drawBitmap(filledstar, width * 4 / 10, height / 2, p);
+                           if(secondStarTimeCheck == 0) {
+                               secondStarTimeCheck = System.nanoTime();
+                           }
+
+                           if(secondStarTimeCheck + (ONESEC_NANOS/2) < frtime) {
+                               c.drawBitmap(emptystar, width * 7 / 10, height / 2, p);
+                           }
+                       }
                    }else{
                        c.drawBitmap(filledstar, width/10, height/2,p);
-                       c.drawBitmap(emptystar, width*4/10, height/2,p);
-                       c.drawBitmap(emptystar, width*7/10, height/2,p);
+                       if(firstStarTimeCheck == 0) {
+                           firstStarTimeCheck = System.nanoTime();
+                       }
+                       if(firstStarTimeCheck + (ONESEC_NANOS/2) < frtime) {
+                           c.drawBitmap(emptystar, width * 4 / 10, height / 2, p);
+                           if(secondStarTimeCheck == 0) {
+                               secondStarTimeCheck = System.nanoTime();
+                           }
+
+                           if(secondStarTimeCheck + (ONESEC_NANOS/2) < frtime) {
+                               c.drawBitmap(emptystar, width * 7 / 10, height / 2, p);
+                           }
+                       }
                    }
+
+
+
                     /*c.drawBitmap(filledstar, width*4/10, height/2,p);
                     c.drawBitmap(filledstar, width/10, height/2,p);
                     c.drawBitmap(emptystar, width*7/10, height/2,p);*/
@@ -828,8 +901,20 @@ public class PlayScreen extends Screen {
         gamestate = State.WIN;
     }
 
-    public void spawnFighter(){
-        enemiesFlying.add(new Fighter(fighter, fighterOrb));
+    public void spawnEnemy(EnemyType enemyType){
+        if(enemyType == EnemyType.FIGHTER) {
+            enemiesFlying.add(new Fighter(fighter));
+        }else if(enemyType == EnemyType.IMPERIAL){
+            enemiesFlying.add(new Imperial(imperial));
+
+        }else if(enemyType == EnemyType.BERSERKER){
+            enemiesFlying.add(new Berserker(berserker));
+
+        }else if(enemyType == EnemyType.BATTLESHIP){
+            enemiesFlying.add(new Battleship(battleship));
+        }else if(enemyType == EnemyType.BATTLECRUISER){
+            enemiesFlying.add(new Battlecruiser(battlecruiser));
+        }
     }
 
     public int getEnemiesDestroyed() {
