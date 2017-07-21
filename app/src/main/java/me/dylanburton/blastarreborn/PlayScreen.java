@@ -588,6 +588,7 @@ public class PlayScreen extends Screen {
                         if (playerShip.hasCollision(shipLasers.get(i).getX(), shipLasers.get(i).getY())) {
 
                             //bye bye
+                            shipLasers.get(i).setX(4000);
                             shipLasers.remove(shipLasers.get(i));
 
                             //need that red tinge which will be in draw method
@@ -689,7 +690,9 @@ public class PlayScreen extends Screen {
                                 //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
                                 if (e.getExplosionActivateTime() + (ONESEC_NANOS / 20) < frtime) {
                                     e.setExplosionActivateTime(System.nanoTime());
-                                    se.nextFrame();
+                                    if(se.getCurrentFrame() < 11) {
+                                        se.nextFrame();
+                                    }
 
                                 }
 
@@ -711,8 +714,11 @@ public class PlayScreen extends Screen {
             for (ShipExplosion se : shipExplosions) {
                 c.drawBitmap(explosion[se.getCurrentFrame()], se.getX(), se.getY(), p);
 
+                //for some reason, removing the explosion caused major lag. So we're doing it this way
                 if (se.getCurrentFrame() == 11) {
-                    shipExplosions.remove(se);
+                    se.setX(4000);
+                    se.setY(4000);
+                   // shipExplosions.remove(se);
                 }
 
             }
@@ -785,7 +791,9 @@ public class PlayScreen extends Screen {
                         }
 
                         if (se.getCurrentFrame() == 11) {
-                            shipExplosions.remove(se);
+                            se.setX(4000);
+                            se.setY(4000);
+                         //   shipExplosions.remove(se);
 
                             //end of game folks, thanks for playing
                             gamestate = State.PLAYERDIED;
