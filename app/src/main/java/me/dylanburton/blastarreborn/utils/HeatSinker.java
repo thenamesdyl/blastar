@@ -21,8 +21,10 @@ public class HeatSinker {
         cpy = cpy - y;
         cpx = cpx - x;
 
-        dy = cpy;
-        dx = cpx;
+
+        //slows dividing by 50 makes sure the ship doesnt teleport instantly to the ships coordinates
+        dy = cpy/100;
+        dx = cpx/100;
 
     }
 

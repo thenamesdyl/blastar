@@ -381,7 +381,11 @@ public class PlayScreen extends Screen {
 
                                 //fun explosions
                                 if (e.getLives() == 0) {
-                                    shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e));
+                                    if(e.getEnemyType() == EnemyType.FIGHTER) {
+                                        shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e));
+                                    }else if(e.getEnemyType() == EnemyType.BERSERKER){
+                                        shipExplosions.add(new ShipExplosion(e.getX() + e.getBitmap().getWidth()/3, e.getY() + e.getBitmap().getHeight()/3,e));
+                                    }
                                     //bye bye and disable ai
                                     e.setX(10000);
                                     e.setY(10000);
