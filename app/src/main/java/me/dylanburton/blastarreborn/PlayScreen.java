@@ -392,11 +392,11 @@ public class PlayScreen extends Screen {
                                     e.setAIDisabled(true);
                                     enemiesDestroyed++;
 
+
                                     e.setExplosionActivateTime(System.nanoTime()); //used to delay deletion so orbs dont disappear
                                 } else {
                                     e.setEnemyIsHitButNotDead(true);
                                 }
-
 
                             }
                         }
@@ -428,8 +428,14 @@ public class PlayScreen extends Screen {
                  * Movement AI
                  */
 
+                    if (startDelayReached) {
+                        e.setX(e.getX() + e.getVx());
+                        e.setY(e.getY() + e.getVy());
+
+                    }
+
                     //handles collision for multiple enemies
-                    if(!e.isAIDisabled()) {
+                    if(e.getEnemyType() == EnemyType.FIGHTER && !e.isAIDisabled()) {
                         for (int i = 0; i < enemiesFlying.size(); i++) {
                             if ((e != enemiesFlying.get(i))) {
                                 if ((e.getX() >= enemiesFlying.get(i).getX() - enemiesFlying.get(i).getBitmap().getWidth() && e.getX() <= enemiesFlying.get(i).getX() + enemiesFlying.get(i).getBitmap().getWidth()) &&
@@ -438,13 +444,6 @@ public class PlayScreen extends Screen {
                                 }
 
                             }
-
-                        }
-
-
-                        if (startDelayReached) {
-                            e.setX(e.getX() + e.getVx());
-                            e.setY(e.getY() + e.getVy());
 
                         }
 
@@ -559,7 +558,7 @@ public class PlayScreen extends Screen {
                             //delays speeding up process
                             e.setLastSpedUpVelocityTime(System.nanoTime());
                         }
-                    }else if(e.getEnemyType() == EnemyType.BERSERKER){
+                    }else if(e.getEnemyType() == EnemyType.BERSERKER && !e.isAIDisabled()){
                         e.updateShipVelocity(playerShip.getX(), playerShip.getY());
 
 
@@ -791,9 +790,7 @@ public class PlayScreen extends Screen {
                         }
 
                         if (se.getCurrentFrame() == 11) {
-                            se.setX(4000);
-                            se.setY(4000);
-                         //   shipExplosions.remove(se);
+                            shipExplosions.remove(se);
 
                             //end of game folks, thanks for playing
                             gamestate = State.PLAYERDIED;
