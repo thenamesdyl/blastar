@@ -115,6 +115,10 @@ public class PlayScreen extends Screen {
 
     //some AI Movement vars, to see how it works, look in Enemy class
     private boolean startDelayReached = false;
+    private float newBerserkerVelocityX = 0;
+    private float newBerserkerVelocityY = 0;
+    private float differenceBerserkerVelocityX;
+    private float differenceBerserkerVelocityY;
     private Random rand = new Random();
 
 
@@ -364,8 +368,8 @@ public class PlayScreen extends Screen {
 
                     //ship explodes when charges into opposite side of screen
                     if(e.getY() > height*8/9){
-                        e.setY(0);
                         addEnemyExplosion(e);
+                        e.setY(0);
                     }
 
                     for(int i = 0; i < shipLasers.size(); i++) {
@@ -554,11 +558,25 @@ public class PlayScreen extends Screen {
                                 e.setLastSpedUpVelocityTime(System.nanoTime());
                             }
                         } else if (e.getEnemyType() == EnemyType.BERSERKER) {
+
                             Berserker b = (Berserker) e;
                             if (b.getUpdateVelocityTime() + (ONESEC_NANOS) < frtime) {
-                                e.updateShipVelocity(playerShip.getX(), playerShip.getY());
+                                newBerserkerVelocityX = b.updateShipVelocityX(playerShip.getX(), playerShip.getY());
+                                newBerserkerVelocityY = b.updateShipVelocityY(playerShip.getX(), playerShip.getY());
+
+                                differenceBerserkerVelocityX = newBerserkerVelocityX - e.getVx();
+                                differenceBerserkerVelocityY = newBerserkerVelocityY - e.getVy();
+
                                 b.setUpdateVelocityTime(System.nanoTime());
                             }
+
+                            //acceleration
+                            if (b.getLastAccelerationTime() + (ONESEC_NANOS / 30) < frtime) {
+                                e.setVx(e.getVx() + (differenceBerserkerVelocityX / 30));
+                                e.setVy(e.getVy() + (differenceBerserkerVelocityY / 30));
+                                b.setLastAccelerationTime(System.nanoTime());
+                            }
+
 
 
 

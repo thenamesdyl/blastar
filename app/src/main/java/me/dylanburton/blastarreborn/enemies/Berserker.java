@@ -12,6 +12,7 @@ import me.dylanburton.blastarreborn.utils.HeatSinker;
 public class Berserker extends Enemy {
     private HeatSinker hs;
     private long updateVelocityTime;
+    private long lastAccelerationTime;
 
     public Berserker(Bitmap shipBitmap){
         super(shipBitmap, EnemyType.BERSERKER);
@@ -21,11 +22,14 @@ public class Berserker extends Enemy {
     }
 
 
-    @Override
-    public void updateShipVelocity(float cpx, float cpy){
+    public float updateShipVelocityX(float cpx, float cpy){
         hs.updateHeatsink(getX(), getY(), cpx, cpy);
-        setVx(hs.getDx());
-        setVy(hs.getDy());
+        return hs.getDx();
+    }
+
+    public float updateShipVelocityY(float cpx, float cpy){
+        hs.updateHeatsink(getX(), getY(), cpx, cpy);
+        return hs.getDy();
     }
 
 
@@ -36,5 +40,14 @@ public class Berserker extends Enemy {
     public void setUpdateVelocityTime(long updateVelocityTime) {
         this.updateVelocityTime = updateVelocityTime;
     }
+
+    public long getLastAccelerationTime() {
+        return lastAccelerationTime;
+    }
+
+    public void setLastAccelerationTime(long lastAccelerationTime) {
+        this.lastAccelerationTime = lastAccelerationTime;
+    }
+
 
 }

@@ -71,9 +71,6 @@ public class Enemy extends Ship {
         this.enemyType = enemyType;
     }
 
-    public void updateShipVelocity(float cpx, float cpy){} //to be overwritten by enemies like berserkers who have their own movement patterns
-
-
     public Bitmap getBitmap(){
         return btm;
     }

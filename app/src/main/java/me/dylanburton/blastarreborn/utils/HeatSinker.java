@@ -5,10 +5,6 @@ package me.dylanburton.blastarreborn.utils;
  */
 
 public class HeatSinker {
-    private int currentPlayershipLocationX;
-    private int currentPlayershipLocationY;
-    private float x;
-    private float y;
     private float dx;
     private float dy;
 
@@ -22,8 +18,9 @@ public class HeatSinker {
         cpx = cpx - x;
 
         //slows dividing by 50 makes sure the ship doesnt teleport instantly to the ships coordinates
-        dy = cpy/200;
-        dx = cpx/200;
+        dy = cpy/100;
+        dx = cpx/100;
+
 
     }
 
