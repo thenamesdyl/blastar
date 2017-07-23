@@ -315,7 +315,11 @@ public class PlayScreen extends Screen {
         if (gamestate == State.RUNNING ) {
 
             //live percentages for lives rectangle
-            livesPercentage = width/12 - (((width/12-width/2)/5)*lives);
+            if(lives >= 0) {
+                livesPercentage = width / 5 - (((width / 5 - width / 2) / 5) * lives);
+            }else{
+                livesPercentage = width / 5;
+            }
 
             synchronized (enemiesFlying) {
                 Iterator<Enemy> enemiesIterator = enemiesFlying.iterator();
@@ -835,10 +839,15 @@ public class PlayScreen extends Screen {
                 }
             }
 
-            p.setColor(Color.rgb(150,150,150));
+
+
+            //live counter
+            p.setColor(Color.rgb(20,20,20));
             c.drawRect(0, 0 , width, height/17, p);
             p.setColor(Color.rgb(255,0,0));
-            c.drawRect(width/12, height/30, livesPercentage, height/20, p);
+            c.drawRect(width/5, height/30, livesPercentage, height/20, p);
+            p.setColor(Color.rgb(255,255,255));
+            drawCenteredText(c, "Life", height/20, p, -width*35/100);
 
             p.setColor(Color.WHITE);
             p.setTextSize(act.TS_NORMAL);
