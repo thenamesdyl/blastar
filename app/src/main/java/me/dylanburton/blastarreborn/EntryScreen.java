@@ -16,7 +16,7 @@ import java.io.InputStream;
 public class EntryScreen extends Screen {
     MainActivity act;
     Paint p = new Paint();
-    Bitmap screenbtm, playbtm, exitbtm;
+    Bitmap screenbtm, asteroid;
     Rect scaledDst = new Rect(); // generic rect for scaling
     Rect playBtnBounds = null;
     Rect exitBtnBounds = null;
@@ -33,10 +33,7 @@ public class EntryScreen extends Screen {
             screenbtm = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
 
-
-            playbtm = act.getScaledBitmap("playbtn.png");
-
-            exitbtm = act.getScaledBitmap("exitbtn.png");
+            asteroid = act.getScaledBitmap("asteroid.png");
         }
         catch (Exception e) {
             // what to do with an exception here on android?
@@ -61,14 +58,14 @@ public class EntryScreen extends Screen {
         height = v.getHeight();
         if (playBtnBounds == null) {
             // initialize button locations
-            playBtnBounds = new Rect(width/2 - playbtm.getWidth()/2,
-                    height/6 - playbtm.getHeight(),
-                    width/2 + playbtm.getWidth()/2,
-                    height/6 + playbtm.getHeight()/2);
-            exitBtnBounds = new Rect(width*85/100 - exitbtm.getWidth()/2,
-                    height*3/5  - exitbtm.getHeight()/2,
-                    width*4/5 + exitbtm.getWidth()/2,
-                    height*4/5 + exitbtm.getHeight()/2);
+            playBtnBounds = new Rect(width/4,
+                    height/10,
+                    width*3/4,
+                    height/4);
+            exitBtnBounds = new Rect(width*7/10,
+                    height*2/3,
+                    width*8/9,
+                    height*4/5);
         }
 
         // draw the screen
@@ -88,12 +85,12 @@ public class EntryScreen extends Screen {
         p.setColor(Color.rgb(255,55,55));
         p.setTextSize(200);
 
-        drawCenteredText(c, "Play", height*22/100-playbtm.getHeight()/2,p,0);
+        drawCenteredText(c, "Play", height/6,p,0);
         p.setColor(Color.rgb(0,0,0));
         p.setTextSize(70);
-        drawCenteredText(c, "About", height*78/100-playbtm.getHeight()/2,p,-width*31/100);
+        drawCenteredText(c, "About", height*73/100,p,-width*31/100);
         p.setTextSize(70);
-        drawCenteredText(c, "Exit", height*78/100-playbtm.getHeight()/2,p,+width*31/100);
+        drawCenteredText(c, "Exit", height*73/100,p,+width*31/100);
         p.setTextSize(300);
         p.setColor(Color.rgb(255,255,255));
         drawCenteredText(c, "Blastar", height*14/15,p,0);
