@@ -367,7 +367,7 @@ public class PlayScreen extends Screen {
 
 
                     //ship explodes when charges into opposite side of screen
-                    if(e.getY() > height*8/9){
+                    if(e.getY() > height*12/13){
                         addEnemyExplosion(e);
                         e.setY(0);
                     }
