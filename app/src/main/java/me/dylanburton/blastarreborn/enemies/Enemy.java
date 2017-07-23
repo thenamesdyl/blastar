@@ -261,5 +261,4 @@ public class Enemy extends Ship {
         this.enemyType = enemyType;
     }
 
-
 }

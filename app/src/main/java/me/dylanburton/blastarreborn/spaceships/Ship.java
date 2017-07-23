@@ -7,8 +7,8 @@ package me.dylanburton.blastarreborn.spaceships;
 //will eventually integrate this, but for now its just for inheritance
 public class Ship {
 
-    float x;
-    float y;
+    float x = 0;
+    float y = 0;
 
     public Ship(){}
 
