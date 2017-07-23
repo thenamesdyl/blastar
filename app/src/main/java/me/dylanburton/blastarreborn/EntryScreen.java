@@ -25,12 +25,18 @@ public class EntryScreen extends Screen {
 
     private MainActivity act;
     private Paint p = new Paint();
-    private Bitmap screenbtm, asteroidBmp, starbackground;
+    private Bitmap screenbtm, asteroidBmp, starbackground, grayedShip;
     private Rect scaledDst = new Rect(); // generic rect for scaling
     private Rect playBtnBounds = null;
     private Rect exitBtnBounds = null;
     private Rect scaledAsteroidDst = new Rect();
     private long lastSpawnedAsteroid = 0;
+
+    private long lastSpedUpTime = 0;
+    private float grayedShipVelocityXChange = -.1f;
+    private float grayedShipDx = 0;
+    private float grayedShipX = 0;
+    private float grayedShipY = 0;
 
     private List<Asteroid> asteroidList = new LinkedList<Asteroid>();
 
@@ -55,6 +61,8 @@ public class EntryScreen extends Screen {
             asteroidBmp = act.getScaledBitmap("asteroid.png");
 
             starbackground = act.getScaledBitmap("maps/sidescrollingstars.jpg");
+
+            grayedShip = act.getScaledBitmap("grayedship.png");
         }
         catch (Exception e) {
             // what to do with an exception here on android?
@@ -65,6 +73,14 @@ public class EntryScreen extends Screen {
     @Override
     public void update(View v) {
         //nothing to update
+        if(width == 0){
+            width = v.getWidth();
+            height = v.getHeight();
+
+            grayedShipX = width*42/100;
+            grayedShipY = height*68/100;
+        }
+
     }
 
 
@@ -77,8 +93,6 @@ public class EntryScreen extends Screen {
     public void draw(Canvas c, View v) {
         frtime = System.nanoTime();
 
-        width = v.getWidth();
-        height = v.getHeight();
 
         if (playBtnBounds == null) {
             // initialize button locations
@@ -134,6 +148,26 @@ public class EntryScreen extends Screen {
         }
 
         c.drawBitmap(screenbtm, null, scaledDst, p);
+
+
+        c.drawBitmap(grayedShip, grayedShipX, grayedShipY, p);
+
+        if(lastSpedUpTime + (ONESEC_NANOS/30) < frtime) {
+
+            if(grayedShipDx > .95 || grayedShipDx < -1){
+                grayedShipVelocityXChange = - grayedShipVelocityXChange;
+            }
+
+            grayedShipDx = grayedShipDx + grayedShipVelocityXChange;
+            grayedShipX = grayedShipX + grayedShipDx;
+
+            lastSpedUpTime = System.nanoTime();
+
+        }
+
+
+
+
 
 
         // version/copyright line
