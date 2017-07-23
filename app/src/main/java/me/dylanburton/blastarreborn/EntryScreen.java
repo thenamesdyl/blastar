@@ -95,7 +95,7 @@ public class EntryScreen extends Screen {
         if(lastSpawnedAsteroid + (ONESEC_NANOS*randomAsteroidSpawnTime) < frtime){
             asteroidList.add(new Asteroid(width, height));
             lastSpawnedAsteroid = System.nanoTime();
-            randomAsteroidSpawnTime = rand.nextInt(5);
+            randomAsteroidSpawnTime = rand.nextInt(5)+1;
         }
 
         // draw the screen
@@ -175,7 +175,6 @@ public class EntryScreen extends Screen {
     private class Asteroid{
         //asteroid stuff
         private Random rand = new Random();
-        private int randomAsteroidSpawnTime = 0;
         private int randomDirection = 0;
         private int smallerXScale = 8;
         private int largerXScale = 15;
