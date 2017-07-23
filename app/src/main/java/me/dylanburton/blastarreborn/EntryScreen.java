@@ -38,6 +38,13 @@ public class EntryScreen extends Screen {
     private float grayedShipX = 0;
     private float grayedShipY = 0;
 
+    private int xStretch = 0;
+    private int yStretch = 0;
+    private int playSubtract;
+    private long startAnimationTime = 0;
+
+    private boolean startAnimation = false;
+
     private List<Asteroid> asteroidList = new LinkedList<Asteroid>();
 
     private Random rand = new Random();
@@ -47,6 +54,8 @@ public class EntryScreen extends Screen {
     private long frtime = 0;
     private int width;
     private int height;
+    private int realWidth;
+    private int realHeight;
 
 
     public EntryScreen(MainActivity act) {
@@ -77,6 +86,10 @@ public class EntryScreen extends Screen {
             width = v.getWidth();
             height = v.getHeight();
 
+            //this is the things that shouldnt stretch on play
+            realHeight = v.getHeight();
+            realWidth = v.getWidth();
+
             grayedShipX = width*42/100;
             grayedShipY = height*68/100;
         }
@@ -106,6 +119,15 @@ public class EntryScreen extends Screen {
                     height*4/5);
         }
 
+
+        if(startAnimation){
+            width = width + 60;
+            height = height +120;
+            xStretch = xStretch- 60;
+            yStretch = yStretch-65;
+
+        }
+
         if(lastSpawnedAsteroid + (ONESEC_NANOS*randomAsteroidSpawnTime) < frtime){
             asteroidList.add(new Asteroid(width, height));
             lastSpawnedAsteroid = System.nanoTime();
@@ -114,7 +136,10 @@ public class EntryScreen extends Screen {
 
         // draw the screen
         scaledDst.set(0, 0, width, height);
-        c.drawBitmap(starbackground,null,scaledDst,p);
+        if(startAnimation){
+            scaledDst.set(xStretch, yStretch, width, height);
+        }
+        c.drawBitmap(starbackground,null,new Rect(0,0,realWidth,realHeight),p);
 
         //0 is left, 1 is right for asteroid
         for(Asteroid a: asteroidList) {
@@ -157,6 +182,9 @@ public class EntryScreen extends Screen {
             if(grayedShipDx > .95 || grayedShipDx < -1){
                 grayedShipVelocityXChange = - grayedShipVelocityXChange;
             }
+            if(startAnimation){
+                grayedShipY = grayedShipY + 250;
+            }
 
             grayedShipDx = grayedShipDx + grayedShipVelocityXChange;
             grayedShipX = grayedShipX + grayedShipDx;
@@ -183,7 +211,12 @@ public class EntryScreen extends Screen {
         p.setColor(Color.rgb(255,55,55));
         p.setTextSize(200);
 
-        drawCenteredText(c, "Play", height/6,p,0);
+        if(!startAnimation) {
+            drawCenteredText(c, "Play", realHeight / 6, p, 0);
+        }else{
+            playSubtract = playSubtract + 30;
+            drawCenteredText(c, "Play", realHeight / 6 - playSubtract, p, 0);
+        }
         p.setColor(Color.rgb(0,0,0));
         p.setTextSize(70);
         drawCenteredText(c, "About", height*73/100,p,-width*31/100);
@@ -193,12 +226,27 @@ public class EntryScreen extends Screen {
         p.setColor(Color.rgb(255,255,255));
         drawCenteredText(c, "Blastar", height*14/15,p,0);
 
+        if(startAnimation && startAnimationTime + (ONESEC_NANOS*2) < frtime){
+            width = v.getWidth();
+            height = v.getHeight();
+            startAnimation = false;
+            yStretch = 0;
+            xStretch = 0;
+            playSubtract = 0;
+            grayedShipY = height*68/100;
+            act.startGame();
+
+        }
+
     }
 
     @Override
     public boolean onTouch(MotionEvent e) {
-        if (playBtnBounds.contains((int)e.getX(), (int)e.getY()))
-            act.startGame();
+        if (playBtnBounds.contains((int)e.getX(), (int)e.getY())) {
+            // act.startGame()
+            startAnimation = true;
+            startAnimationTime = System.nanoTime();
+        }
         if (exitBtnBounds.contains((int)e.getX(), (int)e.getY()))
             act.exit();
 
