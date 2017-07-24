@@ -8,10 +8,17 @@ import android.graphics.Bitmap;
 
 public class Battleship extends Enemy {
 
+    private static final int RANDOM_DIRECTION_SPEED = 5000;
+
     public Battleship(Bitmap shipBitmap){
         //calls main Enemy constructor
         super(shipBitmap, EnemyType.BATTLESHIP);
-        setAIDisabled(true);
+
+    }
+
+    @Override
+    public int getRandomDirectionSpeed(){
+        return RANDOM_DIRECTION_SPEED;
 
     }
 

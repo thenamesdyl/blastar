@@ -52,11 +52,6 @@ public class PlayScreen extends Screen {
     private Paint p;
     //how fast the spaceship moves backwards
     private static final int DECAY_SPEED=5;
-    private static final int LEVEL_FIGHTER = 1;  // level where different ships are added
-    private static final int LEVEL_IMPERIAL = 3;
-    private static final int LEVEL_BATTLECRUISER = 4;
-    private static final int LEVEL_BATTLESHIP = 5;
-    private static final int LEVEL_BERSERKER = 6;
     private static final long ONESEC_NANOS = 1000000000L;
 
     private enum State {        RUNNING, STARTGAME, PLAYERDIED, WIN    }
@@ -462,19 +457,18 @@ public class PlayScreen extends Screen {
                             //I present to you, next stage of enemy movement and all its glory
                             if (e.isFinishedVelocityChange()) {
 
+                                e.setRandomVelocityGeneratorX((rand.nextInt(e.getRandomDirectionSpeed()) + 1000) / 1000);
+                                e.setRandomVelocityGeneratorY((rand.nextInt(e.getRandomDirectionSpeed()) + 1000) / 1000);
 
-                                e.setRandomVelocityGeneratorX((rand.nextInt(10000) + 1000) / 1000);
-                                e.setRandomVelocityGeneratorY((rand.nextInt(10000) + 1000) / 1000);
 
-
-                                //makes it negative if it is bigger than 5
-                                if (e.getRandomVelocityGeneratorX() > 5) {
-                                    e.setRandomVelocityGeneratorX(e.getRandomVelocityGeneratorX() - 11);
+                                //makes it negative if it is bigger than half
+                                if (e.getRandomVelocityGeneratorX() > e.getRandomDirectionSpeed()/2) {
+                                    e.setRandomVelocityGeneratorX(e.getRandomVelocityGeneratorX() - e.getRandomDirectionSpeed());
                                 }
 
 
-                                if (e.getRandomVelocityGeneratorY() > 5) {
-                                    e.setRandomVelocityGeneratorY(e.getRandomVelocityGeneratorY() - 11);
+                                if (e.getRandomVelocityGeneratorY() > e.getRandomDirectionSpeed()/2) {
+                                    e.setRandomVelocityGeneratorY(e.getRandomVelocityGeneratorY() - e.getRandomDirectionSpeed());
 
                                 }
 

@@ -258,4 +258,7 @@ public class Enemy extends Ship {
         this.enemyType = enemyType;
     }
 
+
+    public int getRandomDirectionSpeed() {return 0;} //override
+
 }
