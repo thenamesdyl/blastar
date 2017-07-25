@@ -1,5 +1,6 @@
 package me.dylanburton.blastarreborn.levels;
 
+import android.graphics.Bitmap;
 import android.view.View;
 
 /**
@@ -9,4 +10,6 @@ import android.view.View;
 public abstract class Level {
     public abstract void checkLevelSequence();
     public abstract void setUpdateCheckerBoundary(int updateBoundaryChecker);
+    public abstract Bitmap getMap();
+
 }

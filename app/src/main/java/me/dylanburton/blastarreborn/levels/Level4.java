@@ -11,21 +11,21 @@ import me.dylanburton.blastarreborn.PlayScreen;
 import me.dylanburton.blastarreborn.enemies.EnemyType;
 
 /**
- * Created by Dylan on 7/17/2017.
+ * Created by Dylan on 7/25/2017.
  */
 
-public class Level1 extends Level{
+public class Level4 extends Level {
     private Bitmap map;
     private PlayScreen ps;
     private int updateCheckerBoundary = 0; //defends against the checkers constantly drawing ships
 
-    public Level1(PlayScreen ps, MainActivity act){
+    public Level4(PlayScreen ps, MainActivity act){
 
         this.ps = ps;
 
         try {
             AssetManager assetManager = act.getAssets();
-            InputStream inputStream = assetManager.open("maps/sidescrollingstars.jpg");
+            InputStream inputStream = assetManager.open("maps/lavamap.jpg");
             map = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
         }catch(Exception e){
@@ -67,7 +67,7 @@ public class Level1 extends Level{
             updateCheckerBoundary = 9;
         }
 
-        if(ps.getEnemiesDestroyed() == 0){
+        if(ps.getEnemiesDestroyed() == 10){
             ps.playerWon();
         }
 

@@ -38,6 +38,11 @@
         import me.dylanburton.blastarreborn.lasers.ShipLaser;
         import me.dylanburton.blastarreborn.levels.Level;
         import me.dylanburton.blastarreborn.levels.Level1;
+        import me.dylanburton.blastarreborn.levels.Level2;
+        import me.dylanburton.blastarreborn.levels.Level3;
+        import me.dylanburton.blastarreborn.levels.Level4;
+        import me.dylanburton.blastarreborn.levels.Level5;
+        import me.dylanburton.blastarreborn.levels.Level6;
         import me.dylanburton.blastarreborn.spaceships.PlayerShip;
         import me.dylanburton.blastarreborn.spaceships.ShipExplosion;
 
@@ -103,6 +108,8 @@ public class PlayScreen extends Screen {
     private int starsEarned = 0;
     private int starsEarnedFile = 0;
     private boolean levelCompleted = false;
+
+    private String[] receivingInfo = new String[12];
 
 
 
@@ -191,9 +198,34 @@ public class PlayScreen extends Screen {
 
         if(currentLevel == 1){
 
-            level = new Level1(this);
+            level = new Level1(this, act);
             level.checkLevelSequence();
 
+
+        }else if(currentLevel == 2){
+
+            level = new Level2(this, act);
+            level.checkLevelSequence();
+
+        }else if(currentLevel == 3){
+
+            level = new Level3(this, act);
+            level.checkLevelSequence();
+
+        }else if(currentLevel == 4){
+
+            level = new Level4(this, act);
+            level.checkLevelSequence();
+
+        }else if(currentLevel == 5){
+
+            level = new Level5(this, act);
+            level.checkLevelSequence();
+
+        }else if(currentLevel == 6){
+
+            level = new Level6(this, act);
+            level.checkLevelSequence();
 
         }
 
@@ -203,10 +235,10 @@ public class PlayScreen extends Screen {
             BufferedReader f = new BufferedReader(new FileReader(act.getFilesDir() + HIGHSCORE_FILE));
             String receiveString = "";
 
+
             //gets us to the right place
-            for (int i = 0; i < currentLevel-1; i++){
-                f.readLine();
-                f.readLine();
+            for (int i = 0; i < (currentLevel-1)*2; i++){
+                receivingInfo[i] = f.readLine();
             }
 
             f.readLine();//getting past level completed boolean
@@ -661,9 +693,9 @@ public class PlayScreen extends Screen {
 
             // actually draw the screen
             scaledDst.set(mapAnimatorX - width, mapAnimatorY - height, mapAnimatorX, mapAnimatorY);
-            c.drawBitmap(starbackground, null, scaledDst, p);
+            c.drawBitmap(level.getMap(), null, scaledDst, p);
             //secondary background for animation. Same as last draw, but instead, these are a height-length higher
-            c.drawBitmap(starbackground, null, new Rect(secondaryMapAnimatorX - width, secondaryMapAnimatorY - (height * 2), secondaryMapAnimatorX, secondaryMapAnimatorY - height), p);
+            c.drawBitmap(level.getMap(), null, new Rect(secondaryMapAnimatorX - width, secondaryMapAnimatorY - (height * 2), secondaryMapAnimatorX, secondaryMapAnimatorY - height), p);
 
             synchronized (enemiesFlying) {
                 for (Enemy e : enemiesFlying) {
@@ -893,6 +925,45 @@ public class PlayScreen extends Screen {
 
                 drawCenteredText(c, "Press to continue", height*4/5,p,0);
 
+                BufferedReader r = new BufferedReader(new FileReader(act.getFilesDir() + HIGHSCORE_FILE));
+                String receiveString = "";
+                int counter = 2;
+
+                while((receiveString = r.readLine()) != null){
+                    counter++;
+                    drawCenteredText(c, receiveString, height/counter, p, 0);
+                }
+
+                r.close();
+
+
+                //write to data file
+                try {
+
+                    BufferedWriter f = new BufferedWriter(new FileWriter(act.getFilesDir() + HIGHSCORE_FILE));
+
+
+
+                    int counter2 = 0;
+                    while(receivingInfo[counter2] != null){
+                        f.write(receivingInfo[counter2] + "\n");
+                        counter2++;
+                    }
+                    f.write(Boolean.toString(levelCompleted)+"\n");
+
+
+
+                    if (starsEarnedFile <= starsEarned) {
+                        f.write(Integer.toString(starsEarned) + "\n");
+                    }else{
+                        f.write(Integer.toString(starsEarnedFile) + "\n");
+                    }
+
+                    f.close();
+                } catch (Exception e) {
+                    Log.d(MainActivity.LOG_ID, "WriteHiScore", e);
+                }
+
             }
 
 
@@ -916,32 +987,6 @@ public class PlayScreen extends Screen {
 
 
 
-        //write to data file
-        try {
-            BufferedWriter f = new BufferedWriter(new FileWriter(act.getFilesDir() + HIGHSCORE_FILE));
-            BufferedReader r = new BufferedReader(new FileReader(act.getFilesDir() + HIGHSCORE_FILE));
-
-            //get to the right line
-            for (int i = 0; i < currentLevel - 1; i++){
-                r.readLine();
-                r.readLine();
-            }
-
-            f.write(Boolean.toString(levelCompleted)+"\n");
-
-
-
-            if (starsEarnedFile <= starsEarned) {
-                f.write(Integer.toString(starsEarned) + "\n");
-            }else{
-                f.write(Integer.toString(starsEarnedFile) + "\n");
-            }
-
-            r.close();
-            f.close();
-        } catch (Exception e) {
-            Log.d(MainActivity.LOG_ID, "WriteHiScore", e);
-        }
 
 
     }

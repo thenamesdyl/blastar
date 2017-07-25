@@ -89,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
      * load and scale bitmap according to the apps scale factors.
      *
      */
-    Bitmap getScaledBitmap(String fname) throws IOException
+    public Bitmap getScaledBitmap(String fname) throws IOException
     {
         sboptions.inScreenDensity = dm.densityDpi;
         sboptions.inTargetDensity =  dm.densityDpi;
@@ -126,15 +126,10 @@ public class MainActivity extends ActionBarActivity {
                 playScreen.resetGame();
 
 
-
-
-
             }else if(currentScreen == levelScreen){
                 currentScreen = entryScreen;
                 levelScreen.resetVariables();
             }
-
-            onWindowFocusChanged(true);
 
         }else{
             System.exit(0);

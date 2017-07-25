@@ -203,18 +203,28 @@ public class LevelScreen extends Screen {
 
     @Override
     public boolean onTouch(MotionEvent e) {
-        //todo implement this screen with level selection choices
 
-        /*
-        Boundaries for level selector.
-        ps.setCurrentLevel(selected);
-        act.startGame();
-         */
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
 
                 if (level[0].contains((int) e.getX(), (int) e.getY())) {
+                    resetVariables();
                     act.startGame(1);
+                }else if (level[1].contains((int) e.getX(), (int) e.getY()) && levelFinished[0]) {
+                    resetVariables();
+                    act.startGame(2);
+                }else if (level[2].contains((int) e.getX(), (int) e.getY()) && levelFinished[1]) {
+                    resetVariables();
+                    act.startGame(3);
+                }else if (level[3].contains((int) e.getX(), (int) e.getY()) && levelFinished[2]) {
+                    resetVariables();
+                    act.startGame(4);
+                }else if (level[4].contains((int) e.getX(), (int) e.getY()) && levelFinished[3]) {
+                    resetVariables();
+                    act.startGame(5);
+                }else if (level[5].contains((int) e.getX(), (int) e.getY()) && levelFinished[4]) {
+                    resetVariables();
+                    act.startGame(6);
                 }
 
                 break;
