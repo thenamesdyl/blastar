@@ -924,19 +924,7 @@ public class PlayScreen extends Screen {
                 }
 
                 drawCenteredText(c, "Press to continue", height*4/5,p,0);
-
-                BufferedReader r = new BufferedReader(new FileReader(act.getFilesDir() + HIGHSCORE_FILE));
-                String receiveString = "";
-                int counter = 2;
-
-                while((receiveString = r.readLine()) != null){
-                    counter++;
-                    drawCenteredText(c, receiveString, height/counter, p, 0);
-                }
-
-                r.close();
-
-
+                
                 //write to data file
                 try {
 
