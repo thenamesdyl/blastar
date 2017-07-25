@@ -2,12 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.dylanburton.blastarreborn">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-sdk
         android:minSdkVersion="18"
         android:targetSdkVersion="26" />
 
     <application
+
         android:allowBackup="true"
         android:icon="@mipmap/spaceshiptopview1"
         android:label="@string/app_name"

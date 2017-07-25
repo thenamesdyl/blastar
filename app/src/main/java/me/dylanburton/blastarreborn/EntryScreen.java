@@ -212,10 +212,10 @@ public class EntryScreen extends Screen {
         p.setTextSize(200);
 
         if(!startAnimation) {
-            drawCenteredText(c, "Play", realHeight / 6, p, 0);
+            c.drawText("Play", realWidth*335/1000, realHeight/6,p);
         }else{
             playSubtract = playSubtract + 30;
-            drawCenteredText(c, "Play", realHeight / 6 - playSubtract, p, 0);
+            c.drawText("Play", realWidth*335/1000, realHeight/6-playSubtract,p);
         }
         p.setColor(Color.rgb(0,0,0));
         p.setTextSize(70);
@@ -226,7 +226,7 @@ public class EntryScreen extends Screen {
         p.setColor(Color.rgb(255,255,255));
         drawCenteredText(c, "Blastar", height*14/15,p,0);
 
-        if(startAnimation && startAnimationTime + (ONESEC_NANOS*2) < frtime){
+        if(startAnimation && startAnimationTime + (ONESEC_NANOS*1.6) < frtime){
             width = v.getWidth();
             height = v.getHeight();
             startAnimation = false;
@@ -234,7 +234,7 @@ public class EntryScreen extends Screen {
             xStretch = 0;
             playSubtract = 0;
             grayedShipY = height*68/100;
-            act.startGame();
+            act.startLevelScreen();
 
         }
 

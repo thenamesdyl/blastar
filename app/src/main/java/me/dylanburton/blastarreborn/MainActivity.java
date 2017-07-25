@@ -37,9 +37,11 @@ public class MainActivity extends ActionBarActivity {
     DisplayMetrics dm;
     Screen entryScreen;
     PlayScreen playScreen;
+    LevelScreen levelScreen;
     Screen currentScreen;
     FullScreenView mainView;
     Typeface gamefont;
+    Typeface levelfont;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,7 @@ public class MainActivity extends ActionBarActivity {
             dm = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(dm);
             gamefont = Typeface.createFromAsset(getAssets(), "fonts/elitedanger.ttf");
+            levelfont = Typeface.createFromAsset(getAssets(), "fonts/sugarpunch.ttf");
 
             //consistent dpi/screen stuff
             densityscalefactor = (float)dm.densityDpi / EXPECTED_DENSITY;
@@ -70,6 +73,7 @@ public class MainActivity extends ActionBarActivity {
             // create screens
             entryScreen = new EntryScreen(this);
             playScreen = new PlayScreen(this);
+            levelScreen = new LevelScreen(playScreen, this);
 
             mainView = new FullScreenView(this);
             setContentView(mainView);
@@ -117,14 +121,18 @@ public class MainActivity extends ActionBarActivity {
             if(currentScreen == playScreen){
 
 
+                levelScreen.resetVariables();
                 playScreen.resetGame();
+                currentScreen = levelScreen;
+
+
+
+
+            }else if(currentScreen == levelScreen){
+                levelScreen.resetVariables();
                 currentScreen = entryScreen;
-
-
-
-
             }
-            currentScreen = entryScreen;
+
             onWindowFocusChanged(true);
 
         }else{
@@ -153,14 +161,21 @@ public class MainActivity extends ActionBarActivity {
     public Typeface getGameFont() {
         return gamefont;
     }
+    public Typeface getLevelFont() {
+        return levelfont;
+    }
 
 
     /**
      * Start a new game.
      */
-    public void startGame() {
-        this.playScreen.initGame();
+    public void startGame(int level) {
+        this.playScreen.initGame(level);
         currentScreen = this.playScreen;
+    }
+
+    public void startLevelScreen(){
+        currentScreen = this.levelScreen;
     }
 
     /**
@@ -206,7 +221,7 @@ public class MainActivity extends ActionBarActivity {
                 while(isRendering){
                     while(!holder.getSurface().isValid()) {
                         try {
-                            Thread.sleep(10);
+                            Thread.sleep(5);
                         } catch (Exception e) { /* we don't care */  }
                     }
 

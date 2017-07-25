@@ -86,15 +86,13 @@ public class PlayScreen extends Screen {
     private float elapsedSecs;
     private int fps = 0;
 
-
     //various game things
     private int enemiesDestroyed = 0;
     private int minRoundPass;
     private int currentLevel;
     private int score;
     private int lives;
-    private int highscore=0, highlev=1;
-    private static final String HIGHSCORE_FILE = "highscore.dat";
+    private static final String HIGHSCORE_FILE = "scoredata.dat";
     private static final int START_NUMLIVES = 5;
     private Map<Integer, String> levelMap = new HashMap<Integer, String>();
     private Level level;
@@ -102,9 +100,9 @@ public class PlayScreen extends Screen {
 
     private int livesPercentage; //for lives counter
 
-    private long lastStarDrawTime = 0;
     private int starsEarned = 0;
-    private int starPositionCounter = 3;
+    private int starsEarnedFile = 0;
+    private boolean levelCompleted = false;
 
 
 
@@ -183,14 +181,13 @@ public class PlayScreen extends Screen {
     /**
      * initialize and start a game
      */
-    void initGame() {
+    void initGame(int currentLevel) {
 
         //used for slight delays on spawning things at the beginning
         gameStartTime = System.nanoTime();
         score = 0;
-        currentLevel = 1;
+        this.currentLevel = currentLevel;
         lives = START_NUMLIVES;
-        highscore = 0;
 
         if(currentLevel == 1){
 
@@ -200,15 +197,28 @@ public class PlayScreen extends Screen {
 
         }
 
+        gamestate = State.RUNNING;
+
         try {
             BufferedReader f = new BufferedReader(new FileReader(act.getFilesDir() + HIGHSCORE_FILE));
-            highscore = Integer.parseInt(f.readLine());
-            highlev = Integer.parseInt(f.readLine());
-            f.close();
-        } catch (Exception e) {
-            Log.d(MainActivity.LOG_ID, "ReadHighScore", e);
+            String receiveString = "";
+
+            //gets us to the right place
+            for (int i = 0; i < currentLevel-1; i++){
+                f.readLine();
+                f.readLine();
+            }
+
+            f.readLine();//getting past level completed boolean
+            if((receiveString = f.readLine())!= null) {
+                starsEarnedFile = Integer.parseInt(receiveString);
+            }
+
+        }catch (Exception e){
+
         }
-        gamestate = State.STARTGAME;
+
+
     }
 
 
@@ -226,25 +236,9 @@ public class PlayScreen extends Screen {
         }
         enemiesDestroyed = 0;
         level.setUpdateCheckerBoundary(0);
+        firstStarTimeCheck = 0;
+        secondStarTimeCheck = 0;
 
-    }
-
-
-    /**
-     * init game for current round
-     */
-    private void initRound() {
-
-        // how many enemies do we need to kill to progress?
-        if (currentLevel == 1)
-            minRoundPass = 10;
-        else if (currentLevel < 4)
-            minRoundPass = 30;
-        else
-            minRoundPass = 40;
-
-
-        gamestate = State.RUNNING;
     }
 
     /**
@@ -286,12 +280,6 @@ public class PlayScreen extends Screen {
         fps = (int) (1 / elapsedSecs);
 
         level.checkLevelSequence();//updates level spawning enemies
-
-        if (gamestate == State.STARTGAME) {
-
-            initRound();
-            return;
-        }
 
         if (width == 0) {
             // set variables that rely on screen size
@@ -818,14 +806,6 @@ public class PlayScreen extends Screen {
 
                             //end of game folks, thanks for playing
                             gamestate = State.PLAYERDIED;
-                            try {
-                                BufferedWriter f = new BufferedWriter(new FileWriter(act.getFilesDir() + HIGHSCORE_FILE));
-                                f.write(Integer.toString(highscore)+"\n");
-                                f.write(Integer.toString(highlev)+"\n");
-                                f.close();
-                            } catch (Exception e) { // if we can't write the high score file...oh well.
-                                Log.d(MainActivity.LOG_ID, "WriteHiScore", e);
-                            }
 
                         }
                     }
@@ -847,10 +827,6 @@ public class PlayScreen extends Screen {
             p.setTextSize(act.TS_NORMAL);
             p.setTypeface(act.getGameFont());
 
-            if (score >= highscore) {
-                highscore = score;
-                highlev = currentLevel;
-            }
 
 
             if (gamestate == State.WIN || gamestate == State.PLAYERDIED) {
@@ -916,13 +892,6 @@ public class PlayScreen extends Screen {
 
                 drawCenteredText(c, "Press to continue", height*4/5,p,0);
 
-                /*p.setTextSize(act.TS_BIG);
-                p.setColor(Color.RED);
-                drawCenteredText(c, "GamE oVeR!", height /2, p, -2);
-                drawCenteredText(c, "Touch to end game", height * 4 /5, p, -2);
-                p.setColor(Color.WHITE);
-                drawCenteredText(c, "GamE oVeR!", height /2, p, 0);
-                drawCenteredText(c, "Touch to end game", height * 4 /5, p, 0);*/
             }
 
 
@@ -942,6 +911,38 @@ public class PlayScreen extends Screen {
             starsEarned = 1;
         }
         gamestate = State.WIN;
+        levelCompleted = true;
+
+
+
+        //write to data file
+        try {
+            BufferedWriter f = new BufferedWriter(new FileWriter(act.getFilesDir() + HIGHSCORE_FILE));
+            BufferedReader r = new BufferedReader(new FileReader(act.getFilesDir() + HIGHSCORE_FILE));
+
+            //get to the right line
+            for (int i = 0; i < currentLevel - 1; i++){
+                r.readLine();
+                r.readLine();
+            }
+
+            f.write(Boolean.toString(levelCompleted)+"\n");
+
+
+
+            if (starsEarnedFile <= starsEarned) {
+                f.write(Integer.toString(starsEarned) + "\n");
+            }else{
+                f.write(Integer.toString(starsEarnedFile) + "\n");
+            }
+
+            r.close();
+            f.close();
+        } catch (Exception e) {
+            Log.d(MainActivity.LOG_ID, "WriteHiScore", e);
+        }
+
+
     }
 
     public void spawnEnemy(EnemyType enemyType){
@@ -976,10 +977,6 @@ public class PlayScreen extends Screen {
     public boolean onTouch(MotionEvent e) {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(gamestate == State.PLAYERDIED || gamestate == State.WIN){
-                    act.onBackPressed(); //just simulates them pressing the back button, resets the game stats and whatnot
-                }
-
 
                 break;
 
@@ -994,8 +991,23 @@ public class PlayScreen extends Screen {
                 }
 
                 break;
-
             case MotionEvent.ACTION_UP:
+                //just using these time checks so I dont have to make a new one. There is no flush mouse hits method for some reason so I have to add a delay
+                if(firstStarTimeCheck != 0) {
+                    if (firstStarTimeCheck + (ONESEC_NANOS * 2) < frtime) {
+                        if ((gamestate == State.PLAYERDIED || gamestate == State.WIN)) {
+                            act.onBackPressed(); //just simulates them pressing the back button, resets the game stats and whatnot
+
+                        }
+                    }
+                }else{
+                    if(playerShip.getShipExplosionActivateTime() + (ONESEC_NANOS*2)<frtime){
+                        if ((gamestate == State.PLAYERDIED || gamestate == State.WIN)) {
+                            act.onBackPressed(); //just simulates them pressing the back button, resets the game stats and whatnot
+
+                        }
+                    }
+                }
                 playerShip.setSpaceshipIsMoving(false);
 
                 break;
