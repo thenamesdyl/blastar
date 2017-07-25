@@ -156,12 +156,29 @@ public class EntryScreen extends Screen {
                     a.currentAsteroidY[1] = a.currentAsteroidY[1] + a.YScale;
                     a.currentAsteroidY[0] = a.currentAsteroidY[0] - a.YScale;
 
+                    //lets get a move on...
+                    if(startAnimation){
+                        a.currentAsteroidX[1] = a.currentAsteroidX[1] - 50;
+                        a.currentAsteroidX[0] = a.currentAsteroidX[0] - 70;
+
+                        a.currentAsteroidY[1] = a.currentAsteroidY[1] + 3;
+                        a.currentAsteroidY[0] = a.currentAsteroidY[0] - 3;
+                    }
+
                 } else {
                     a.currentAsteroidX[0] = a.currentAsteroidX[0] + a.smallerXScale;
                     a.currentAsteroidX[1] = a.currentAsteroidX[1] + a.largerXScale;
 
                     a.currentAsteroidY[1] = a.currentAsteroidY[1] + a.YScale;
                     a.currentAsteroidY[0] = a.currentAsteroidY[0] - a.YScale;
+
+                    if(startAnimation){
+                        a.currentAsteroidX[0] = a.currentAsteroidX[0] + 50;
+                        a.currentAsteroidX[1] = a.currentAsteroidX[1] + 70;
+
+                        a.currentAsteroidY[1] = a.currentAsteroidY[1] + 3;
+                        a.currentAsteroidY[0] = a.currentAsteroidY[0] - 3;
+                    }
 
                 }
                 a.lastScaleUpTime = System.nanoTime();
@@ -226,7 +243,7 @@ public class EntryScreen extends Screen {
         p.setColor(Color.rgb(255,255,255));
         drawCenteredText(c, "Blastar", height*14/15,p,0);
 
-        if(startAnimation && startAnimationTime + (ONESEC_NANOS*1.6) < frtime){
+        if(startAnimation && startAnimationTime + (ONESEC_NANOS/2) < frtime){
             width = v.getWidth();
             height = v.getHeight();
             startAnimation = false;

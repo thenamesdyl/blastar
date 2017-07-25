@@ -994,14 +994,14 @@ public class PlayScreen extends Screen {
             case MotionEvent.ACTION_UP:
                 //just using these time checks so I dont have to make a new one. There is no flush mouse hits method for some reason so I have to add a delay
                 if(firstStarTimeCheck != 0) {
-                    if (firstStarTimeCheck + (ONESEC_NANOS * 2) < frtime) {
+                    if (firstStarTimeCheck + (ONESEC_NANOS) < frtime) {
                         if ((gamestate == State.PLAYERDIED || gamestate == State.WIN)) {
                             act.onBackPressed(); //just simulates them pressing the back button, resets the game stats and whatnot
 
                         }
                     }
                 }else{
-                    if(playerShip.getShipExplosionActivateTime() + (ONESEC_NANOS*2)<frtime){
+                    if(playerShip.getShipExplosionActivateTime() + (ONESEC_NANOS)<frtime){
                         if ((gamestate == State.PLAYERDIED || gamestate == State.WIN)) {
                             act.onBackPressed(); //just simulates them pressing the back button, resets the game stats and whatnot
 

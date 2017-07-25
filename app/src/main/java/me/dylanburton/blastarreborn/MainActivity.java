@@ -122,15 +122,16 @@ public class MainActivity extends ActionBarActivity {
 
 
                 levelScreen.resetVariables();
-                playScreen.resetGame();
                 currentScreen = levelScreen;
+                playScreen.resetGame();
+
 
 
 
 
             }else if(currentScreen == levelScreen){
-                levelScreen.resetVariables();
                 currentScreen = entryScreen;
+                levelScreen.resetVariables();
             }
 
             onWindowFocusChanged(true);
@@ -221,7 +222,7 @@ public class MainActivity extends ActionBarActivity {
                 while(isRendering){
                     while(!holder.getSurface().isValid()) {
                         try {
-                            Thread.sleep(5);
+                            Thread.sleep(10);
                         } catch (Exception e) { /* we don't care */  }
                     }
 
