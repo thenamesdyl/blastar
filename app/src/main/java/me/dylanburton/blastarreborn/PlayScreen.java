@@ -229,6 +229,7 @@ public class PlayScreen extends Screen {
         height = 0;
         enemiesFlying.clear();
         shipLasers.clear();
+        shipExplosions.clear();
         startDelayReached = false;
         for(Enemy e: enemiesFlying){
             e.setFinishedVelocityChange(false);
