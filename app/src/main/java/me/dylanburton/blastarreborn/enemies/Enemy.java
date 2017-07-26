@@ -19,6 +19,7 @@ public class Enemy extends Ship {
     private final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
     private EnemyType enemyType;
     private Bitmap btm;
+    private Bitmap btmHit;
     private float vx=0;
     private float vy=0;
     private int points;
@@ -58,9 +59,10 @@ public class Enemy extends Ship {
 
     }
 
-    public Enemy(Bitmap bitmap, EnemyType enemyType) {
+    public Enemy(Bitmap bitmap, Bitmap btmHit, EnemyType enemyType) {
         setX(0);
         setY(500);
+        this.btmHit = btmHit;
         this.btm = bitmap;
         this.width = bitmap.getWidth();
         this.height = bitmap.getHeight();
@@ -74,6 +76,8 @@ public class Enemy extends Ship {
     public Bitmap getBitmap(){
         return btm;
     }
+    public Bitmap getHitBitmap(){ return btmHit;}
+    public void setHitBitmap(Bitmap btmHit){ this.btmHit = btmHit;}
     public boolean hasCollision(float collx, float colly) {
         return getBounds().contains((int) collx, (int) colly);
     }

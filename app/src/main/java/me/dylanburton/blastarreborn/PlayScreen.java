@@ -71,7 +71,7 @@ public class PlayScreen extends Screen {
     private int height = 0;
     //bitmap with a rect used for drawing
     private Bitmap starbackground, spaceship[], spaceshipHit[], spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText,filledstar,emptystar;
-    private Bitmap imperial, imperialHit, berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battleship, battleshipHit;
+    private Bitmap imperial, imperialHit, berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, mothership, mothershipHit;
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -158,11 +158,8 @@ public class PlayScreen extends Screen {
             battlecruiser = act.getScaledBitmap("enemies/mothership.png");
             battlecruiserHit = act.getScaledBitmap("enemies/mothershiphit.png");
 
-            battleship = act.getScaledBitmap("enemies/battleship.png");
-            battleshipHit = act.getScaledBitmap("enemies/battleshiphit.png");
-
-
-
+            mothership = act.getScaledBitmap("enemies/battleship.png");
+            mothershipHit = act.getScaledBitmap("enemies/battleshiphit.png");
 
             //explosion
             explosion = new Bitmap[12];
@@ -305,7 +302,10 @@ public class PlayScreen extends Screen {
             shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e));
         }else if(e.getEnemyType() == EnemyType.BERSERKER){
             shipExplosions.add(new ShipExplosion(e.getX() + e.getBitmap().getWidth()/3, e.getY() + e.getBitmap().getHeight()/3,e));
+        }else if(e.getEnemyType() == EnemyType.IMPERIAL){
+            shipExplosions.add(new ShipExplosion(e.getX() , e.getY() + e.getBitmap().getHeight()/3,e));
         }
+
         e.setX(10000);
         e.setAIDisabled(true);
         enemiesDestroyed++;
@@ -471,7 +471,7 @@ public class PlayScreen extends Screen {
                             e.setAIStarted(true);
                         }
 
-                        if (e.getEnemyType() == EnemyType.FIGHTER) {
+                        if (e.getEnemyType() == EnemyType.FIGHTER || e.getEnemyType() == EnemyType.IMPERIAL) {
                             for (int i = 0; i < enemiesFlying.size(); i++) {
                                 if ((e != enemiesFlying.get(i))) {
                                     if ((e.getX() >= enemiesFlying.get(i).getX() - enemiesFlying.get(i).getBitmap().getWidth() && e.getX() <= enemiesFlying.get(i).getX() + enemiesFlying.get(i).getBitmap().getWidth()) &&
@@ -714,18 +714,15 @@ public class PlayScreen extends Screen {
 
                         //puts like a red tinge on the enemy for 100 ms if hes hit
                         if (e.isEnemyHitButNotDead()) {
-                            if(e.getEnemyType() == EnemyType.BERSERKER){
-                                c.drawBitmap(berserkerHit, e.getX(), e.getY(), p);
-                            }else if(e.getEnemyType() == EnemyType.FIGHTER) {
-                                c.drawBitmap(fighterHit, e.getX(), e.getY(), p);
-                            }
+
+                            c.drawBitmap(e.getHitBitmap(), e.getX(), e.getY(), p);
 
                             if (e.getHitContactTimeForTinge() + (ONESEC_NANOS / 10) < frtime) {
                                 e.setEnemyIsHitButNotDead(false);
                             }
 
                         } else {
-                            if(e.getEnemyType() == EnemyType.FIGHTER) {
+                            if(e.getEnemyType() != EnemyType.BERSERKER) {
                                 c.drawBitmap(e.getBitmap(), e.getX(), e.getY(), p);
                             }else if(e.getEnemyType() == EnemyType.BERSERKER){
                                 if(e.getVy()>0){
@@ -998,17 +995,17 @@ public class PlayScreen extends Screen {
 
     public void spawnEnemy(EnemyType enemyType){
         if(enemyType == EnemyType.FIGHTER) {
-            enemiesFlying.add(new Fighter(fighter));
+            enemiesFlying.add(new Fighter(fighter, fighterHit));
         }else if(enemyType == EnemyType.IMPERIAL){
-            enemiesFlying.add(new Imperial(imperial));
+            enemiesFlying.add(new Imperial(imperial, imperialHit));
 
         }else if(enemyType == EnemyType.BERSERKER){
-            enemiesFlying.add(new Berserker(berserker));
+            enemiesFlying.add(new Berserker(berserker, berserkerHit));
 
         }else if(enemyType == EnemyType.BATTLESHIP){
-            enemiesFlying.add(new Mothership(battleship));
+            enemiesFlying.add(new Mothership(mothership, mothershipHit));
         }else if(enemyType == EnemyType.BATTLECRUISER){
-            enemiesFlying.add(new Battlecruiser(battlecruiser));
+            enemiesFlying.add(new Battlecruiser(battlecruiser, battlecruiserHit));
         }
     }
 
