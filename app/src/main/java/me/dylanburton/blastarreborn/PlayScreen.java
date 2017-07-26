@@ -109,7 +109,7 @@ public class PlayScreen extends Screen {
     private int starsEarnedFile = 0;
     private boolean levelCompleted = false;
 
-    private String[] receivingInfo = new String[12];
+    private String[] receivingInfo = new String[13];
 
 
 
@@ -241,13 +241,22 @@ public class PlayScreen extends Screen {
                 receivingInfo[i] = f.readLine();
             }
 
-            f.readLine();//getting past level completed boolean
-            if((receiveString = f.readLine())!= null) {
+            receiveString = f.readLine();
+
+            //this looks weird but works i swear on me mum
+            if(receiveString != "false" && (receiveString = f.readLine())!= null) {
                 starsEarnedFile = Integer.parseInt(receiveString);
+
+            }
+
+            //now read the rest if there is any
+            for(int i = ((currentLevel-1)*2)+2; i < 12; i++){
+                receivingInfo[i] = f.readLine();
             }
 
         }catch (Exception e){
 
+            e.printStackTrace();
         }
 
 
@@ -924,33 +933,8 @@ public class PlayScreen extends Screen {
                 }
 
                 drawCenteredText(c, "Press to continue", height*4/5,p,0);
-                
-                //write to data file
-                try {
+                drawCenteredText(c, "" + starsEarnedFile, height*3/5,p,0);
 
-                    BufferedWriter f = new BufferedWriter(new FileWriter(act.getFilesDir() + HIGHSCORE_FILE));
-
-
-
-                    int counter2 = 0;
-                    while(receivingInfo[counter2] != null){
-                        f.write(receivingInfo[counter2] + "\n");
-                        counter2++;
-                    }
-                    f.write(Boolean.toString(levelCompleted)+"\n");
-
-
-
-                    if (starsEarnedFile <= starsEarned) {
-                        f.write(Integer.toString(starsEarned) + "\n");
-                    }else{
-                        f.write(Integer.toString(starsEarnedFile) + "\n");
-                    }
-
-                    f.close();
-                } catch (Exception e) {
-                    Log.d(MainActivity.LOG_ID, "WriteHiScore", e);
-                }
 
             }
 
@@ -973,6 +957,40 @@ public class PlayScreen extends Screen {
         gamestate = State.WIN;
         levelCompleted = true;
 
+        //write to data file
+        try {
+
+            BufferedWriter f = new BufferedWriter(new FileWriter(act.getFilesDir() + HIGHSCORE_FILE));
+
+
+
+            for(int i = 0; i < (currentLevel-1)*2; i++){
+                f.write(receivingInfo[i] + "\n");
+            }
+
+
+            f.write(Boolean.toString(levelCompleted)+"\n");
+
+            if (starsEarnedFile <= starsEarned) {
+                f.write(Integer.toString(starsEarned) + "\n");
+            }else{
+                f.write(Integer.toString(starsEarnedFile) + "\n");
+            }
+
+            for(int i = ((currentLevel-1)*2)+2; i < 13; i++){
+                f.write(receivingInfo[i] + "\n");
+            }
+
+            /*int counter = (currentLevel-1)*2;
+            while(receivingInfo[counter] != null && counter != 12){
+                f.write(receivingInfo[counter]);
+                counter++;
+            }*/
+
+            f.close();
+        } catch (Exception e) {
+            Log.d(MainActivity.LOG_ID, "WriteHiScore", e);
+        }
 
 
 

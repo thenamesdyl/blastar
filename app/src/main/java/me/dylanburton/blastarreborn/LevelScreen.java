@@ -99,7 +99,6 @@ public class LevelScreen extends Screen {
                             levelFinished[currentLevel] = Boolean.parseBoolean(receiveString);
                             starsEarned[currentLevel] = Integer.parseInt(f.readLine());
                         }else{
-                            f.readLine();
                             levelFinished[currentLevel] = false;
                             starsEarned[currentLevel] = 0;
                         }
