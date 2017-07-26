@@ -27,7 +27,7 @@
         import java.util.Random;
 
         import me.dylanburton.blastarreborn.enemies.Battlecruiser;
-        import me.dylanburton.blastarreborn.enemies.Battleship;
+        import me.dylanburton.blastarreborn.enemies.Mothership;
         import me.dylanburton.blastarreborn.enemies.Berserker;
         import me.dylanburton.blastarreborn.enemies.Enemy;
         import me.dylanburton.blastarreborn.enemies.EnemyType;
@@ -155,8 +155,8 @@ public class PlayScreen extends Screen {
             berserkerHit = act.getScaledBitmap("enemies/berserkerhit.png");
             berserkerReverse = act.getScaledBitmap("enemies/berserkerreverse.png");
 
-            battlecruiser = act.getScaledBitmap("enemies/battlecruiser.png");
-            battlecruiserHit = act.getScaledBitmap("enemies/battlecruiserhit.png");
+            battlecruiser = act.getScaledBitmap("enemies/mothership.png");
+            battlecruiserHit = act.getScaledBitmap("enemies/mothershiphit.png");
 
             battleship = act.getScaledBitmap("enemies/battleship.png");
             battleshipHit = act.getScaledBitmap("enemies/battleshiphit.png");
@@ -933,7 +933,6 @@ public class PlayScreen extends Screen {
                 }
 
                 drawCenteredText(c, "Press to continue", height*4/5,p,0);
-                drawCenteredText(c, "" + starsEarnedFile, height*3/5,p,0);
 
 
             }
@@ -1007,7 +1006,7 @@ public class PlayScreen extends Screen {
             enemiesFlying.add(new Berserker(berserker));
 
         }else if(enemyType == EnemyType.BATTLESHIP){
-            enemiesFlying.add(new Battleship(battleship));
+            enemiesFlying.add(new Mothership(battleship));
         }else if(enemyType == EnemyType.BATTLECRUISER){
             enemiesFlying.add(new Battlecruiser(battlecruiser));
         }
