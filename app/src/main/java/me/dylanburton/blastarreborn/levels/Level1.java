@@ -60,6 +60,7 @@ public class Level1 extends Level{
                 for (int i = 0; i < 3; i++) {
                     ps.spawnEnemy(EnemyType.FIGHTER);
                 }
+                ps.spawnEnemy(EnemyType.BERSERKER);
             }else if(updateCheckerBoundary == 2){
                 updateCheckerBoundary = 4;
             }

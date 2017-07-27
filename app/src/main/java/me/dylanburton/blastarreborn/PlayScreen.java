@@ -71,7 +71,7 @@ public class PlayScreen extends Screen {
     private int height = 0;
     //bitmap with a rect used for drawing
     private Bitmap starbackground, spaceship[], spaceshipHit[], spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText,filledstar,emptystar;
-    private Bitmap imperial, imperialHit, berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, mothership, mothershipHit;
+    private Bitmap imperial, imperialHit, imperialOrb, berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, mothership, mothershipHit;
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -150,6 +150,7 @@ public class PlayScreen extends Screen {
 
             imperial = act.getScaledBitmap("enemies/imperial.png");
             imperialHit = act.getScaledBitmap("enemies/imperialhit.png");
+            imperialOrb = act.getScaledBitmap("enemies/imperialorb.png");
 
             berserker = act.getScaledBitmap("enemies/berserker.png");
             berserkerHit = act.getScaledBitmap("enemies/berserkerhit.png");
@@ -228,6 +229,8 @@ public class PlayScreen extends Screen {
 
         gamestate = State.RUNNING;
 
+
+        // add score data for level screen
         try {
             BufferedReader f = new BufferedReader(new FileReader(act.getFilesDir() + HIGHSCORE_FILE));
             String receiveString = "";
@@ -303,7 +306,7 @@ public class PlayScreen extends Screen {
         }else if(e.getEnemyType() == EnemyType.BERSERKER){
             shipExplosions.add(new ShipExplosion(e.getX() + e.getBitmap().getWidth()/3, e.getY() + e.getBitmap().getHeight()/3,e));
         }else if(e.getEnemyType() == EnemyType.IMPERIAL){
-            shipExplosions.add(new ShipExplosion(e.getX() , e.getY() + e.getBitmap().getHeight()/3,e));
+            shipExplosions.add(new ShipExplosion(e.getX() , e.getY() + e.getBitmap().getHeight()/4,e));
         }
 
         e.setX(10000);
@@ -442,7 +445,7 @@ public class PlayScreen extends Screen {
                                 shipLasers.add(new ShipLaser(fighterOrb, e.getX()+e.getBitmap().getWidth()/3, e.getY()+e.getBitmap().getHeight()*3/4));
                                 shipLasers.add(new DiagonalLaser(fighterOrb, e.getX()+e.getBitmap().getWidth()/6, e.getY()+e.getBitmap().getHeight()/2,-1));
                             }else if(e.getEnemyType() == EnemyType.IMPERIAL){
-                                //todo add implementation of imperial
+                                shipLasers.add(new ShipLaser(imperialOrb, e.getX() + e.getBitmap().getWidth()/3, e.getY() + e.getBitmap().getHeight()*4/5));
                             }
 
                         }
