@@ -9,7 +9,7 @@ public enum EnemyType {
     FIGHTER(5,20),
     IMPERIAL(8,50),
     BATTLECRUISER(13,100),
-    BATTLESHIP(15,200),
+    MOTHERSHIP(15,200),
     BERSERKER(20,500);
 
     private final int lives;

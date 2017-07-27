@@ -307,6 +307,8 @@ public class PlayScreen extends Screen {
             shipExplosions.add(new ShipExplosion(e.getX() + e.getBitmap().getWidth()/3, e.getY() + e.getBitmap().getHeight()/3,e));
         }else if(e.getEnemyType() == EnemyType.IMPERIAL){
             shipExplosions.add(new ShipExplosion(e.getX() , e.getY() + e.getBitmap().getHeight()/4,e));
+        }else if(e.getEnemyType() == EnemyType.BATTLECRUISER){
+            //todo add implementation for shiplasers
         }
 
         e.setX(10000);
@@ -1005,7 +1007,7 @@ public class PlayScreen extends Screen {
         }else if(enemyType == EnemyType.BERSERKER){
             enemiesFlying.add(new Berserker(berserker, berserkerHit));
 
-        }else if(enemyType == EnemyType.BATTLESHIP){
+        }else if(enemyType == EnemyType.MOTHERSHIP){
             enemiesFlying.add(new Mothership(mothership, mothershipHit));
         }else if(enemyType == EnemyType.BATTLECRUISER){
             enemiesFlying.add(new Battlecruiser(battlecruiser, battlecruiserHit));
