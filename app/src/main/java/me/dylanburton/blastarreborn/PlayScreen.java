@@ -156,11 +156,11 @@ public class PlayScreen extends Screen {
             berserkerHit = act.getScaledBitmap("enemies/berserkerhit.png");
             berserkerReverse = act.getScaledBitmap("enemies/berserkerreverse.png");
 
-            battlecruiser = act.getScaledBitmap("enemies/mothership.png");
-            battlecruiserHit = act.getScaledBitmap("enemies/mothershiphit.png");
+            battlecruiser = act.getScaledBitmap("enemies/battlecruiser.png");
+            battlecruiserHit = act.getScaledBitmap("enemies/battlecruiserhit.png");
 
-            mothership = act.getScaledBitmap("enemies/battleship.png");
-            mothershipHit = act.getScaledBitmap("enemies/battleshiphit.png");
+            mothership = act.getScaledBitmap("enemies/mothership.png");
+            mothershipHit = act.getScaledBitmap("enemies/mothershiphit.png");
 
             //explosion
             explosion = new Bitmap[12];
@@ -308,7 +308,7 @@ public class PlayScreen extends Screen {
         }else if(e.getEnemyType() == EnemyType.IMPERIAL){
             shipExplosions.add(new ShipExplosion(e.getX() , e.getY() + e.getBitmap().getHeight()/4,e));
         }else if(e.getEnemyType() == EnemyType.BATTLECRUISER){
-            //todo add implementation for shiplasers
+            //todo add implementation for shipexplosion
         }
 
         e.setX(10000);
@@ -476,7 +476,7 @@ public class PlayScreen extends Screen {
                             e.setAIStarted(true);
                         }
 
-                        if (e.getEnemyType() == EnemyType.FIGHTER || e.getEnemyType() == EnemyType.IMPERIAL) {
+                        if (e.getEnemyType() != EnemyType.BERSERKER) {
                             for (int i = 0; i < enemiesFlying.size(); i++) {
                                 if ((e != enemiesFlying.get(i))) {
                                     if ((e.getX() >= enemiesFlying.get(i).getX() - enemiesFlying.get(i).getBitmap().getWidth() && e.getX() <= enemiesFlying.get(i).getX() + enemiesFlying.get(i).getBitmap().getWidth()) &&
