@@ -68,7 +68,7 @@ public class Level1 extends Level{
             updateCheckerBoundary = 9;
         }
 
-        if(ps.getEnemiesDestroyed() == 10){
+        if(ps.getEnemiesDestroyed() == 11){
             ps.playerWon();
         }
 

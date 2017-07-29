@@ -878,6 +878,7 @@ public class PlayScreen extends Screen {
             if (gamestate == State.WIN || gamestate == State.PLAYERDIED) {
 
                 if(gamestate == State.PLAYERDIED) {
+                    c.drawBitmap(gameOverOverlay,null,new Rect(0,0,width,height),p);
                     c.drawBitmap(playerDiedText, width / 6, height / 3, p);
 
                 }else{
