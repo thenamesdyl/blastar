@@ -308,7 +308,9 @@ public class PlayScreen extends Screen {
         }else if(e.getEnemyType() == EnemyType.IMPERIAL){
             shipExplosions.add(new ShipExplosion(e.getX() , e.getY() + e.getBitmap().getHeight()/4,e));
         }else if(e.getEnemyType() == EnemyType.BATTLECRUISER){
-            //todo add implementation for shipexplosion
+            shipExplosions.add(new ShipExplosion(e.getX() , e.getY() + e.getBitmap().getHeight()/4,e));
+        }else if(e.getEnemyType() == EnemyType.MOTHERSHIP){
+            shipExplosions.add(new ShipExplosion(e.getX() , e.getY() + e.getBitmap().getHeight()/4,e));
         }
 
         e.setX(10000);
