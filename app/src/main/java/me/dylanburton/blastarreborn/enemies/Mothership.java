@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 public class Mothership extends Enemy {
 
     private static final int RANDOM_DIRECTION_SPEED = 5000;
+    private long motherShipSpawner = 0;
 
     public Mothership(Bitmap shipBitmap, Bitmap btmHit){
         //calls main Enemy constructor
@@ -21,6 +22,16 @@ public class Mothership extends Enemy {
         return RANDOM_DIRECTION_SPEED;
 
     }
+
+
+    public long getMotherShipSpawner() {
+        return motherShipSpawner;
+    }
+
+    public void setMotherShipSpawner(long motherShipSpawner) {
+        this.motherShipSpawner = motherShipSpawner;
+    }
+
 
 
 

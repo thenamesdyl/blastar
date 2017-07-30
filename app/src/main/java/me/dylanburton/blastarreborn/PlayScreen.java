@@ -121,6 +121,8 @@ public class PlayScreen extends Screen {
     private float differenceBerserkerVelocityY;
     private Random rand = new Random();
 
+    private boolean isSpawnEnemyImperial = false;
+
 
     public PlayScreen(MainActivity act) {
         p = new Paint();
@@ -367,6 +369,18 @@ public class PlayScreen extends Screen {
                         startDelayReached = true;
                     }
 
+                    //Mothership spawning
+
+                    if(e.getEnemyType() == EnemyType.MOTHERSHIP){
+                        Mothership ms = (Mothership) e;
+                        if(ms.getMotherShipSpawner() + (ONESEC_NANOS*2) < frtime){
+
+                            //have to use boolean for spawning imperial because of concurrent exception
+                            isSpawnEnemyImperial = true;
+                            ms.setMotherShipSpawner(System.nanoTime());
+                        }
+                    }
+
 
                     /*
                      * Charging behavior
@@ -456,7 +470,7 @@ public class PlayScreen extends Screen {
                                 shipLasers.add(new ShipLaser(imperialOrb, e.getX() + e.getBitmap().getWidth()/4, e.getY() + e.getBitmap().getHeight()*4/5));
                             }else if(e.getEnemyType() == EnemyType.BATTLECRUISER){
                                 int fireFrame = rand.nextInt(3);
-                                shipLasers.add(new ShipLaser(battlecruiserFire[fireFrame], e.getX() + e.getBitmap().getWidth()/3, e.getY() + e.getBitmap().getHeight()*4/5));
+                                shipLasers.add(new ShipLaser(battlecruiserFire[fireFrame], e.getX() + e.getBitmap().getWidth()/5, e.getY() + e.getBitmap().getHeight()*3/4,2.0f));
                             }
 
                         }
@@ -692,6 +706,12 @@ public class PlayScreen extends Screen {
                 playerShip.setLastLaserSpawnTime(System.nanoTime());
             }
 
+            if(isSpawnEnemyImperial){
+                spawnEnemy(EnemyType.IMPERIAL);
+                //subtracts an enemy destroyed because this imperial spawn is from mothership
+                enemiesDestroyed--;
+                isSpawnEnemyImperial = false;
+            }
 
 
             //animator for map background

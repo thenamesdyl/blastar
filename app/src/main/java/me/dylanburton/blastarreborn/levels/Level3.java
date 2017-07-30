@@ -58,8 +58,8 @@ public class Level3 extends Level {
         }else if(ps.getEnemiesDestroyed() >= 4){
 
             if(updateCheckerBoundary == 4) {
-                for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER);
+                for (int i = 0; i < 2; i++) {
+                    ps.spawnEnemy(EnemyType.BERSERKER);
                 }
             }else if(updateCheckerBoundary == 2){
                 updateCheckerBoundary = 4;
@@ -68,7 +68,7 @@ public class Level3 extends Level {
             updateCheckerBoundary = 9;
         }
 
-        if(ps.getEnemiesDestroyed() == 12){
+        if(ps.getEnemiesDestroyed() == 10){
             ps.playerWon();
         }
 

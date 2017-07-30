@@ -25,7 +25,7 @@ public class Level6 extends Level {
 
         try {
             AssetManager assetManager = act.getAssets();
-            InputStream inputStream = assetManager.open("maps/islandmap.jpg");
+            InputStream inputStream = assetManager.open("maps/desertmap.jpg");
             map = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
         }catch(Exception e){
@@ -38,29 +38,31 @@ public class Level6 extends Level {
         if(ps.getEnemiesDestroyed() >=0 && ps.getEnemiesDestroyed() < 2) {
 
             if(updateCheckerBoundary == 0) {
-                for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER);
+                for (int i = 0; i < 2; i++) {
+                    ps.spawnEnemy(EnemyType.IMPERIAL);
                 }
-                ps.spawnEnemy(EnemyType.BERSERKER);
+                ps.spawnEnemy(EnemyType.BATTLECRUISER);
             }
 
             updateCheckerBoundary = 2;
         }else if(ps.getEnemiesDestroyed() >= 2 && ps.getEnemiesDestroyed() < 4){
 
             if(updateCheckerBoundary == 2) {
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 2; i++) {
                     ps.spawnEnemy(EnemyType.FIGHTER);
                 }
+                ps.spawnEnemy(EnemyType.IMPERIAL);
+                ps.spawnEnemy(EnemyType.MOTHERSHIP);
             }
 
             updateCheckerBoundary = 4;
-        }else if(ps.getEnemiesDestroyed() >= 4){
+        }else if(ps.getEnemiesDestroyed() >= 5){
 
             if(updateCheckerBoundary == 4) {
                 for (int i = 0; i < 3; i++) {
                     ps.spawnEnemy(EnemyType.FIGHTER);
                 }
-                ps.spawnEnemy(EnemyType.MOTHERSHIP);
+                ps.spawnEnemy(EnemyType.BERSERKER);
             }else if(updateCheckerBoundary == 2){
                 updateCheckerBoundary = 4;
             }
@@ -68,7 +70,7 @@ public class Level6 extends Level {
             updateCheckerBoundary = 9;
         }
 
-        if(ps.getEnemiesDestroyed() == 10){
+        if(ps.getEnemiesDestroyed() == 11){
             ps.playerWon();
         }
 

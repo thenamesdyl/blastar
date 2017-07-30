@@ -30,7 +30,7 @@ public class ShipLaser {
         this.bmp = bmp;
         this.x = x;
         this.y = y;
-        this.dy = y*speedAmplifier;
+        this.dy = dy*speedAmplifier;
 
     }
 

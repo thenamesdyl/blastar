@@ -38,28 +38,29 @@ public class Level5 extends Level {
         if(ps.getEnemiesDestroyed() >=0 && ps.getEnemiesDestroyed() < 2) {
 
             if(updateCheckerBoundary == 0) {
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 2; i++) {
                     ps.spawnEnemy(EnemyType.FIGHTER);
                 }
-                ps.spawnEnemy(EnemyType.BERSERKER);
+                ps.spawnEnemy(EnemyType.IMPERIAL);
             }
 
             updateCheckerBoundary = 2;
         }else if(ps.getEnemiesDestroyed() >= 2 && ps.getEnemiesDestroyed() < 4){
 
             if(updateCheckerBoundary == 2) {
-                for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER);
+                for (int i = 0; i < 6; i++) {
+                    ps.spawnEnemy(EnemyType.IMPERIAL);
                 }
             }
 
             updateCheckerBoundary = 4;
-        }else if(ps.getEnemiesDestroyed() >= 4){
+        }else if(ps.getEnemiesDestroyed() >= 7){
 
             if(updateCheckerBoundary == 4) {
                 for (int i = 0; i < 3; i++) {
                     ps.spawnEnemy(EnemyType.FIGHTER);
                 }
+                ps.spawnEnemy(EnemyType.BERSERKER);
             }else if(updateCheckerBoundary == 2){
                 updateCheckerBoundary = 4;
             }
@@ -67,7 +68,7 @@ public class Level5 extends Level {
             updateCheckerBoundary = 9;
         }
 
-        if(ps.getEnemiesDestroyed() == 10){
+        if(ps.getEnemiesDestroyed() == 13){
             ps.playerWon();
         }
 

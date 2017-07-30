@@ -58,7 +58,7 @@ public class Level2 extends Level {
 
             if(updateCheckerBoundary == 4) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER);
+                    ps.spawnEnemy(EnemyType.IMPERIAL);
                 }
             }else if(updateCheckerBoundary == 2){
                 updateCheckerBoundary = 4;
