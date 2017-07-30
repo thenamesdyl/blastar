@@ -71,7 +71,7 @@ public class PlayScreen extends Screen {
     private int height = 0;
     //bitmap with a rect used for drawing
     private Bitmap starbackground, spaceship[], spaceshipHit[], spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText,filledstar,emptystar;
-    private Bitmap imperial, imperialHit, imperialOrb, berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, mothership, mothershipHit;
+    private Bitmap imperial, imperialHit, imperialOrb, berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battlecruiserFire[], mothership, mothershipHit;
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -158,6 +158,10 @@ public class PlayScreen extends Screen {
 
             battlecruiser = act.getScaledBitmap("enemies/battlecruiser.png");
             battlecruiserHit = act.getScaledBitmap("enemies/battlecruiserhit.png");
+            battlecruiserFire = new Bitmap[3];
+            battlecruiserFire[0] = act.getScaledBitmap("enemies/battlecruiserfire1.png");
+            battlecruiserFire[1] = act.getScaledBitmap("enemies/battlecruiserfire2.png");
+            battlecruiserFire[2] = act.getScaledBitmap("enemies/battlecruiserfire3.png");
 
             mothership = act.getScaledBitmap("enemies/mothership.png");
             mothershipHit = act.getScaledBitmap("enemies/mothershiphit.png");
@@ -449,7 +453,10 @@ public class PlayScreen extends Screen {
                                 shipLasers.add(new ShipLaser(fighterOrb, e.getX()+e.getBitmap().getWidth()/3, e.getY()+e.getBitmap().getHeight()*3/4));
                                 shipLasers.add(new DiagonalLaser(fighterOrb, e.getX()+e.getBitmap().getWidth()/6, e.getY()+e.getBitmap().getHeight()/2,-1));
                             }else if(e.getEnemyType() == EnemyType.IMPERIAL){
-                                shipLasers.add(new ShipLaser(imperialOrb, e.getX() + e.getBitmap().getWidth()/3, e.getY() + e.getBitmap().getHeight()*4/5));
+                                shipLasers.add(new ShipLaser(imperialOrb, e.getX() + e.getBitmap().getWidth()/4, e.getY() + e.getBitmap().getHeight()*4/5));
+                            }else if(e.getEnemyType() == EnemyType.BATTLECRUISER){
+                                int fireFrame = rand.nextInt(3);
+                                shipLasers.add(new ShipLaser(battlecruiserFire[fireFrame], e.getX() + e.getBitmap().getWidth()/3, e.getY() + e.getBitmap().getHeight()*4/5));
                             }
 
                         }

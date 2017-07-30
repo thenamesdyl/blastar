@@ -26,6 +26,14 @@ public class ShipLaser {
         this.y = y;
 
     }
+    public ShipLaser(Bitmap bmp, float x , float y, float speedAmplifier){
+        this.bmp = bmp;
+        this.x = x;
+        this.y = y;
+        this.dy = y*speedAmplifier;
+
+    }
+
 
     public boolean isEnemyLaser(){
 
