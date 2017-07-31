@@ -14,8 +14,8 @@ public class Berserker extends Enemy {
     private long updateVelocityTime;
     private long lastAccelerationTime;
 
-    public Berserker(Bitmap shipBitmap, Bitmap btmHit){
-        super(shipBitmap, btmHit, EnemyType.BERSERKER);
+    public Berserker(Bitmap shipBitmap, Bitmap btmHit, boolean isWorthEnemyDestroyedPoint){
+        super(shipBitmap, btmHit, EnemyType.BERSERKER, isWorthEnemyDestroyedPoint);
         hs = new HeatSinker();
 
 

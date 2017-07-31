@@ -39,9 +39,9 @@ public class Level2 extends Level {
 
             if(updateCheckerBoundary == 0) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER);
+                    ps.spawnEnemy(EnemyType.FIGHTER,true);
                 }
-                ps.spawnEnemy(EnemyType.BERSERKER);
+                ps.spawnEnemy(EnemyType.BERSERKER,true);
             }
 
             updateCheckerBoundary = 2;
@@ -49,7 +49,7 @@ public class Level2 extends Level {
 
             if(updateCheckerBoundary == 2) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER);
+                    ps.spawnEnemy(EnemyType.FIGHTER,true);
                 }
             }
 
@@ -58,7 +58,7 @@ public class Level2 extends Level {
 
             if(updateCheckerBoundary == 4) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.IMPERIAL);
+                    ps.spawnEnemy(EnemyType.IMPERIAL,true);
                 }
             }else if(updateCheckerBoundary == 2){
                 updateCheckerBoundary = 4;

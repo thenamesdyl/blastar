@@ -54,12 +54,14 @@ public class Enemy extends Ship {
 
     Rect bounds = new Rect();
 
+    private boolean isWorthEnemyDestroyedPoint = true; //this disables points if the enemy was created by a mothership
+
     //default constructor for inheritance
     public Enemy(){
 
     }
 
-    public Enemy(Bitmap bitmap, Bitmap btmHit, EnemyType enemyType) {
+    public Enemy(Bitmap bitmap, Bitmap btmHit, EnemyType enemyType, boolean isWorthEnemyDestroyedPoint) {
         setX(0);
         setY(500);
         this.btmHit = btmHit;
@@ -71,6 +73,7 @@ public class Enemy extends Ship {
         this.lives = enemyType.getLives();
         this.points = enemyType.getPoints();
         this.enemyType = enemyType;
+        setWorthEnemyDestroyedPoint(isWorthEnemyDestroyedPoint);
     }
 
     public Bitmap getBitmap(){
@@ -264,5 +267,14 @@ public class Enemy extends Ship {
 
 
     public int getRandomDirectionSpeed() {return 0;} //override
+
+    public boolean isWorthEnemyDestroyedPoint() {
+        return isWorthEnemyDestroyedPoint;
+    }
+
+    public void setWorthEnemyDestroyedPoint(boolean worthEnemyDestroyedPoint) {
+        isWorthEnemyDestroyedPoint = worthEnemyDestroyedPoint;
+    }
+
 
 }

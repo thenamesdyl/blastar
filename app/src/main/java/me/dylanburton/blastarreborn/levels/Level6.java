@@ -39,9 +39,9 @@ public class Level6 extends Level {
 
             if(updateCheckerBoundary == 0) {
                 for (int i = 0; i < 2; i++) {
-                    ps.spawnEnemy(EnemyType.IMPERIAL);
+                    ps.spawnEnemy(EnemyType.IMPERIAL,true);
                 }
-                ps.spawnEnemy(EnemyType.BATTLECRUISER);
+                ps.spawnEnemy(EnemyType.BATTLECRUISER,true);
             }
 
             updateCheckerBoundary = 2;
@@ -49,10 +49,10 @@ public class Level6 extends Level {
 
             if(updateCheckerBoundary == 2) {
                 for (int i = 0; i < 2; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER);
+                    ps.spawnEnemy(EnemyType.FIGHTER,true);
                 }
-                ps.spawnEnemy(EnemyType.IMPERIAL);
-                ps.spawnEnemy(EnemyType.MOTHERSHIP);
+                ps.spawnEnemy(EnemyType.IMPERIAL,true);
+                ps.spawnEnemy(EnemyType.MOTHERSHIP,true);
             }
 
             updateCheckerBoundary = 4;
@@ -60,9 +60,9 @@ public class Level6 extends Level {
 
             if(updateCheckerBoundary == 4) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER);
+                    ps.spawnEnemy(EnemyType.FIGHTER,true);
                 }
-                ps.spawnEnemy(EnemyType.BERSERKER);
+                ps.spawnEnemy(EnemyType.BERSERKER,true);
             }else if(updateCheckerBoundary == 2){
                 updateCheckerBoundary = 4;
             }

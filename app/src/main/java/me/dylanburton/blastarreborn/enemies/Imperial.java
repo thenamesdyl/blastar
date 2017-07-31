@@ -9,8 +9,8 @@ import android.graphics.Bitmap;
 public class Imperial extends Enemy {
     private static final int RANDOM_DIRECTION_SPEED = 8000;
 
-    public Imperial(Bitmap bmp, Bitmap bmpHit){
-        super(bmp,bmpHit,EnemyType.IMPERIAL);
+    public Imperial(Bitmap bmp, Bitmap bmpHit, boolean isWorthEnemyDestroyedPoint){
+        super(bmp,bmpHit,EnemyType.IMPERIAL, isWorthEnemyDestroyedPoint);
     }
 
     @Override

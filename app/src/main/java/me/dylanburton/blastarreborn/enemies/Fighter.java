@@ -17,9 +17,9 @@ import me.dylanburton.blastarreborn.lasers.ShipLaser;
  */
 public class Fighter extends Enemy {
     private static final int RANDOM_DIRECTION_SPEED = 10000;
-    public Fighter(Bitmap shipBitmap, Bitmap shipHit) {
+    public Fighter(Bitmap shipBitmap, Bitmap shipHit, boolean isWorthEnemyDestroyedPoint) {
         //calls main Enemy constructor
-        super(shipBitmap, shipHit, EnemyType.FIGHTER);
+        super(shipBitmap, shipHit, EnemyType.FIGHTER, isWorthEnemyDestroyedPoint);
 
     }
 

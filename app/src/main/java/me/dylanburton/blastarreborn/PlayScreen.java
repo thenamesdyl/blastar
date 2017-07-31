@@ -321,11 +321,17 @@ public class PlayScreen extends Screen {
 
         e.setX(10000);
         e.setAIDisabled(true);
-        enemiesDestroyed++;
+        enemyDestroyed(e);
 
         e.setExplosionActivateTime(System.nanoTime());
     }
 
+    public void enemyDestroyed(Enemy e){
+        if(e.isWorthEnemyDestroyedPoint()){
+            enemiesDestroyed++;
+        }
+        //else we dont care
+    }
 
     @Override
     public void update(View v) {
@@ -707,9 +713,8 @@ public class PlayScreen extends Screen {
             }
 
             if(isSpawnEnemyImperial){
-                spawnEnemy(EnemyType.IMPERIAL);
+                spawnEnemy(EnemyType.IMPERIAL,false);
                 //subtracts an enemy destroyed because this imperial spawn is from mothership
-                enemiesDestroyed--;
                 isSpawnEnemyImperial = false;
             }
 
@@ -1028,19 +1033,19 @@ public class PlayScreen extends Screen {
 
     }
 
-    public void spawnEnemy(EnemyType enemyType){
+    public void spawnEnemy(EnemyType enemyType, boolean isWorthEnemyDestroyedPoint){
         if(enemyType == EnemyType.FIGHTER) {
-            enemiesFlying.add(new Fighter(fighter, fighterHit));
+            enemiesFlying.add(new Fighter(fighter, fighterHit, isWorthEnemyDestroyedPoint));
         }else if(enemyType == EnemyType.IMPERIAL){
-            enemiesFlying.add(new Imperial(imperial, imperialHit));
+            enemiesFlying.add(new Imperial(imperial, imperialHit, isWorthEnemyDestroyedPoint));
 
         }else if(enemyType == EnemyType.BERSERKER){
-            enemiesFlying.add(new Berserker(berserker, berserkerHit));
+            enemiesFlying.add(new Berserker(berserker, berserkerHit, isWorthEnemyDestroyedPoint));
 
         }else if(enemyType == EnemyType.MOTHERSHIP){
-            enemiesFlying.add(new Mothership(mothership, mothershipHit));
+            enemiesFlying.add(new Mothership(mothership, mothershipHit, isWorthEnemyDestroyedPoint));
         }else if(enemyType == EnemyType.BATTLECRUISER){
-            enemiesFlying.add(new Battlecruiser(battlecruiser, battlecruiserHit));
+            enemiesFlying.add(new Battlecruiser(battlecruiser, battlecruiserHit, isWorthEnemyDestroyedPoint));
         }
     }
 

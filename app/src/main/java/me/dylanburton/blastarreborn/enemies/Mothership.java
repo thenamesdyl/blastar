@@ -11,9 +11,9 @@ public class Mothership extends Enemy {
     private static final int RANDOM_DIRECTION_SPEED = 5000;
     private long motherShipSpawner = 0;
 
-    public Mothership(Bitmap shipBitmap, Bitmap btmHit){
+    public Mothership(Bitmap shipBitmap, Bitmap btmHit, boolean isWorthEnemyDestroyedPoint){
         //calls main Enemy constructor
-        super(shipBitmap, btmHit, EnemyType.MOTHERSHIP);
+        super(shipBitmap, btmHit, EnemyType.MOTHERSHIP, isWorthEnemyDestroyedPoint);
 
     }
 

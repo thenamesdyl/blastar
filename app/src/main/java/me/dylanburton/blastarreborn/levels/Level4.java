@@ -39,9 +39,9 @@ public class Level4 extends Level {
 
             if(updateCheckerBoundary == 0) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.IMPERIAL);
+                    ps.spawnEnemy(EnemyType.IMPERIAL,true);
                 }
-                ps.spawnEnemy(EnemyType.FIGHTER);
+                ps.spawnEnemy(EnemyType.FIGHTER,true);
             }
 
             updateCheckerBoundary = 2;
@@ -49,7 +49,7 @@ public class Level4 extends Level {
 
             if(updateCheckerBoundary == 2) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.BATTLECRUISER);
+                    ps.spawnEnemy(EnemyType.BATTLECRUISER,true);
                 }
             }
 
@@ -58,7 +58,7 @@ public class Level4 extends Level {
 
             if(updateCheckerBoundary == 4) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER);
+                    ps.spawnEnemy(EnemyType.FIGHTER,true);
                 }
             }else if(updateCheckerBoundary == 2){
                 updateCheckerBoundary = 4;
@@ -68,10 +68,10 @@ public class Level4 extends Level {
         }else if(ps.getEnemiesDestroyed() >=6){
             if(updateCheckerBoundary == 9){
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.IMPERIAL);
+                    ps.spawnEnemy(EnemyType.IMPERIAL,true);
                 }
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER);
+                    ps.spawnEnemy(EnemyType.FIGHTER,true);
                 }
             }
 
