@@ -98,7 +98,7 @@ public class PlayScreen extends Screen {
     private int score;
     private int lives;
     private static final String HIGHSCORE_FILE = "scoredata.dat";
-    private static final int START_NUMLIVES = 5;
+    private static final int START_NUMLIVES = 8;
     private Map<Integer, String> levelMap = new HashMap<Integer, String>();
     private Level level;
     private List<ShipLaser> shipLasers = new LinkedList<ShipLaser>();
@@ -360,9 +360,9 @@ public class PlayScreen extends Screen {
 
             //live percentages for lives rectangle
             if(lives >= 0) {
-                livesPercentage = width / 5 - (((width / 5 - width / 2) / 5) * lives);
+                livesPercentage = width / 9 - (((width / 9 - width / 3) / START_NUMLIVES) * lives);
             }else{
-                livesPercentage = width / 5;
+                livesPercentage = width / 9;
             }
 
             synchronized (enemiesFlying) {
@@ -394,9 +394,11 @@ public class PlayScreen extends Screen {
                      */
 
                     //for some reason it wont work with rectangles, just doing it like this for an accurate hitbox
-                    if((e.hasCollision(playerShip.getX() + spaceship[0].getWidth()/2, playerShip.getY()+ spaceship[0].getHeight()/3) ||
-                            e.hasCollision(playerShip.getX() + spaceship[0].getWidth()/2, playerShip.getY()+ spaceship[0].getHeight()) ||
-                            e.hasCollision(playerShip.getX() + spaceship[0].getWidth()/2, playerShip.getY()+ spaceship[0].getHeight()/2))
+                    if((e.hasCollision(playerShip.getX() + spaceship[0].getWidth(), playerShip.getY()+ spaceship[0].getHeight()) ||
+                            e.hasCollision(playerShip.getX() + spaceship[0].getWidth(), playerShip.getY() + spaceship[0].getHeight()/3) ||
+                            e.hasCollision(playerShip.getX() + spaceship[0].getWidth()/2, playerShip.getY()+spaceship[0].getHeight()*3/4) ||
+                            e.hasCollision(playerShip.getX(), playerShip.getY() +spaceship[0].getHeight()/3) ||
+                            e.hasCollision(playerShip.getX() + spaceship[0].getWidth()/2, playerShip.getY()))
                             && lives > 0) {
 
                         int playerShipLivesLost = e.getEnemyType().getLives() / 5;
@@ -664,7 +666,11 @@ public class PlayScreen extends Screen {
 
                     //PLAYER HIT ***********
                     if(shipLasers.get(i).isEnemyLaser()) {
-                        if (playerShip.hasCollision(shipLasers.get(i).getX(), shipLasers.get(i).getY())) {
+                        //accuracy since cant use rect for some reason
+                        if (playerShip.hasCollision(shipLasers.get(i).getX(), shipLasers.get(i).getY())
+                                || playerShip.hasCollision(shipLasers.get(i).getX()+shipLasers.get(i).getBmp().getWidth(), shipLasers.get(i).getY())
+                                || playerShip.hasCollision(shipLasers.get(i).getX()+shipLasers.get(i).getBmp().getWidth(), shipLasers.get(i).getY() + shipLasers.get(i).getBmp().getHeight())
+                                || playerShip.hasCollision(shipLasers.get(i).getX(), shipLasers.get(i).getY() + shipLasers.get(i).getBmp().getHeight())) {
 
                             //bye bye
                             shipLasers.get(i).setX(4000);
@@ -893,13 +899,13 @@ public class PlayScreen extends Screen {
 
 
 
-            //live counter
+            //life counter
             p.setColor(Color.rgb(20,20,20));
             c.drawRect(0, 0 , width, height/17, p);
             p.setColor(Color.rgb(255,0,0));
-            c.drawRect(width/5, height/30, livesPercentage, height/20, p);
+            c.drawRect(width/9, height/35, livesPercentage, height/23, p);
             p.setColor(Color.rgb(255,255,255));
-            drawCenteredText(c, "Life", height/20, p, -width*35/100);
+            drawCenteredText(c, "Life", height/23, p, -width*45/100);
 
             p.setColor(Color.WHITE);
             p.setTextSize(act.TS_NORMAL);

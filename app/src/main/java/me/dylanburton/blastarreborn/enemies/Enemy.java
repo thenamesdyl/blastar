@@ -63,7 +63,7 @@ public class Enemy extends Ship {
 
     public Enemy(Bitmap bitmap, Bitmap btmHit, EnemyType enemyType, boolean isWorthEnemyDestroyedPoint) {
         setX(0);
-        setY(500);
+        setY(-50);
         this.btmHit = btmHit;
         this.btm = bitmap;
         this.width = bitmap.getWidth();
