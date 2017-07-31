@@ -44,6 +44,7 @@
         import me.dylanburton.blastarreborn.levels.Level5;
         import me.dylanburton.blastarreborn.levels.Level6;
         import me.dylanburton.blastarreborn.powerups.HealthPack;
+        import me.dylanburton.blastarreborn.powerups.Powerup;
         import me.dylanburton.blastarreborn.spaceships.PlayerShip;
         import me.dylanburton.blastarreborn.spaceships.ShipExplosion;
 
@@ -66,7 +67,7 @@ public class PlayScreen extends Screen {
     private List<Enemy> enemiesFlying = Collections.synchronizedList(new LinkedList<Enemy>());  // enemies that are still alive
     private List<ShipExplosion> shipExplosions = new LinkedList<ShipExplosion>();
     private List<ShipLaser> shipLasers = new LinkedList<ShipLaser>();
-    private List<HealthPack> healthPacks = new LinkedList<HealthPack>();
+    private List<Powerup> powerups = new LinkedList<Powerup>();
 
 
     //width and height of screen
@@ -75,7 +76,7 @@ public class PlayScreen extends Screen {
 
 
     private Bitmap starbackground, spaceship[], spaceshipHit[], spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText,filledstar,emptystar;
-    private Bitmap imperial, imperialHit, imperialOrb, berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battlecruiserFire[], mothership, mothershipHit;
+    private Bitmap imperial, imperialHit, imperialOrb, berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battlecruiserFire[], mothership, mothershipHit, healthPack;
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -91,6 +92,7 @@ public class PlayScreen extends Screen {
     private long frtime = 0; //the global time
     private long firstStarTimeCheck = 0;
     private long secondStarTimeCheck = 0;
+    private long powerupSpawnTime = 0;
     private float elapsedSecs;
     private int fps = 0;
 
@@ -164,6 +166,8 @@ public class PlayScreen extends Screen {
 
             mothership = act.getScaledBitmap("enemies/mothership.png");
             mothershipHit = act.getScaledBitmap("enemies/mothershiphit.png");
+
+            healthPack = act.getScaledBitmap("powerups/healthpack.png");
 
             //explosion
             explosion = new Bitmap[12];
@@ -348,6 +352,9 @@ public class PlayScreen extends Screen {
             secondaryMapAnimatorX=width;
             secondaryMapAnimatorY=height;
 
+            int randomTime = rand.nextInt(10)+3;
+            powerupSpawnTime = System.nanoTime() + (ONESEC_NANOS*randomTime);
+
         }
 
         if (gamestate == State.RUNNING ) {
@@ -359,6 +366,38 @@ public class PlayScreen extends Screen {
                 livesPercentage = width / 9;
             }
 
+
+            //powerup spawning
+            if(powerupSpawnTime < frtime){
+                int randomChoice = rand.nextInt(4);
+                int randomX = rand.nextInt(width);
+                if(randomChoice == 0){
+                    powerups.add(new HealthPack(healthPack,(float) randomX, -height/10, 1 ));
+                }else if(randomChoice == 1){
+                    powerups.add(new HealthPack(healthPack,(float) randomX, -height/10, 1 ));
+                }else if(randomChoice == 2){
+                    powerups.add(new HealthPack(healthPack,(float) randomX, -height/10, 1 ));
+                }else if(randomChoice == 3){
+                    powerups.add(new HealthPack(healthPack,(float) randomX, -height/10, 1 ));
+                }
+
+                int randomSpawnTime = rand.nextInt(10) + 3;
+                powerupSpawnTime = System.nanoTime() + (ONESEC_NANOS*randomSpawnTime);
+            }
+
+            for(Powerup p: powerups){
+                p.setY(p.getY() + p.getDy());
+
+                if(playerShip.hasCollision(p.getX(), p.getY()) ||
+                        playerShip.hasCollision(p.getX() + p.getBitmap().getWidth(),p.getY()) ||
+                        playerShip.hasCollision(p.getX() + p.getBitmap().getWidth(),p.getY() + p.getBitmap().getHeight()) ||
+                        playerShip.hasCollision(p.getX(),p.getY() + p.getBitmap().getHeight())){
+
+                    p.setX(10000);
+                    lives++;
+
+                }
+            }
 
             Iterator<Enemy> enemiesIterator = enemiesFlying.iterator();
             while (enemiesIterator.hasNext()) {
@@ -468,7 +507,7 @@ public class PlayScreen extends Screen {
                             shipLasers.add(new ShipLaser(imperialOrb, e.getX() + e.getBitmap().getWidth() / 4, e.getY() + e.getBitmap().getHeight() * 4 / 5));
                         } else if (e.getEnemyType() == EnemyType.BATTLECRUISER) {
                             int fireFrame = rand.nextInt(3);
-                            shipLasers.add(new ShipLaser(battlecruiserFire[fireFrame], e.getX() + e.getBitmap().getWidth() / 5, e.getY() + e.getBitmap().getHeight() * 3 / 4, 2.0f));
+                            shipLasers.add(new ShipLaser(battlecruiserFire[fireFrame], e.getX() + e.getBitmap().getWidth() / 7, e.getY() + e.getBitmap().getHeight() * 3 / 4, 2.0f));
                         }
 
                     }
@@ -738,6 +777,12 @@ public class PlayScreen extends Screen {
             //secondary background for animation. Same as last draw, but instead, these are a height-length higher
             c.drawBitmap(level.getMap(), null, new Rect(secondaryMapAnimatorX - width, secondaryMapAnimatorY - (height * 2), secondaryMapAnimatorX, secondaryMapAnimatorY - height), p);
 
+
+
+            for( Powerup pw: powerups){
+                c.drawBitmap(pw.getBitmap(), pw.getX(), pw.getY(), p);
+
+            }
 
             for (Enemy e : enemiesFlying) {
 
