@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,7 +51,7 @@ public class LevelScreen extends Screen {
             levelSelection = act.getScaledBitmap("levelselection/panel_portrait.png");
 
 
-            starbackground = act.getScaledBitmap("maps/sidescrollingstars.jpg");
+            starbackground = act.getScaledBitmap("maps/map1.jpg");
 
             //level stuff
             oneStar = act.getScaledBitmap("levelselection/onestar.png");

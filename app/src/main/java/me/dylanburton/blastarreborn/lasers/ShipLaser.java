@@ -2,6 +2,8 @@ package me.dylanburton.blastarreborn.lasers;
 
 import android.graphics.Bitmap;
 
+import me.dylanburton.blastarreborn.enemies.ShipType;
+
 /**
  * Created by Dylan on 7/16/2017.
  */
@@ -11,23 +13,28 @@ import android.graphics.Bitmap;
  */
 public class ShipLaser {
     private boolean isEnemyLaser = true;
+    private ShipType shipType;
     private float x = 0;
     private float y = 0;
     private float dx = 0;
     private float dy = 5;
+    private int currentFrame = 0;
+    private long lastImperialLaserFrameChange = 0;
 
     private Bitmap bmp;
 
     public ShipLaser(){}
 
-    public ShipLaser(Bitmap bmp, float x , float y){
+    public ShipLaser(ShipType shipType, Bitmap bmp, float x , float y){
         this.bmp = bmp;
+        this.shipType = shipType;
         this.x = x;
         this.y = y;
 
     }
-    public ShipLaser(Bitmap bmp, float x , float y, float speedAmplifier){
+    public ShipLaser(ShipType shipType, Bitmap bmp, float x , float y, float speedAmplifier){
         this.bmp = bmp;
+        this.shipType = shipType;
         this.x = x;
         this.y = y;
         this.dy = dy*speedAmplifier;
@@ -87,6 +94,32 @@ public class ShipLaser {
     public void setY(float y) {
         this.y = y;
     }
+
+    public int getCurrentFrame() {
+        return currentFrame;
+    }
+
+    public void setCurrentFrame(int currentFrame) {
+        this.currentFrame = currentFrame;
+    }
+
+
+    public ShipType getShipType() {
+        return shipType;
+    }
+
+    public void setShipType(ShipType shipType) {
+        this.shipType = shipType;
+    }
+    public long getLastImperialLaserFrameChange() {
+        return lastImperialLaserFrameChange;
+    }
+
+    public void setLastImperialLaserFrameChange(long lastImperialLaserFrameChange) {
+        this.lastImperialLaserFrameChange = lastImperialLaserFrameChange;
+    }
+
+
 
 
 }

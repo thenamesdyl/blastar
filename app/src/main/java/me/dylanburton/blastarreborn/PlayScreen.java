@@ -7,6 +7,7 @@
         import android.graphics.Color;
         import android.graphics.Paint;
         import android.graphics.Rect;
+        import android.provider.Settings;
         import android.util.DisplayMetrics;
         import android.util.Log;
         import android.view.MotionEvent;
@@ -19,18 +20,16 @@
         import java.io.IOException;
         import java.io.InputStream;
         import java.util.Collections;
-        import java.util.HashMap;
         import java.util.Iterator;
         import java.util.LinkedList;
         import java.util.List;
-        import java.util.Map;
         import java.util.Random;
 
         import me.dylanburton.blastarreborn.enemies.Battlecruiser;
         import me.dylanburton.blastarreborn.enemies.Mothership;
         import me.dylanburton.blastarreborn.enemies.Berserker;
         import me.dylanburton.blastarreborn.enemies.Enemy;
-        import me.dylanburton.blastarreborn.enemies.EnemyType;
+        import me.dylanburton.blastarreborn.enemies.ShipType;
         import me.dylanburton.blastarreborn.enemies.Fighter;
         import me.dylanburton.blastarreborn.enemies.Imperial;
         import me.dylanburton.blastarreborn.lasers.DiagonalLaser;
@@ -76,7 +75,7 @@ public class PlayScreen extends Screen {
 
 
     private Bitmap starbackground, spaceship[], spaceshipHit[], spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText,filledstar,emptystar;
-    private Bitmap imperial, imperialHit, imperialOrb, berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battlecruiserFire[], mothership, mothershipHit, healthPack;
+    private Bitmap imperial, imperialHit, imperialOrb[], berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battlecruiserFire[], mothership, mothershipHit, healthPack;
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -130,7 +129,7 @@ public class PlayScreen extends Screen {
         try {
 
             //background
-            InputStream inputStream = assetManager.open("maps/sidescrollingstars.jpg");
+            InputStream inputStream = assetManager.open("maps/map1.jpg");
             starbackground = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
 
@@ -151,7 +150,11 @@ public class PlayScreen extends Screen {
 
             imperial = act.getScaledBitmap("enemies/imperial.png");
             imperialHit = act.getScaledBitmap("enemies/imperialhit.png");
-            imperialOrb = act.getScaledBitmap("enemies/imperialorb.png");
+
+            imperialOrb = new Bitmap[8];
+            for(int i = 0; i < 8; i++) {
+                imperialOrb[i] = act.getScaledBitmap("enemies/imperialorbs/imperialorb" + (i+1) + ".png");
+            }
 
             berserker = act.getScaledBitmap("enemies/berserker.png");
             berserkerHit = act.getScaledBitmap("enemies/berserkerhit.png");
@@ -305,15 +308,15 @@ public class PlayScreen extends Screen {
     }
 
     public void addEnemyExplosion(Enemy e){
-        if(e.getEnemyType() == EnemyType.FIGHTER) {
+        if(e.getShipType() == ShipType.FIGHTER) {
             shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e));
-        }else if(e.getEnemyType() == EnemyType.BERSERKER){
+        }else if(e.getShipType() == ShipType.BERSERKER){
             shipExplosions.add(new ShipExplosion(e.getX() + e.getBitmap().getWidth()/3, e.getY() + e.getBitmap().getHeight()/3,e));
-        }else if(e.getEnemyType() == EnemyType.IMPERIAL){
+        }else if(e.getShipType() == ShipType.IMPERIAL){
             shipExplosions.add(new ShipExplosion(e.getX() , e.getY() + e.getBitmap().getHeight()/4,e));
-        }else if(e.getEnemyType() == EnemyType.BATTLECRUISER){
+        }else if(e.getShipType() == ShipType.BATTLECRUISER){
             shipExplosions.add(new ShipExplosion(e.getX() , e.getY() + e.getBitmap().getHeight()/4,e));
-        }else if(e.getEnemyType() == EnemyType.MOTHERSHIP){
+        }else if(e.getShipType() == ShipType.MOTHERSHIP){
             shipExplosions.add(new ShipExplosion(e.getX() , e.getY() + e.getBitmap().getHeight()/4,e));
         }
 
@@ -406,7 +409,7 @@ public class PlayScreen extends Screen {
 
                 //Mothership spawning
 
-                if(e.getEnemyType() == EnemyType.MOTHERSHIP){
+                if(e.getShipType() == ShipType.MOTHERSHIP){
                     Mothership ms = (Mothership) e;
                     if(ms.getMotherShipSpawner() + (ONESEC_NANOS*2) < frtime){
 
@@ -430,7 +433,7 @@ public class PlayScreen extends Screen {
                         e.hasCollision(playerShip.getX() + spaceship[0].getWidth() / 2, playerShip.getY()))
                         && lives > 0) {
 
-                    int playerShipLivesLost = e.getEnemyType().getLives() / 5;
+                    int playerShipLivesLost = e.getShipType().getLives() / 5;
                     lives = lives - playerShipLivesLost;
                     if (lives > 0) {
                         addEnemyExplosion(e);
@@ -499,15 +502,15 @@ public class PlayScreen extends Screen {
                     if (e.getEnemyFiringTime() + (e.getRandomlyGeneratedEnemyFiringTimeInSeconds() * ONESEC_NANOS) < frtime) {
                         e.setEnemyFiringTime(System.nanoTime());
                         e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(5000) + 1000) / 1000);
-                        if (e.getEnemyType() == EnemyType.FIGHTER) {
-                            shipLasers.add(new DiagonalLaser(fighterOrb, e.getX() + e.getBitmap().getWidth() * 3 / 5, e.getY() + e.getBitmap().getHeight() / 2, 1));
-                            shipLasers.add(new ShipLaser(fighterOrb, e.getX() + e.getBitmap().getWidth() / 3, e.getY() + e.getBitmap().getHeight() * 3 / 4));
-                            shipLasers.add(new DiagonalLaser(fighterOrb, e.getX() + e.getBitmap().getWidth() / 6, e.getY() + e.getBitmap().getHeight() / 2, -1));
-                        } else if (e.getEnemyType() == EnemyType.IMPERIAL) {
-                            shipLasers.add(new ShipLaser(imperialOrb, e.getX() + e.getBitmap().getWidth() / 4, e.getY() + e.getBitmap().getHeight() * 4 / 5));
-                        } else if (e.getEnemyType() == EnemyType.BATTLECRUISER) {
+                        if (e.getShipType() == ShipType.FIGHTER) {
+                            shipLasers.add(new DiagonalLaser(ShipType.FIGHTER, fighterOrb, e.getX() + e.getBitmap().getWidth() * 3 / 5, e.getY() + e.getBitmap().getHeight() / 2, 1));
+                            shipLasers.add(new ShipLaser(ShipType.FIGHTER, fighterOrb, e.getX() + e.getBitmap().getWidth() / 3, e.getY() + e.getBitmap().getHeight() * 3 / 4));
+                            shipLasers.add(new DiagonalLaser(ShipType.FIGHTER, fighterOrb, e.getX() + e.getBitmap().getWidth() / 6, e.getY() + e.getBitmap().getHeight() / 2, -1));
+                        } else if (e.getShipType() == ShipType.IMPERIAL) {
+                            shipLasers.add(new ShipLaser(ShipType.IMPERIAL, imperialOrb[0], e.getX() + e.getBitmap().getWidth() / 4, e.getY() + e.getBitmap().getHeight() * 4 / 5));
+                        } else if (e.getShipType() == ShipType.BATTLECRUISER) {
                             int fireFrame = rand.nextInt(3);
-                            shipLasers.add(new ShipLaser(battlecruiserFire[fireFrame], e.getX() + e.getBitmap().getWidth() / 7, e.getY() + e.getBitmap().getHeight() * 3 / 4, 2.0f));
+                            shipLasers.add(new ShipLaser(ShipType.BATTLECRUISER, battlecruiserFire[fireFrame], e.getX() + e.getBitmap().getWidth() / 7, e.getY() + e.getBitmap().getHeight() * 3 / 4, 2.0f));
                         }
 
                     }
@@ -536,7 +539,7 @@ public class PlayScreen extends Screen {
                         e.setAIStarted(true);
                     }
 
-                    if (e.getEnemyType() != EnemyType.BERSERKER) {
+                    if (e.getShipType() != ShipType.BERSERKER) {
                         for (int i = 0; i < enemiesFlying.size(); i++) {
                             if ((e != enemiesFlying.get(i))) {
                                 if ((e.getX() >= enemiesFlying.get(i).getX() - enemiesFlying.get(i).getBitmap().getWidth() && e.getX() <= enemiesFlying.get(i).getX() + enemiesFlying.get(i).getBitmap().getWidth()) &&
@@ -650,7 +653,7 @@ public class PlayScreen extends Screen {
                             //delays speeding up process
                             e.setLastSpedUpVelocityTime(System.nanoTime());
                         }
-                    } else if (e.getEnemyType() == EnemyType.BERSERKER) {
+                    } else if (e.getShipType() == ShipType.BERSERKER) {
 
                         Berserker b = (Berserker) e;
                         if (b.getUpdateVelocityTime() + (ONESEC_NANOS) < frtime) {
@@ -745,7 +748,7 @@ public class PlayScreen extends Screen {
             }
 
             if(isSpawnEnemyImperial){
-                spawnEnemy(EnemyType.IMPERIAL,false);
+                spawnEnemy(ShipType.IMPERIAL,false);
                 //subtracts an enemy destroyed because this imperial spawn is from mothership
                 isSpawnEnemyImperial = false;
             }
@@ -797,9 +800,9 @@ public class PlayScreen extends Screen {
                     }
 
                 } else {
-                    if (e.getEnemyType() != EnemyType.BERSERKER) {
+                    if (e.getShipType() != ShipType.BERSERKER) {
                         c.drawBitmap(e.getBitmap(), e.getX(), e.getY(), p);
-                    } else if (e.getEnemyType() == EnemyType.BERSERKER) {
+                    } else if (e.getShipType() == ShipType.BERSERKER) {
                         if (e.getVy() > 0) {
                             c.drawBitmap(e.getBitmap(), e.getX(), e.getY(), p);
                         } else {
@@ -852,7 +855,19 @@ public class PlayScreen extends Screen {
             //drawing enemy lasers
             if (shipLasers.size() > 0) {
                 for (int i = 0; i < shipLasers.size(); i++) {
-                    c.drawBitmap(shipLasers.get(i).getBmp(), shipLasers.get(i).getX(), shipLasers.get(i).getY(), p);
+
+                    if(shipLasers.get(i).getShipType() != ShipType.IMPERIAL) {
+                        c.drawBitmap(shipLasers.get(i).getBmp(), shipLasers.get(i).getX(), shipLasers.get(i).getY(), p);
+                    }else{
+                        c.drawBitmap(imperialOrb[shipLasers.get(i).getCurrentFrame()], shipLasers.get(i).getX(), shipLasers.get(i).getY(), p);
+                        if(shipLasers.get(i).getLastImperialLaserFrameChange() < frtime){
+                            shipLasers.get(i).setCurrentFrame(shipLasers.get(i).getCurrentFrame() + 1);
+                            if(shipLasers.get(i).getCurrentFrame() == 8){
+                                shipLasers.get(i).setCurrentFrame(0);
+                            }
+                            shipLasers.get(i).setLastImperialLaserFrameChange(System.nanoTime() + (ONESEC_NANOS/20));
+                        }
+                    }
                 }
             }
 
@@ -1062,18 +1077,18 @@ public class PlayScreen extends Screen {
 
     }
 
-    public void spawnEnemy(EnemyType enemyType, boolean isWorthEnemyDestroyedPoint){
-        if(enemyType == EnemyType.FIGHTER) {
+    public void spawnEnemy(ShipType shipType, boolean isWorthEnemyDestroyedPoint){
+        if(shipType == ShipType.FIGHTER) {
             enemiesFlying.add(new Fighter(fighter, fighterHit, isWorthEnemyDestroyedPoint));
-        }else if(enemyType == EnemyType.IMPERIAL){
+        }else if(shipType == ShipType.IMPERIAL){
             enemiesFlying.add(new Imperial(imperial, imperialHit, isWorthEnemyDestroyedPoint));
 
-        }else if(enemyType == EnemyType.BERSERKER){
+        }else if(shipType == ShipType.BERSERKER){
             enemiesFlying.add(new Berserker(berserker, berserkerHit, isWorthEnemyDestroyedPoint));
 
-        }else if(enemyType == EnemyType.MOTHERSHIP){
+        }else if(shipType == ShipType.MOTHERSHIP){
             enemiesFlying.add(new Mothership(mothership, mothershipHit, isWorthEnemyDestroyedPoint));
-        }else if(enemyType == EnemyType.BATTLECRUISER){
+        }else if(shipType == ShipType.BATTLECRUISER){
             enemiesFlying.add(new Battlecruiser(battlecruiser, battlecruiserHit, isWorthEnemyDestroyedPoint));
         }
     }

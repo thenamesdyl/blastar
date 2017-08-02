@@ -7,17 +7,13 @@ package me.dylanburton.blastarreborn.enemies;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import me.dylanburton.blastarreborn.lasers.ShipLaser;
 import me.dylanburton.blastarreborn.spaceships.Ship;
 
 /**
  * An enemy is a template for all the enemies     */
 public class Enemy extends Ship {
     private final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
-    private EnemyType enemyType;
+    private ShipType shipType;
     private Bitmap btm;
     private Bitmap btmHit;
     private float vx=0;
@@ -61,7 +57,7 @@ public class Enemy extends Ship {
 
     }
 
-    public Enemy(Bitmap bitmap, Bitmap btmHit, EnemyType enemyType, boolean isWorthEnemyDestroyedPoint) {
+    public Enemy(Bitmap bitmap, Bitmap btmHit, ShipType shipType, boolean isWorthEnemyDestroyedPoint) {
         setX(0);
         setY(-50);
         this.btmHit = btmHit;
@@ -70,9 +66,9 @@ public class Enemy extends Ship {
         this.height = bitmap.getHeight();
         this.halfWidth = width / HALF_DIVISOR;
         this.halfHeight = height / HALF_DIVISOR;
-        this.lives = enemyType.getLives();
-        this.points = enemyType.getPoints();
-        this.enemyType = enemyType;
+        this.lives = shipType.getLives();
+        this.points = shipType.getPoints();
+        this.shipType = shipType;
         setWorthEnemyDestroyedPoint(isWorthEnemyDestroyedPoint);
     }
 
@@ -257,12 +253,12 @@ public class Enemy extends Ship {
         isAIDisabled = AIDisabled;
     }
 
-    public EnemyType getEnemyType() {
-        return enemyType;
+    public ShipType getShipType() {
+        return shipType;
     }
 
-    public void setEnemyType(EnemyType enemyType) {
-        this.enemyType = enemyType;
+    public void setShipType(ShipType shipType) {
+        this.shipType = shipType;
     }
 
 

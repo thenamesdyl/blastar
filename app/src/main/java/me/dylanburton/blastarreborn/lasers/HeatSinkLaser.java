@@ -2,6 +2,7 @@ package me.dylanburton.blastarreborn.lasers;
 
 import android.graphics.Bitmap;
 
+import me.dylanburton.blastarreborn.enemies.ShipType;
 import me.dylanburton.blastarreborn.utils.HeatSinker;
 
 /**
@@ -16,8 +17,9 @@ public class HeatSinkLaser extends ShipLaser {
     private float dx;
     private float dy;
 
-    public HeatSinkLaser(Bitmap bmp, int x , int y){
+    public HeatSinkLaser(ShipType shipType, Bitmap bmp, int x , int y){
         setEnemyLaser(true);
+        setShipType(shipType);
         this.bmp = bmp;
         this.x = x;
         this.y = y;

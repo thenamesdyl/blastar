@@ -16,8 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import me.dylanburton.blastarreborn.spaceships.ShipExplosion;
-
 public class EntryScreen extends Screen {
 
     private static final long ONESEC_NANOS = 1000000000L;
@@ -70,7 +68,7 @@ public class EntryScreen extends Screen {
 
             asteroidBmp = act.getScaledBitmap("asteroid.png");
 
-            starbackground = act.getScaledBitmap("maps/sidescrollingstars.jpg");
+            starbackground = act.getScaledBitmap("maps/map1.jpg");
 
             grayedShip = act.getScaledBitmap("grayedship.png");
         }

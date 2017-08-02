@@ -8,7 +8,7 @@ import java.io.InputStream;
 
 import me.dylanburton.blastarreborn.MainActivity;
 import me.dylanburton.blastarreborn.PlayScreen;
-import me.dylanburton.blastarreborn.enemies.EnemyType;
+import me.dylanburton.blastarreborn.enemies.ShipType;
 
 /**
  * Created by Dylan on 7/25/2017.
@@ -25,7 +25,7 @@ public class Level4 extends Level {
 
         try {
             AssetManager assetManager = act.getAssets();
-            InputStream inputStream = assetManager.open("maps/lavamap.jpg");
+            InputStream inputStream = assetManager.open("maps/map4.jpg");
             map = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
         }catch(Exception e){
@@ -39,9 +39,9 @@ public class Level4 extends Level {
 
             if(updateCheckerBoundary == 0) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.IMPERIAL,true);
+                    ps.spawnEnemy(ShipType.IMPERIAL,true);
                 }
-                ps.spawnEnemy(EnemyType.FIGHTER,true);
+                ps.spawnEnemy(ShipType.FIGHTER,true);
             }
 
             updateCheckerBoundary = 2;
@@ -49,7 +49,7 @@ public class Level4 extends Level {
 
             if(updateCheckerBoundary == 2) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.BATTLECRUISER,true);
+                    ps.spawnEnemy(ShipType.BATTLECRUISER,true);
                 }
             }
 
@@ -58,7 +58,7 @@ public class Level4 extends Level {
 
             if(updateCheckerBoundary == 4) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER,true);
+                    ps.spawnEnemy(ShipType.FIGHTER,true);
                 }
             }else if(updateCheckerBoundary == 2){
                 updateCheckerBoundary = 4;
@@ -68,10 +68,10 @@ public class Level4 extends Level {
         }else if(ps.getEnemiesDestroyed() >=6){
             if(updateCheckerBoundary == 9){
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.IMPERIAL,true);
+                    ps.spawnEnemy(ShipType.IMPERIAL,true);
                 }
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER,true);
+                    ps.spawnEnemy(ShipType.FIGHTER,true);
                 }
             }
 

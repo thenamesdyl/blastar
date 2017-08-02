@@ -8,7 +8,7 @@ import java.io.InputStream;
 
 import me.dylanburton.blastarreborn.MainActivity;
 import me.dylanburton.blastarreborn.PlayScreen;
-import me.dylanburton.blastarreborn.enemies.EnemyType;
+import me.dylanburton.blastarreborn.enemies.ShipType;
 
 /**
  * Created by Dylan on 7/17/2017.
@@ -25,7 +25,7 @@ public class Level1 extends Level{
 
         try {
             AssetManager assetManager = act.getAssets();
-            InputStream inputStream = assetManager.open("maps/sidescrollingstars.jpg");
+            InputStream inputStream = assetManager.open("maps/map1.jpg");
             map = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
         }catch(Exception e){
@@ -39,7 +39,7 @@ public class Level1 extends Level{
 
             if(updateCheckerBoundary == 0) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.IMPERIAL,true);
+                    ps.spawnEnemy(ShipType.IMPERIAL,true);
                 }
             }
 
@@ -48,9 +48,9 @@ public class Level1 extends Level{
 
             if(updateCheckerBoundary == 2) {
                 for (int i = 0; i < 2; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER,true);
+                    ps.spawnEnemy(ShipType.FIGHTER,true);
                 }
-                ps.spawnEnemy(EnemyType.BATTLECRUISER,true);
+                ps.spawnEnemy(ShipType.BATTLECRUISER,true);
             }
 
             updateCheckerBoundary = 4;
@@ -58,7 +58,7 @@ public class Level1 extends Level{
 
             if(updateCheckerBoundary == 4) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.IMPERIAL,true);
+                    ps.spawnEnemy(ShipType.IMPERIAL,true);
                 }
             }else if(updateCheckerBoundary == 2){
                 updateCheckerBoundary = 4;

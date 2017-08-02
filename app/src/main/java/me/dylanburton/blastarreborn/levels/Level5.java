@@ -8,7 +8,7 @@ import java.io.InputStream;
 
 import me.dylanburton.blastarreborn.MainActivity;
 import me.dylanburton.blastarreborn.PlayScreen;
-import me.dylanburton.blastarreborn.enemies.EnemyType;
+import me.dylanburton.blastarreborn.enemies.ShipType;
 
 /**
  * Created by Dylan on 7/25/2017.
@@ -25,7 +25,7 @@ public class Level5 extends Level {
 
         try {
             AssetManager assetManager = act.getAssets();
-            InputStream inputStream = assetManager.open("maps/snowymap.jpg");
+            InputStream inputStream = assetManager.open("maps/map5.jpg");
             map = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
         }catch(Exception e){
@@ -39,9 +39,9 @@ public class Level5 extends Level {
 
             if(updateCheckerBoundary == 0) {
                 for (int i = 0; i < 2; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER,true);
+                    ps.spawnEnemy(ShipType.FIGHTER,true);
                 }
-                ps.spawnEnemy(EnemyType.IMPERIAL,true);
+                ps.spawnEnemy(ShipType.IMPERIAL,true);
             }
 
             updateCheckerBoundary = 2;
@@ -49,7 +49,7 @@ public class Level5 extends Level {
 
             if(updateCheckerBoundary == 2) {
                 for (int i = 0; i < 6; i++) {
-                    ps.spawnEnemy(EnemyType.IMPERIAL,true);
+                    ps.spawnEnemy(ShipType.IMPERIAL,true);
                 }
             }
 
@@ -58,9 +58,9 @@ public class Level5 extends Level {
 
             if(updateCheckerBoundary == 4) {
                 for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(EnemyType.FIGHTER,true);
+                    ps.spawnEnemy(ShipType.FIGHTER,true);
                 }
-                ps.spawnEnemy(EnemyType.BERSERKER,true);
+                ps.spawnEnemy(ShipType.BERSERKER,true);
             }else if(updateCheckerBoundary == 2){
                 updateCheckerBoundary = 4;
             }

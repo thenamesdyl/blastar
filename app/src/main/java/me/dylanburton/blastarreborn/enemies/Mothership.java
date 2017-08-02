@@ -13,7 +13,7 @@ public class Mothership extends Enemy {
 
     public Mothership(Bitmap shipBitmap, Bitmap btmHit, boolean isWorthEnemyDestroyedPoint){
         //calls main Enemy constructor
-        super(shipBitmap, btmHit, EnemyType.MOTHERSHIP, isWorthEnemyDestroyedPoint);
+        super(shipBitmap, btmHit, ShipType.MOTHERSHIP, isWorthEnemyDestroyedPoint);
 
     }
 
