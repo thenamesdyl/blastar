@@ -9,7 +9,7 @@ public enum PowerupType {
     HEALTHPACK(),
     DOUBLEFIRE(),
     NUKE(),
-    SHIELD(),
+    SLOWTIME(),
 
 
     PowerupType() {

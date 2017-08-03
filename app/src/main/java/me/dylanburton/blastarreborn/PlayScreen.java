@@ -46,6 +46,7 @@
         import me.dylanburton.blastarreborn.powerups.Nuke;
         import me.dylanburton.blastarreborn.powerups.Powerup;
         import me.dylanburton.blastarreborn.powerups.PowerupType;
+        import me.dylanburton.blastarreborn.powerups.SlowTime;
         import me.dylanburton.blastarreborn.spaceships.PlayerShip;
         import me.dylanburton.blastarreborn.spaceships.ShipExplosion;
 
@@ -78,7 +79,7 @@ public class PlayScreen extends Screen {
 
     private Bitmap starbackground, spaceship, spaceshipHit, spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText;
     private Bitmap imperial, imperialHit, imperialOrb[], berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battlecruiserFire[], mothership, mothershipHit, healthPack;
-    private Bitmap doubleFire, doubleFireShot, oneStar, twoStar, threeStar, noStar, nuke;
+    private Bitmap doubleFire, doubleFireShot, oneStar, twoStar, threeStar, noStar, nuke, slowTime;
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -178,6 +179,7 @@ public class PlayScreen extends Screen {
             healthPack = act.getScaledBitmap("powerups/healthpack.png");
             doubleFire = act.getScaledBitmap("powerups/doublefire.png");
             nuke = act.getScaledBitmap("powerups/nuke.png");
+            slowTime = act.getScaledBitmap("powerups/timeslow.png");
 
             oneStar = act.getScaledBitmap("endgame/onestar.png");
             twoStar = act.getScaledBitmap("endgame/twostars.png");
@@ -394,7 +396,7 @@ public class PlayScreen extends Screen {
                 }else if(randomChoice == 2){
                     powerups.add(new Nuke(nuke,(float) randomX, -height/10));
                 }else if(randomChoice == 3){
-                    powerups.add(new HealthPack(healthPack,(float) randomX, -height/10, 1 ));
+                    powerups.add(new SlowTime(slowTime,(float) randomX, -height/10));
                 }
 
                 int randomSpawnTime = rand.nextInt(10) + 3;
@@ -423,6 +425,8 @@ public class PlayScreen extends Screen {
                                 addEnemyExplosion(e);
                             }
                         }
+                    }else if(p.getPowerupType() == PowerupType.SLOWTIME){
+
                     }
 
                 }
@@ -572,7 +576,9 @@ public class PlayScreen extends Screen {
                     }
 
                     if (e.getShipType() != ShipType.BERSERKER) {
-                        for (int i = 0; i < enemiesFlying.size(); i++) {
+
+
+                        /*for (int i = 0; i < enemiesFlying.size(); i++) {
                             if ((e != enemiesFlying.get(i))) {
                                 if ((e.getX() >= enemiesFlying.get(i).getX() - enemiesFlying.get(i).getBitmap().getWidth() && e.getX() <= enemiesFlying.get(i).getX() + enemiesFlying.get(i).getBitmap().getWidth()) &&
                                         (e.getY() >= enemiesFlying.get(i).getY() - enemiesFlying.get(i).getBitmap().getHeight() && e.getY() <= enemiesFlying.get(i).getY() + enemiesFlying.get(i).getBitmap().getHeight())) {
@@ -581,7 +587,7 @@ public class PlayScreen extends Screen {
 
                             }
 
-                        }
+                        }*/
 
 
                         //I present to you, next stage of enemy movement and all its glory
