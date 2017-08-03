@@ -16,14 +16,12 @@ import me.dylanburton.blastarreborn.lasers.ShipLaser;
 public class PlayerShip extends Ship{
 
     //main spaceships location and bound
-    private Bitmap mainSpaceShip[];
+    private Bitmap mainSpaceShip;
     private float width;
     private float height;
-    private int currentSpaceshipFrame=0; //frame of spaceship for animation
     private boolean spaceshipIsMoving;
     //timer for spawning new laser
     private long lastLaserSpawnTime = 0;
-    private long spaceshipFrameSwitchTime = 0; //for spaceships fire animation
     private long shipHitForTingeTime = 0; //for red tinge on your spaceship
     private boolean playerHitButNotDead = false; //also for red tinge
     private long shipExplosionActivateTime = 0;
@@ -32,15 +30,11 @@ public class PlayerShip extends Ship{
     Rect bounds = new Rect();//bounds for the PlayerShip
 
 
-    public PlayerShip(Bitmap mainSpaceShip[], Bitmap mainSpaceShipLaser, float x, float y){
+    public PlayerShip(Bitmap mainSpaceShip, Bitmap mainSpaceShipLaser, float x, float y){
         this.mainSpaceShip = mainSpaceShip;
 
-        if(mainSpaceShip.length > 0) {
-            this.width = mainSpaceShip[0].getWidth();
-            this.height = mainSpaceShip[0].getHeight();
-        }else{
-            //screw you
-        }
+        this.width = mainSpaceShip.getWidth();
+        this.height = mainSpaceShip.getHeight();
 
         this.setX(x);
         this.setY(y);
@@ -65,14 +59,6 @@ public class PlayerShip extends Ship{
 
     //getters and setters
 
-    public int getCurrentSpaceshipFrame() {
-        return currentSpaceshipFrame;
-    }
-
-    public void setCurrentSpaceshipFrame(int currentSpaceshipFrame) {
-        this.currentSpaceshipFrame = currentSpaceshipFrame;
-    }
-
     public boolean isSpaceshipMoving() {
         return spaceshipIsMoving;
     }
@@ -86,13 +72,6 @@ public class PlayerShip extends Ship{
 
     public void setLastLaserSpawnTime(long lastLaserSpawnTime) {
         this.lastLaserSpawnTime = lastLaserSpawnTime;
-    }
-    public long getSpaceshipFrameSwitchTime() {
-        return spaceshipFrameSwitchTime;
-    }
-
-    public void setSpaceshipFrameSwitchTime(long spaceshipFrameSwitchTime) {
-        this.spaceshipFrameSwitchTime = spaceshipFrameSwitchTime;
     }
 
     public long getShipHitForTingeTime() {

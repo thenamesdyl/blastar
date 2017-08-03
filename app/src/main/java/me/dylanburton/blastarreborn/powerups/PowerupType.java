@@ -7,7 +7,7 @@ package me.dylanburton.blastarreborn.powerups;
 public enum PowerupType {
     //Name of ship followed by how strong the enemy is then points
     HEALTHPACK(),
-    FIRESPEED(),
+    DOUBLEFIRE(),
     NUKE(),
     SHIELD(),
 

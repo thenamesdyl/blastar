@@ -20,6 +20,7 @@ public class ShipLaser {
     private float dy = 5;
     private int currentFrame = 0;
     private long lastImperialLaserFrameChange = 0;
+    private long lastBattlecruiserLaserFrameChange = 0;
 
     private Bitmap bmp;
 
@@ -118,6 +119,15 @@ public class ShipLaser {
     public void setLastImperialLaserFrameChange(long lastImperialLaserFrameChange) {
         this.lastImperialLaserFrameChange = lastImperialLaserFrameChange;
     }
+
+    public long getLastBattlecruiserLaserFrameChange() {
+        return lastBattlecruiserLaserFrameChange;
+    }
+
+    public void setLastBattlecruiserLaserFrameChange(long lastBattlecruiserLaserFrameChange) {
+        this.lastBattlecruiserLaserFrameChange = lastBattlecruiserLaserFrameChange;
+    }
+
 
 
 

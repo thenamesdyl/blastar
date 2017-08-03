@@ -23,7 +23,7 @@ public class EntryScreen extends Screen {
 
     private MainActivity act;
     private Paint p = new Paint();
-    private Bitmap screenbtm, asteroidBmp, starbackground, grayedShip;
+    private Bitmap screenbtm, asteroidBmp[], starbackground, grayedShip;
     private Rect scaledDst = new Rect(); // generic rect for scaling
     private Rect playBtnBounds = null;
     private Rect exitBtnBounds = null;
@@ -66,7 +66,11 @@ public class EntryScreen extends Screen {
             screenbtm = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
 
-            asteroidBmp = act.getScaledBitmap("asteroid.png");
+            asteroidBmp = new Bitmap[4];
+            asteroidBmp[0] = act.getScaledBitmap("asteroid1.png");
+            asteroidBmp[1] = act.getScaledBitmap("asteroid2.png");
+            asteroidBmp[2] = act.getScaledBitmap("asteroid3.png");
+            asteroidBmp[3] = act.getScaledBitmap("asteroid4.png");
 
             starbackground = act.getScaledBitmap("maps/map1.jpg");
 
@@ -139,7 +143,8 @@ public class EntryScreen extends Screen {
         }
 
         if(lastSpawnedAsteroid + (ONESEC_NANOS*randomAsteroidSpawnTime) < frtime){
-            asteroidList.add(new Asteroid(width, height));
+            int randChoice = rand.nextInt(4);
+            asteroidList.add(new Asteroid(asteroidBmp[randChoice], width, height));
             lastSpawnedAsteroid = System.nanoTime();
             randomAsteroidSpawnTime = rand.nextInt(5)+1;
         }
@@ -155,7 +160,7 @@ public class EntryScreen extends Screen {
         for(Asteroid a: asteroidList) {
 
             scaledAsteroidDst.set(a.currentAsteroidX[0],a.currentAsteroidY[0],a.currentAsteroidX[1],a.currentAsteroidY[1]);
-            c.drawBitmap(asteroidBmp,null,scaledAsteroidDst,p);
+            c.drawBitmap(a.getAsteroid(),null,scaledAsteroidDst,p);
 
             if(a.lastScaleUpTime + (ONESEC_NANOS/50) < frtime) {
                 if (a.randomDirection == 0) {
@@ -289,6 +294,7 @@ public class EntryScreen extends Screen {
         //asteroid stuff
         private Random rand = new Random();
         private int randomDirection = 0;
+        private Bitmap asteroid;
         private int smallerXScale = 8;
         private int largerXScale = 15;
         private int YScale = 5;
@@ -296,8 +302,9 @@ public class EntryScreen extends Screen {
         private Integer currentAsteroidX[] = new Integer[2]; //0 is left x, 1 is right x
         private Integer currentAsteroidY[] = new Integer[2]; //0 is top y, 1 is bottom
 
-        public Asteroid(int x, int y){
+        public Asteroid(Bitmap bmp, int x, int y){
 
+            asteroid = bmp;
             randomDirection = rand.nextInt(height/2);
             for(int i = 0; i < 2; i++){
                 currentAsteroidX[i] = x/2;
@@ -322,6 +329,15 @@ public class EntryScreen extends Screen {
         public void setCurrentAsteroidY(int index, int value) {
             currentAsteroidY[index] = value;
         }
+
+        public Bitmap getAsteroid() {
+            return asteroid;
+        }
+
+        public void setAsteroid(Bitmap asteroid) {
+            this.asteroid = asteroid;
+        }
+
 
     }
 }
