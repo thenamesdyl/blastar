@@ -9,7 +9,7 @@ public enum ShipType {
     FIGHTER(5,20),
     IMPERIAL(8,50),
     BATTLECRUISER(13,100),
-    MOTHERSHIP(15,200),
+    MOTHERSHIP(30,200),
     BERSERKER(20,500),
     PLAYER(0,0);
 
