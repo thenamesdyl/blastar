@@ -7,7 +7,7 @@ import android.graphics.Bitmap;
  */
 
 public class Battlecruiser extends Enemy {
-    private int RANDOM_DIRECTION_SPEED = 3000;
+    private int RANDOM_DIRECTION_SPEED = 10000;
     public Battlecruiser(Bitmap shipBitmap, Bitmap btmHit, boolean isWorthEnemyDestroyedPoint){
         //calls main Enemy constructor
         super(shipBitmap, btmHit, ShipType.BATTLECRUISER, isWorthEnemyDestroyedPoint);

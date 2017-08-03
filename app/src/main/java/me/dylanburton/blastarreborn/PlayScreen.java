@@ -420,8 +420,8 @@ public class PlayScreen extends Screen {
                         powerupActivateTime = System.nanoTime() + (ONESEC_NANOS*4);
                     }else if(p.getPowerupType() == PowerupType.NUKE){
                         for(Enemy e: enemiesFlying){
-                            //checks if it is worth and a point and is actually on the screen
-                            if(e.isWorthEnemyDestroyedPoint() && e.getX() < width){
+                            //checks if actually on the screen
+                            if(e.getX() < width){
                                 addEnemyExplosion(e);
                             }
                         }
@@ -593,18 +593,18 @@ public class PlayScreen extends Screen {
                         //I present to you, next stage of enemy movement and all its glory
                         if (e.isFinishedVelocityChange()) {
 
-                            e.setRandomVelocityGeneratorX((rand.nextInt(e.getRandomDirectionSpeed()) + 1000) / 1000);
-                            e.setRandomVelocityGeneratorY((rand.nextInt(e.getRandomDirectionSpeed()) + 1000) / 1000);
+                            e.setRandomVelocityGeneratorX((rand.nextInt(e.getRandomDirectionSpeed())) / 1000);
+                            e.setRandomVelocityGeneratorY((rand.nextInt(e.getRandomDirectionSpeed())) / 1000);
 
 
                             //makes it negative if it is bigger than half
-                            if (e.getRandomVelocityGeneratorX() > e.getRandomDirectionSpeed() / 2) {
-                                e.setRandomVelocityGeneratorX(e.getRandomVelocityGeneratorX() - e.getRandomDirectionSpeed());
+                            if (e.getRandomVelocityGeneratorX() > (e.getRandomDirectionSpeed()/1000) / 2) {
+                                e.setRandomVelocityGeneratorX(e.getRandomVelocityGeneratorX() - (e.getRandomDirectionSpeed()/1000));
                             }
 
 
-                            if (e.getRandomVelocityGeneratorY() > e.getRandomDirectionSpeed() / 2) {
-                                e.setRandomVelocityGeneratorY(e.getRandomVelocityGeneratorY() - e.getRandomDirectionSpeed());
+                            if (e.getRandomVelocityGeneratorY() > (e.getRandomDirectionSpeed()/1000) / 2) {
+                                e.setRandomVelocityGeneratorY(e.getRandomVelocityGeneratorY() - (e.getRandomDirectionSpeed()/1000));
 
                             }
 
@@ -634,7 +634,7 @@ public class PlayScreen extends Screen {
 
                         }
 
-                        if (e.isSlowingDown() && (frtime > e.getLastSlowedDownVelocityTime() + (ONESEC_NANOS / 100))) {
+                        if (e.isSlowingDown() && (frtime > e.getLastSlowedDownVelocityTime())) {
                             //obv will never be 0. Half a second for slowing down, then speeding up later on
                             e.setVx(e.getVx() - (e.getVx() / 50));
                             e.setVy(e.getVy() - (e.getVy() / 50));
@@ -659,9 +659,9 @@ public class PlayScreen extends Screen {
 
                             }
                             //delays this slowing down process a little
-                            e.setLastSlowedDownVelocityTime(System.nanoTime());
+                            e.setLastSlowedDownVelocityTime(System.nanoTime() + (ONESEC_NANOS / 100));
 
-                        } else if (e.isSpeedingUp() && (frtime > e.getLastSpedUpVelocityTime() + (ONESEC_NANOS / 100))) {
+                        } else if (e.isSpeedingUp() && (frtime > e.getLastSpedUpVelocityTime() )) {
 
 
                             //will not have asymptotes like the last one
@@ -689,7 +689,7 @@ public class PlayScreen extends Screen {
                             }
 
                             //delays speeding up process
-                            e.setLastSpedUpVelocityTime(System.nanoTime());
+                            e.setLastSpedUpVelocityTime(System.nanoTime() + (ONESEC_NANOS/100));
                         }
                     } else if (e.getShipType() == ShipType.BERSERKER) {
 
