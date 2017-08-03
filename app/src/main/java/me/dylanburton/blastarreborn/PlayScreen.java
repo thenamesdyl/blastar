@@ -95,6 +95,7 @@ public class PlayScreen extends Screen {
     private long frtime = 0; //the global time
     private long gameEndTimeCheck = 0;
     private long powerupSpawnTime = 0;
+    private long slowDownTime = 0; //how long the slow down is
     private float elapsedSecs;
     private int fps = 0;
 
@@ -128,6 +129,7 @@ public class PlayScreen extends Screen {
 
     //powerup vars
     private boolean isDoubleFireSpeed = false;
+    private boolean isSlowDown = false;
     private long powerupActivateTime = 0;
 
 
@@ -427,6 +429,7 @@ public class PlayScreen extends Screen {
                         }
                     }else if(p.getPowerupType() == PowerupType.SLOWTIME){
 
+                        isSlowDown = true;
                     }
 
                 }
@@ -436,7 +439,6 @@ public class PlayScreen extends Screen {
             Iterator<Enemy> enemiesIterator = enemiesFlying.iterator();
             while (enemiesIterator.hasNext()) {
                 Enemy e = enemiesIterator.next();
-
 
                 //Mothership spawning
 
@@ -563,9 +565,14 @@ public class PlayScreen extends Screen {
                 if (!e.isAIDisabled()) {
 
 
-                    e.setX(e.getX() + e.getVx());
-                    e.setY(e.getY() + e.getVy());
-
+                    //for slow down powerup
+                    if(isSlowDown) {
+                        e.setX(e.getX() + e.getVx()/5);
+                        e.setY(e.getY() + e.getVy()/5);
+                    }else{
+                        e.setX(e.getX() + e.getVx());
+                        e.setY(e.getY() + e.getVy());
+                    }
 
                     //this starts the next stage of enemy movement
                     if (!e.isAIStarted()) {
@@ -727,8 +734,13 @@ public class PlayScreen extends Screen {
             //ship laser positions
             if (shipLasers.size() > 0) {
                 for(ShipLaser sl: shipLasers){
-                    sl.setX(sl.getX() + sl.getDx());
-                    sl.setY(sl.getY() + sl.getDy());
+                    if(isSlowDown && sl.isEnemyLaser()) {
+                        sl.setX(sl.getX() + sl.getDx()/5);
+                        sl.setY(sl.getY() + sl.getDy()/5);
+                    }else{
+                        sl.setX(sl.getX() + sl.getDx());
+                        sl.setY(sl.getY() + sl.getDy());
+                    }
                 }
                 //checks if the orb has hit player
                 for( int i = 0; i < shipLasers.size(); i++){
@@ -805,6 +817,14 @@ public class PlayScreen extends Screen {
                 spawnEnemy(ShipType.IMPERIAL,false);
                 //subtracts an enemy destroyed because this imperial spawn is from mothership
                 isSpawnEnemyImperial = false;
+            }
+
+            if(slowDownTime == 0 && isSlowDown == true){
+                slowDownTime = System.nanoTime() + (ONESEC_NANOS*2);
+
+            }else if(slowDownTime < frtime && isSlowDown == true){
+                slowDownTime = 0;
+                isSlowDown = false;
             }
 
 
