@@ -17,7 +17,7 @@ import me.dylanburton.blastarreborn.enemies.ShipType;
 public class Level5 extends Level {
     private Bitmap map;
     private PlayScreen ps;
-    private int updateCheckerBoundary = 0; //defends against the checkers constantly drawing ships
+    private int updateLevelStage = 0; //defends against the checkers constantly drawing ships
 
     public Level5(PlayScreen ps, MainActivity act){
 
@@ -35,37 +35,36 @@ public class Level5 extends Level {
 
     public void checkLevelSequence(){
 
-        if(ps.getEnemiesDestroyed() >=0 && ps.getEnemiesDestroyed() < 2) {
+        if(ps.getEnemiesDestroyed() >=0) {
 
-            if(updateCheckerBoundary == 0) {
+            if(updateLevelStage == 0) {
                 for (int i = 0; i < 2; i++) {
                     ps.spawnEnemy(ShipType.FIGHTER,true);
                 }
                 ps.spawnEnemy(ShipType.IMPERIAL,true);
+                updateLevelStage = 1;
             }
 
-            updateCheckerBoundary = 2;
-        }else if(ps.getEnemiesDestroyed() >= 2 && ps.getEnemiesDestroyed() < 4){
+        }
+        if(ps.getEnemiesDestroyed() >= 2){
 
-            if(updateCheckerBoundary == 2) {
+            if(updateLevelStage == 1) {
                 for (int i = 0; i < 6; i++) {
                     ps.spawnEnemy(ShipType.IMPERIAL,true);
                 }
+                updateLevelStage = 2;
             }
+        }
+        if(ps.getEnemiesDestroyed() >= 7){
 
-            updateCheckerBoundary = 4;
-        }else if(ps.getEnemiesDestroyed() >= 7){
-
-            if(updateCheckerBoundary == 4) {
+            if(updateLevelStage == 2) {
                 for (int i = 0; i < 3; i++) {
                     ps.spawnEnemy(ShipType.FIGHTER,true);
                 }
                 ps.spawnEnemy(ShipType.BERSERKER,true);
-            }else if(updateCheckerBoundary == 2){
-                updateCheckerBoundary = 4;
+                updateLevelStage = 3;
             }
 
-            updateCheckerBoundary = 9;
         }
 
         if(ps.getEnemiesDestroyed() == 13){
@@ -74,12 +73,12 @@ public class Level5 extends Level {
 
     }
 
-    public int getUpdateCheckerBoundary() {
-        return updateCheckerBoundary;
+    public int getUpdateLevelStage() {
+        return updateLevelStage;
     }
 
-    public void setUpdateCheckerBoundary(int updateCheckerBoundary) {
-        this.updateCheckerBoundary = updateCheckerBoundary;
+    public void setUpdateLevelStage(int updateLevelStage) {
+        this.updateLevelStage = updateLevelStage;
     }
 
     public Bitmap getMap() {

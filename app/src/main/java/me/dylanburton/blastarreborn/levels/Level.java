@@ -9,7 +9,7 @@ import android.view.View;
 
 public abstract class Level {
     public abstract void checkLevelSequence();
-    public abstract void setUpdateCheckerBoundary(int updateBoundaryChecker);
+    public abstract void setUpdateLevelStage(int updateBoundaryChecker);
     public abstract Bitmap getMap();
 
 }

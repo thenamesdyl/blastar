@@ -17,7 +17,7 @@ import me.dylanburton.blastarreborn.enemies.ShipType;
 public class Level4 extends Level {
     private Bitmap map;
     private PlayScreen ps;
-    private int updateCheckerBoundary = 0; //defends against the checkers constantly drawing ships
+    private int updateLevelStage = 0; //defends against the checkers constantly drawing ships
 
     public Level4(PlayScreen ps, MainActivity act){
 
@@ -35,47 +35,48 @@ public class Level4 extends Level {
 
     public void checkLevelSequence(){
 
-        if(ps.getEnemiesDestroyed() >=0 && ps.getEnemiesDestroyed() < 2) {
+        if(ps.getEnemiesDestroyed() >=0) {
 
-            if(updateCheckerBoundary == 0) {
+            if(updateLevelStage == 0) {
                 for (int i = 0; i < 3; i++) {
                     ps.spawnEnemy(ShipType.IMPERIAL,true);
                 }
                 ps.spawnEnemy(ShipType.FIGHTER,true);
+                updateLevelStage = 1;
             }
 
-            updateCheckerBoundary = 2;
-        }else if(ps.getEnemiesDestroyed() >= 2 && ps.getEnemiesDestroyed() < 4){
+        }
+        if(ps.getEnemiesDestroyed() >= 2){
 
-            if(updateCheckerBoundary == 2) {
+            if(updateLevelStage == 1) {
                 for (int i = 0; i < 3; i++) {
                     ps.spawnEnemy(ShipType.BATTLECRUISER,true);
                 }
+                updateLevelStage = 2;
             }
 
-            updateCheckerBoundary = 4;
-        }else if(ps.getEnemiesDestroyed() >= 4 && ps.getEnemiesDestroyed() < 6){
+        }
+        if(ps.getEnemiesDestroyed() >= 4){
 
-            if(updateCheckerBoundary == 4) {
+            if(updateLevelStage == 2) {
                 for (int i = 0; i < 3; i++) {
                     ps.spawnEnemy(ShipType.FIGHTER,true);
                 }
-            }else if(updateCheckerBoundary == 2){
-                updateCheckerBoundary = 4;
+                updateLevelStage = 3;
             }
 
-            updateCheckerBoundary = 9;
-        }else if(ps.getEnemiesDestroyed() >=6){
-            if(updateCheckerBoundary == 9){
+        }
+        if(ps.getEnemiesDestroyed() >=6){
+            if(updateLevelStage == 3){
                 for (int i = 0; i < 3; i++) {
                     ps.spawnEnemy(ShipType.IMPERIAL,true);
                 }
                 for (int i = 0; i < 3; i++) {
                     ps.spawnEnemy(ShipType.FIGHTER,true);
                 }
+                updateLevelStage = 4;
             }
 
-            updateCheckerBoundary = 11;
         }
 
         if(ps.getEnemiesDestroyed() == 16){
@@ -84,12 +85,12 @@ public class Level4 extends Level {
 
     }
 
-    public int getUpdateCheckerBoundary() {
-        return updateCheckerBoundary;
+    public int getUpdateLevelStage() {
+        return updateLevelStage;
     }
 
-    public void setUpdateCheckerBoundary(int updateCheckerBoundary) {
-        this.updateCheckerBoundary = updateCheckerBoundary;
+    public void setUpdateLevelStage(int updateLevelStage) {
+        this.updateLevelStage = updateLevelStage;
     }
 
     public Bitmap getMap() {

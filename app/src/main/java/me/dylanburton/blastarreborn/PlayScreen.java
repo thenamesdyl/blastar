@@ -294,7 +294,7 @@ public class PlayScreen extends Screen {
             e.setAIStarted(false);
         }
         enemiesDestroyed = 0;
-        level.setUpdateCheckerBoundary(0);
+        level.setUpdateLevelStage(0);
 
     }
 
@@ -435,7 +435,8 @@ public class PlayScreen extends Screen {
 
                 //Mothership spawning
 
-                if (e.getShipType() == ShipType.MOTHERSHIP) {
+                //makes sure mothership is on the screen before spawning more imperials
+                if (e.getShipType() == ShipType.MOTHERSHIP && e.getX() < width) {
                     Mothership ms = (Mothership) e;
                     if (ms.getMotherShipSpawner() + (ONESEC_NANOS * 2) < frtime) {
 
