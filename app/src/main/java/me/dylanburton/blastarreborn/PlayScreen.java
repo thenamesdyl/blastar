@@ -523,28 +523,31 @@ public class PlayScreen extends Screen {
                      */
 
 
-                //if enemy is not at starting position, spawn lasers. The problem was lasers was spawning before the enemy ship was
-                if (e.getX() != 0 && e.getY() != 500) {
-                    if (e.getEnemyFiringTime() + (e.getRandomlyGeneratedEnemyFiringTimeInSeconds() * ONESEC_NANOS) < frtime) {
-                        e.setEnemyFiringTime(System.nanoTime());
-                        e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(5000) + 1000) / 1000);
-                        if (e.getShipType() == ShipType.FIGHTER) {
-                            shipLasers.add(new DiagonalLaser(ShipType.FIGHTER, fighterOrb, e.getX() + e.getBitmap().getWidth() * 3 / 5, e.getY() + e.getBitmap().getHeight() / 2, 1));
-                            shipLasers.add(new ShipLaser(ShipType.FIGHTER, fighterOrb, e.getX() + e.getBitmap().getWidth() / 3, e.getY() + e.getBitmap().getHeight() * 3 / 4));
-                            shipLasers.add(new DiagonalLaser(ShipType.FIGHTER, fighterOrb, e.getX() + e.getBitmap().getWidth() / 6, e.getY() + e.getBitmap().getHeight() / 2, -1));
-                        } else if (e.getShipType() == ShipType.IMPERIAL) {
-                            shipLasers.add(new ShipLaser(ShipType.IMPERIAL, imperialOrb[0], e.getX() + e.getBitmap().getWidth() / 6, e.getY() + e.getBitmap().getHeight() * 4 / 5));
-                        } else if (e.getShipType() == ShipType.BATTLECRUISER) {
-                            int randomSide = rand.nextInt(2);
-                            if (randomSide == 0) {
-                                shipLasers.add(new ShipLaser(ShipType.BATTLECRUISER, battlecruiserFire[0], e.getX() + e.getBitmap().getWidth() / 10, e.getY() + e.getBitmap().getHeight() * 3 / 4, 2.0f));
-                            } else {
-                                shipLasers.add(new ShipLaser(ShipType.BATTLECRUISER, battlecruiserFire[0], e.getX() + e.getBitmap().getWidth() * 65 / 100, e.getY() + e.getBitmap().getHeight() * 3 / 4, 2.0f));
-                            }
-                        }
-
-                    }
+                //enemy laser firing, if firing time is 0, set the time variables
+                if (e.getEnemyFiringTime() == 0) {
+                    e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(5000) + 1000) / 1000);
+                    e.setEnemyFiringTime(System.nanoTime() + (long) (ONESEC_NANOS * e.getRandomlyGeneratedEnemyFiringTimeInSeconds()));
                 }
+                if (e.getEnemyFiringTime() < frtime) {
+                    e.setRandomlyGeneratedEnemyFiringTimeInSeconds((rand.nextInt(5000) + 1000) / 1000);
+                    e.setEnemyFiringTime(System.nanoTime() + (long) (ONESEC_NANOS * e.getRandomlyGeneratedEnemyFiringTimeInSeconds()));
+                    if (e.getShipType() == ShipType.FIGHTER) {
+                        shipLasers.add(new DiagonalLaser(ShipType.FIGHTER, fighterOrb, e.getX() + e.getBitmap().getWidth() * 3 / 5, e.getY() + e.getBitmap().getHeight() / 2, 1));
+                        shipLasers.add(new ShipLaser(ShipType.FIGHTER, fighterOrb, e.getX() + e.getBitmap().getWidth() / 3, e.getY() + e.getBitmap().getHeight() * 3 / 4));
+                        shipLasers.add(new DiagonalLaser(ShipType.FIGHTER, fighterOrb, e.getX() + e.getBitmap().getWidth() / 6, e.getY() + e.getBitmap().getHeight() / 2, -1));
+                    } else if (e.getShipType() == ShipType.IMPERIAL) {
+                        shipLasers.add(new ShipLaser(ShipType.IMPERIAL, imperialOrb[0], e.getX() + e.getBitmap().getWidth() / 6, e.getY() + e.getBitmap().getHeight() * 4 / 5));
+                    } else if (e.getShipType() == ShipType.BATTLECRUISER) {
+                        int randomSide = rand.nextInt(2);
+                        if (randomSide == 0) {
+                            shipLasers.add(new ShipLaser(ShipType.BATTLECRUISER, battlecruiserFire[0], e.getX() + e.getBitmap().getWidth() / 10, e.getY() + e.getBitmap().getHeight() * 3 / 4, 2.0f));
+                        } else {
+                            shipLasers.add(new ShipLaser(ShipType.BATTLECRUISER, battlecruiserFire[0], e.getX() + e.getBitmap().getWidth() * 65 / 100, e.getY() + e.getBitmap().getHeight() * 3 / 4, 2.0f));
+                        }
+                    }
+
+                }
+
 
                 /*
                  * Movement AI
