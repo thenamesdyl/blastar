@@ -70,7 +70,7 @@ public class Level6 extends Level {
 
         }
 
-        if(ps.getEnemiesDestroyed() == 10){
+        if(ps.getEnemiesDestroyed() == 11){
             ps.playerWon();
         }
 

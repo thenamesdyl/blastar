@@ -123,7 +123,6 @@ public class MainActivity extends ActionBarActivity {
             if(currentScreen == playScreen){
 
 
-                levelScreen.resetVariables();
                 currentScreen = levelScreen;
                 playScreen.resetGame();
 

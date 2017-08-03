@@ -418,7 +418,8 @@ public class PlayScreen extends Screen {
                         powerupActivateTime = System.nanoTime() + (ONESEC_NANOS*4);
                     }else if(p.getPowerupType() == PowerupType.NUKE){
                         for(Enemy e: enemiesFlying){
-                            if(e.isWorthEnemyDestroyedPoint()){
+                            //checks if it is worth and a point and is actually on the screen
+                            if(e.isWorthEnemyDestroyedPoint() && e.getX() < width){
                                 addEnemyExplosion(e);
                             }
                         }
