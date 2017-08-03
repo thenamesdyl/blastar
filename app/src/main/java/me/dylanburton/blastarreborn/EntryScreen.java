@@ -27,6 +27,7 @@ public class EntryScreen extends Screen {
     private Rect scaledDst = new Rect(); // generic rect for scaling
     private Rect playBtnBounds = null;
     private Rect exitBtnBounds = null;
+    private Rect aboutBtnBounds = null;
     private Rect scaledAsteroidDst = new Rect();
     private Rect grayedShipBounds = new Rect();
     private long lastSpawnedAsteroid = 0;
@@ -104,6 +105,10 @@ public class EntryScreen extends Screen {
             exitBtnBounds = new Rect(width*7/10,
                     height*2/3,
                     width*8/9,
+                    height*4/5);
+            aboutBtnBounds = new Rect(width/10,
+                    height*2/3,
+                    width/3,
                     height*4/5);
         }
 
@@ -285,6 +290,9 @@ public class EntryScreen extends Screen {
         }
         if (exitBtnBounds.contains((int)e.getX(), (int)e.getY()))
             act.exit();
+
+        if (aboutBtnBounds.contains((int)e.getX(), (int)e.getY()))
+            act.currentScreen = act.aboutScreen;
 
         // we don't care about followup events in this screen
         return false;
