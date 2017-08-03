@@ -421,7 +421,7 @@ public class PlayScreen extends Screen {
                     }else if(p.getPowerupType() == PowerupType.NUKE){
                         for(Enemy e: enemiesFlying){
                             //checks if actually on the screen
-                            if(e.getX() < width){
+                            if(e.getX() < width && e.getShipType() != ShipType.MOTHERSHIP){
                                 addEnemyExplosion(e);
                             }
                         }
