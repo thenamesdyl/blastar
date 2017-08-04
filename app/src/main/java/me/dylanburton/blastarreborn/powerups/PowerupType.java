@@ -10,6 +10,7 @@ public enum PowerupType {
     DOUBLEFIRE(),
     NUKE(),
     SLOWTIME(),
+    FORCEFIELD();
 
 
     PowerupType() {

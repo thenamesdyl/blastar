@@ -42,6 +42,7 @@
         import me.dylanburton.blastarreborn.levels.Level5;
         import me.dylanburton.blastarreborn.levels.Level6;
         import me.dylanburton.blastarreborn.powerups.DoubleFire;
+        import me.dylanburton.blastarreborn.powerups.Forcefield;
         import me.dylanburton.blastarreborn.powerups.HealthPack;
         import me.dylanburton.blastarreborn.powerups.Nuke;
         import me.dylanburton.blastarreborn.powerups.Powerup;
@@ -79,7 +80,7 @@ public class PlayScreen extends Screen {
 
     private Bitmap starbackground, spaceship, spaceshipHit, spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText;
     private Bitmap imperial, imperialHit, imperialOrb[], berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battlecruiserFire[], mothership, mothershipHit, healthPack;
-    private Bitmap doubleFire, doubleFireShot, oneStar, twoStar, threeStar, noStar, nuke, slowTime;
+    private Bitmap doubleFire, doubleFireShot, oneStar, twoStar, threeStar, noStar, nuke, slowTime, forceField, shield;
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -96,6 +97,7 @@ public class PlayScreen extends Screen {
     private long gameEndTimeCheck = 0;
     private long powerupSpawnTime = 0;
     private long slowDownTime = 0; //how long the slow down is
+    private long forceFieldTime = 0;
     private float elapsedSecs;
     private int fps = 0;
 
@@ -130,6 +132,7 @@ public class PlayScreen extends Screen {
     //powerup vars
     private boolean isDoubleFireSpeed = false;
     private boolean isSlowDown = false;
+    private boolean isForcefield = false;
     private long powerupActivateTime = 0;
 
 
@@ -182,6 +185,8 @@ public class PlayScreen extends Screen {
             doubleFire = act.getScaledBitmap("powerups/doublefire.png");
             nuke = act.getScaledBitmap("powerups/nuke.png");
             slowTime = act.getScaledBitmap("powerups/timeslow.png");
+            forceField = act.getScaledBitmap("powerups/forcefield.png");
+            shield = act.getScaledBitmap("powerups/shield.png");
 
             oneStar = act.getScaledBitmap("endgame/onestar.png");
             twoStar = act.getScaledBitmap("endgame/twostars.png");
@@ -306,7 +311,9 @@ public class PlayScreen extends Screen {
      * player lost a life
      */
     private void loseLife() {
-        lives--;
+        if(!isForcefield) {
+            lives--;
+        }
 
         if (lives <= 0) {
             if(!playerShip.isEndOfTheRoad()) {
@@ -389,7 +396,7 @@ public class PlayScreen extends Screen {
 
             //powerup spawning
             if(powerupSpawnTime < frtime){
-                int randomChoice = rand.nextInt(4);
+                int randomChoice = rand.nextInt(5);
                 int randomX = rand.nextInt(width);
                 if(randomChoice == 0){
                     powerups.add(new HealthPack(healthPack,(float) randomX, -height/10, 1 ));
@@ -399,6 +406,8 @@ public class PlayScreen extends Screen {
                     powerups.add(new Nuke(nuke,(float) randomX, -height/10));
                 }else if(randomChoice == 3){
                     powerups.add(new SlowTime(slowTime,(float) randomX, -height/10));
+                }else if(randomChoice == 4){
+                    powerups.add(new Forcefield(shield, (float) randomX, -height/10));
                 }
 
                 int randomSpawnTime = rand.nextInt(10) + 3;
@@ -428,8 +437,9 @@ public class PlayScreen extends Screen {
                             }
                         }
                     }else if(p.getPowerupType() == PowerupType.SLOWTIME){
-
                         isSlowDown = true;
+                    }else if(p.getPowerupType() == PowerupType.FORCEFIELD){
+                        isForcefield = true;
                     }
 
                 }
@@ -467,8 +477,10 @@ public class PlayScreen extends Screen {
                         e.hasCollision(playerShip.getX() + spaceship.getWidth() / 2, playerShip.getY()))
                         && lives > 0) {
 
-                    int playerShipLivesLost = e.getShipType().getLives() / 5;
-                    lives = lives - playerShipLivesLost;
+                    if(!isForcefield) {
+                        int playerShipLivesLost = e.getShipType().getLives() / 5;
+                        lives = lives - playerShipLivesLost;
+                    }
                     if (lives > 0) {
                         addEnemyExplosion(e);
 
@@ -819,12 +831,24 @@ public class PlayScreen extends Screen {
                 isSpawnEnemyImperial = false;
             }
 
+
+
+
+            //slow down powerup controller
             if(slowDownTime == 0 && isSlowDown == true){
                 slowDownTime = System.nanoTime() + (ONESEC_NANOS*2);
 
             }else if(slowDownTime < frtime && isSlowDown == true){
                 slowDownTime = 0;
                 isSlowDown = false;
+            }
+
+            //forcefield powerup controller
+            if(forceFieldTime == 0 && isForcefield == true){
+                forceFieldTime = System.nanoTime() + (ONESEC_NANOS*4);
+            }else if(forceFieldTime < frtime && isForcefield == true){
+                forceFieldTime = 0;
+                isForcefield = false;
             }
 
 
@@ -968,9 +992,12 @@ public class PlayScreen extends Screen {
 
 
                 //drawing either the tinge or the normal spaceship, based off of delays
-                if (playerShip.isPlayerHitButNotDead()) {
+                if (playerShip.isPlayerHitButNotDead() && !isForcefield) {
                     c.drawBitmap(spaceshipHit, playerShip.getX(), playerShip.getY(), p);
                 } else {
+                    if(isForcefield){
+                        c.drawBitmap(forceField, playerShip.getX()-spaceship.getWidth()/2, playerShip.getY()-spaceship.getHeight()/3, p);
+                    }
                     c.drawBitmap(spaceship, playerShip.getX(), playerShip.getY(), p);
                 }
 

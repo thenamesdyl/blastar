@@ -52,6 +52,7 @@ public class Level2 extends Level {
                 for (int i = 0; i < 3; i++) {
                     ps.spawnEnemy(ShipType.FIGHTER,true);
                 }
+                ps.spawnEnemy(ShipType.BATTLECRUISER, true);
                 updateLevelStage = 2;
             }
 
@@ -62,11 +63,21 @@ public class Level2 extends Level {
                 for (int i = 0; i < 3; i++) {
                     ps.spawnEnemy(ShipType.IMPERIAL,true);
                 }
+                ps.spawnEnemy(ShipType.BATTLECRUISER, true);
                 updateLevelStage = 3;
             }
         }
+        if(ps.getEnemiesDestroyed() >= 7){
 
-        if(ps.getEnemiesDestroyed() == 10){
+            if(updateLevelStage == 3){
+                for (int i = 0; i < 3; i++) {
+                    ps.spawnEnemy(ShipType.BATTLECRUISER,true);
+                }
+                updateLevelStage = 4;
+            }
+        }
+
+        if(ps.getEnemiesDestroyed() == 15){
             ps.playerWon();
         }
 
