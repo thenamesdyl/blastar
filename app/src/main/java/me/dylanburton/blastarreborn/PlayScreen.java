@@ -292,19 +292,21 @@ public class PlayScreen extends Screen {
 
     public void resetGame() {
 
-        gamestate = State.STARTGAME;
-        width = 0;
-        height = 0;
-        enemiesFlying.clear();
-        shipLasers.clear();
-        shipExplosions.clear();
-        for (Enemy e : enemiesFlying) {
-            e.setFinishedVelocityChange(false);
-            e.setAIStarted(false);
-        }
-        enemiesDestroyed = 0;
-        level.setUpdateLevelStage(0);
+        if(width != 0) {
+            gamestate = State.STARTGAME;
+            width = 0;
+            height = 0;
+            enemiesFlying.clear();
+            shipLasers.clear();
+            shipExplosions.clear();
+            for (Enemy e : enemiesFlying) {
+                e.setFinishedVelocityChange(false);
+                e.setAIStarted(false);
+            }
+            enemiesDestroyed = 0;
+            level.setUpdateLevelStage(0);
 
+        }
     }
 
     /**

@@ -122,10 +122,7 @@ public class MainActivity extends ActionBarActivity {
         if(currentScreen != entryScreen) {
             if(currentScreen == playScreen){
 
-                levelScreen.resetVariables();
                 currentScreen = levelScreen;
-                playScreen.resetGame();
-
 
             }else if(currentScreen == levelScreen){
                 currentScreen = entryScreen;

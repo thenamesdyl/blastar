@@ -205,25 +205,27 @@ public class LevelScreen extends Screen {
         switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
 
+                //resets the game if game has been started before, then it starts it, resetting level screen vars
                 if (level[0].contains((int) e.getX(), (int) e.getY())) {
-                    resetVariables();
+                    ps.resetGame();
                     act.startGame(1);
                 }else if (level[1].contains((int) e.getX(), (int) e.getY()) && levelFinished[0]) {
-                    resetVariables();
+                    ps.resetGame();
                     act.startGame(2);
                 }else if (level[2].contains((int) e.getX(), (int) e.getY()) && levelFinished[1]) {
-                    resetVariables();
+                    ps.resetGame();
                     act.startGame(3);
                 }else if (level[3].contains((int) e.getX(), (int) e.getY()) && levelFinished[2]) {
-                    resetVariables();
+                    ps.resetGame();
                     act.startGame(4);
                 }else if (level[4].contains((int) e.getX(), (int) e.getY()) && levelFinished[3]) {
-                    resetVariables();
+                    ps.resetGame();
                     act.startGame(5);
                 }else if (level[5].contains((int) e.getX(), (int) e.getY()) && levelFinished[4]) {
-                    resetVariables();
+                    ps.resetGame();
                     act.startGame(6);
                 }
+
 
                 break;
 
