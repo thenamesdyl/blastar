@@ -216,6 +216,7 @@ public class MainActivity extends ActionBarActivity {
             try {
                 while(isRendering){
                     while(!holder.getSurface().isValid()) {
+                        //this is the delay before the screen starts
                         try {
                             Thread.sleep(10);
                         } catch (Exception e) { /* we don't care */  }

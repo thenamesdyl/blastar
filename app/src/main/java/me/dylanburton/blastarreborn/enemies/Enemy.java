@@ -12,10 +12,12 @@ import me.dylanburton.blastarreborn.spaceships.ShipType;
 
 /**
  * An enemy is a template for all the enemies     */
-public class Enemy extends Ship {
+public class Enemy implements Ship {
     private ShipType shipType;
     private Bitmap btm;
     private Bitmap btmHit;
+    private float x;
+    private float y;
     private float vx=0;
     private float vy=0;
     private int points;
@@ -243,6 +245,26 @@ public class Enemy extends Ship {
 
     public void setWorthEnemyDestroyedPoint(boolean worthEnemyDestroyedPoint) {
         isWorthEnemyDestroyedPoint = worthEnemyDestroyedPoint;
+    }
+
+    @Override
+    public float getX() {
+        return x;
+    }
+
+    @Override
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    @Override
+    public float getY() {
+        return y;
+    }
+
+    @Override
+    public void setY(float y) {
+        this.y = y;
     }
 
 

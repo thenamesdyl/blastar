@@ -2,6 +2,7 @@ package me.dylanburton.blastarreborn.lasers;
 
 import android.graphics.Bitmap;
 
+import me.dylanburton.blastarreborn.spaceships.Ship;
 import me.dylanburton.blastarreborn.spaceships.ShipType;
 
 /**
@@ -11,9 +12,9 @@ import me.dylanburton.blastarreborn.spaceships.ShipType;
 public class FastLaser extends ShipLaser {
 
 
-    public FastLaser(ShipType shipType, Bitmap laserBitmap, float x, float y){
+    public FastLaser(Ship ship, Bitmap laserBitmap, float x, float y){
         setEnemyLaser(true);
-        setShipType(shipType);
+        setShip(ship);
         this.setBmp(laserBitmap);
 
         this.setX(x);

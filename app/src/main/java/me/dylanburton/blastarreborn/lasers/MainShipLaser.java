@@ -2,6 +2,7 @@ package me.dylanburton.blastarreborn.lasers;
 
 import android.graphics.Bitmap;
 
+import me.dylanburton.blastarreborn.spaceships.Ship;
 import me.dylanburton.blastarreborn.spaceships.ShipType;
 
 /**
@@ -13,9 +14,9 @@ public class MainShipLaser extends ShipLaser {
     private static final boolean isMainShipLaser = true;
 
     //simple yet effective
-    public MainShipLaser(Bitmap laserBitmap, float x, float y){
+    public MainShipLaser(Ship ship, Bitmap laserBitmap, float x, float y){
 
-        setShipType(ShipType.PLAYER);
+        setShip(ship);
         setEnemyLaser(false);
         setBmp(laserBitmap);
 

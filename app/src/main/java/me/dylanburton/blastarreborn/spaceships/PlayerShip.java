@@ -13,10 +13,13 @@ import me.dylanburton.blastarreborn.lasers.ShipLaser;
  * Created by Dylan on 7/16/2017.
  */
 
-public class PlayerShip extends Ship{
+public class PlayerShip implements Ship{
 
     //main spaceships location and bound
     private Bitmap mainSpaceShip;
+    private float x;
+    private float y;
+    private ShipType shipType = ShipType.PLAYER;
     private float width;
     private float height;
     private boolean spaceshipIsMoving;
@@ -87,6 +90,36 @@ public class PlayerShip extends Ship{
     public void setPlayerHitButNotDead(boolean playerHitButNotDead) {
         this.playerHitButNotDead = playerHitButNotDead;
     }
+
+    public ShipType getShipType() {
+        return shipType;
+    }
+
+    public void setShipType(ShipType shipType) {
+        this.shipType = shipType;
+    }
+
+
+    @Override
+    public float getX() {
+        return x;
+    }
+
+    @Override
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    @Override
+    public float getY() {
+        return y;
+    }
+
+    @Override
+    public void setY(float y) {
+        this.y = y;
+    }
+
 
 
 

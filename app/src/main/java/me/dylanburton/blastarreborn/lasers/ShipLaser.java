@@ -2,6 +2,7 @@ package me.dylanburton.blastarreborn.lasers;
 
 import android.graphics.Bitmap;
 
+import me.dylanburton.blastarreborn.spaceships.Ship;
 import me.dylanburton.blastarreborn.spaceships.ShipType;
 
 /**
@@ -13,7 +14,7 @@ import me.dylanburton.blastarreborn.spaceships.ShipType;
  */
 public class ShipLaser {
     private boolean isEnemyLaser = true;
-    private ShipType shipType;
+    private Ship ship;
     private float x = 0;
     private float y = 0;
     private float dx = 0;
@@ -26,16 +27,16 @@ public class ShipLaser {
 
     public ShipLaser(){}
 
-    public ShipLaser(ShipType shipType, Bitmap bmp, float x , float y){
+    public ShipLaser(Ship ship, Bitmap bmp, float x , float y){
         this.bmp = bmp;
-        this.shipType = shipType;
+        this.ship = ship;
         this.x = x;
         this.y = y;
 
     }
-    public ShipLaser(ShipType shipType, Bitmap bmp, float x , float y, float speedAmplifier){
+    public ShipLaser(Ship ship, Bitmap bmp, float x , float y, float speedAmplifier){
         this.bmp = bmp;
-        this.shipType = shipType;
+        this.ship = ship;
         this.x = x;
         this.y = y;
         this.dy = dy*speedAmplifier;
@@ -105,12 +106,12 @@ public class ShipLaser {
     }
 
 
-    public ShipType getShipType() {
-        return shipType;
+    public Ship getShip() {
+        return ship;
     }
 
-    public void setShipType(ShipType shipType) {
-        this.shipType = shipType;
+    public void setShip(Ship ship) {
+        this.ship = ship;
     }
     public long getLastImperialLaserFrameChange() {
         return lastImperialLaserFrameChange;
