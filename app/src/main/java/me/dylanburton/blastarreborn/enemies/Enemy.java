@@ -8,11 +8,11 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 
 import me.dylanburton.blastarreborn.spaceships.Ship;
+import me.dylanburton.blastarreborn.spaceships.ShipType;
 
 /**
  * An enemy is a template for all the enemies     */
 public class Enemy extends Ship {
-    private final float HALF_DIVISOR = 1.9f;  //changing the dimensions to be consistent
     private ShipType shipType;
     private Bitmap btm;
     private Bitmap btmHit;
@@ -20,14 +20,8 @@ public class Enemy extends Ship {
     private float vy=0;
     private int points;
     private int lives;
-    private float width=0; // width onscreen
-    private float height=0;  // height onscreen
-    private float halfWidth = 0;  // convenience
-    private float halfHeight = 0;
     private boolean enemyIsHitButNotDead = false; //specific yet helpful boolean for my hit animation
-    private long explosionActivateTime; //adding so I dont have to delete the enemy after explosion for a couple seconds, this way their orbs dont dissapear
     private long hitContactTimeForTinge = 0; //for if the laser hits the enemy
-    private long hitContactTimeForExplosions = 0; //for if the laser hits the enemy
 
     // firing stuff
     private float randomlyGeneratedEnemyFiringTimeInSeconds; //variable for enemy firing stuff
@@ -62,10 +56,6 @@ public class Enemy extends Ship {
         setY(-50);
         this.btmHit = btmHit;
         this.btm = bitmap;
-        this.width = bitmap.getWidth();
-        this.height = bitmap.getHeight();
-        this.halfWidth = width / HALF_DIVISOR;
-        this.halfHeight = height / HALF_DIVISOR;
         this.lives = shipType.getLives();
         this.points = shipType.getPoints();
         this.shipType = shipType;
@@ -221,29 +211,12 @@ public class Enemy extends Ship {
     public void setEnemyFiringTime(long enemyFiringTime) {
         this.enemyFiringTime = enemyFiringTime;
     }
-    public long getExplosionActivateTime() {
-        return explosionActivateTime;
-    }
-
-    public void setExplosionActivateTime(long explosionActivateTime) {
-        this.explosionActivateTime = explosionActivateTime;
-    }
     public long getHitContactTimeForTinge() {
         return hitContactTimeForTinge;
     }
 
     public void setHitContactTimeForTinge(long hitContactTime) {
         this.hitContactTimeForTinge = hitContactTime;
-    }
-    public long getHitContactTimeForExplosions() {
-        return hitContactTimeForTinge;
-    }
-
-    public void setHitContactTimeForExpl(long hitContactTime) {
-        this.hitContactTimeForTinge = hitContactTime;
-    }
-    public void setHitContactTimeForExplosions(long hitContactTimeForExplosions) {
-        this.hitContactTimeForExplosions = hitContactTimeForExplosions;
     }
     public boolean isAIDisabled() {
         return isAIDisabled;

@@ -28,7 +28,7 @@ import me.dylanburton.blastarreborn.enemies.Battlecruiser;
 import me.dylanburton.blastarreborn.enemies.Mothership;
 import me.dylanburton.blastarreborn.enemies.Berserker;
 import me.dylanburton.blastarreborn.enemies.Enemy;
-import me.dylanburton.blastarreborn.enemies.ShipType;
+import me.dylanburton.blastarreborn.spaceships.ShipType;
 import me.dylanburton.blastarreborn.enemies.Fighter;
 import me.dylanburton.blastarreborn.enemies.Imperial;
 import me.dylanburton.blastarreborn.lasers.DiagonalLaser;
@@ -201,8 +201,8 @@ public class PlayScreen extends Screen {
 
             //game over stuff
             gameOverOverlay = act.getScaledBitmap("slightlytransparentoverlay.png");
-            playerDiedText = act.getScaledBitmap("playerdiedtext.png");
-            playerWonText = act.getScaledBitmap("playerwontext.png");
+            playerDiedText = act.getScaledBitmap("endgame/playerdiedtext.png");
+            playerWonText = act.getScaledBitmap("endgame/playerwontext.png");
 
             p.setTypeface(act.getGameFont());
             currentLevel = 1;
@@ -318,11 +318,10 @@ public class PlayScreen extends Screen {
         }
 
         if (lives <= 0) {
-            if (!playerShip.isEndOfTheRoad()) {
-                playerShip.setShipExplosionActivateTime(System.nanoTime());
-                shipExplosions.add(new ShipExplosion(playerShip.getX(), playerShip.getY(), playerShip));
-                playerShip.setEndOfTheRoad(true);
-            }
+
+
+            shipExplosions.add(new ShipExplosion(playerShip.getX(), playerShip.getY(), ShipType.PLAYER));
+            shipExplosions.get(shipExplosions.size()-1).setExplosionActivateTime(System.nanoTime());
 
             //the rest of this will happen when explosion is completed in draw
         }
@@ -330,22 +329,23 @@ public class PlayScreen extends Screen {
 
     public void addEnemyExplosion(Enemy e) {
         if (e.getShipType() == ShipType.FIGHTER) {
-            shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e));
+            shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e.getShipType()));
         } else if (e.getShipType() == ShipType.BERSERKER) {
-            shipExplosions.add(new ShipExplosion(e.getX() + e.getBitmap().getWidth() / 3, e.getY() + e.getBitmap().getHeight() / 3, e));
+            shipExplosions.add(new ShipExplosion(e.getX() + e.getBitmap().getWidth() / 3, e.getY() + e.getBitmap().getHeight() / 3, e.getShipType()));
         } else if (e.getShipType() == ShipType.IMPERIAL) {
-            shipExplosions.add(new ShipExplosion(e.getX(), e.getY() + e.getBitmap().getHeight() / 4, e));
+            shipExplosions.add(new ShipExplosion(e.getX(), e.getY() + e.getBitmap().getHeight() / 4, e.getShipType()));
         } else if (e.getShipType() == ShipType.BATTLECRUISER) {
-            shipExplosions.add(new ShipExplosion(e.getX(), e.getY() + e.getBitmap().getHeight() / 4, e));
+            shipExplosions.add(new ShipExplosion(e.getX(), e.getY() + e.getBitmap().getHeight() / 4, e.getShipType()));
         } else if (e.getShipType() == ShipType.MOTHERSHIP) {
-            shipExplosions.add(new ShipExplosion(e.getX(), e.getY() + e.getBitmap().getHeight() / 4, e));
+            shipExplosions.add(new ShipExplosion(e.getX(), e.getY() + e.getBitmap().getHeight() / 4, e.getShipType()));
         }
 
         e.setX(10000);
         e.setAIDisabled(true);
         enemyDestroyed(e);
 
-        e.setExplosionActivateTime(System.nanoTime());
+        //set the shipExplosion we just added explosion activate time
+        shipExplosions.get(shipExplosions.size()-1).setExplosionActivateTime(System.nanoTime());
     }
 
     public void enemyDestroyed(Enemy e) {
@@ -447,6 +447,27 @@ public class PlayScreen extends Screen {
                 }
             }
 
+            for (ShipExplosion se: shipExplosions){
+                //for some reason, removing the explosion caused major lag. So we're doing it this way
+                if (se.getCurrentFrame() == 11) {
+                    se.setX(4000);
+                    se.setY(4000);
+                    // shipExplosions.remove(se);
+                    if(se.getShip() == ShipType.PLAYER){
+                        gamestate = State.PLAYERDIED;
+                    }
+                }
+
+                //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
+                if (se.getExplosionActivateTime() + (ONESEC_NANOS / 20) < frtime) {
+                    se.setExplosionActivateTime(System.nanoTime());
+                    if (se.getCurrentFrame() < 11) {
+                        se.nextFrame();
+                    }
+
+                }
+            }
+
             synchronized (enemiesFlying) {
                 Iterator<Enemy> enemiesIterator = enemiesFlying.iterator();
                 while (enemiesIterator.hasNext()) {
@@ -491,10 +512,8 @@ public class PlayScreen extends Screen {
                             //for red tinge on enemy, not like it matters though, players dead
                             e.setHitContactTimeForTinge(System.nanoTime());
 
-                            playerShip.setShipExplosionActivateTime(System.nanoTime());
-                            shipExplosions.add(new ShipExplosion(playerShip.getX(), playerShip.getY(), playerShip));
-                            playerShip.setEndOfTheRoad(true);
-
+                            shipExplosions.add(new ShipExplosion(playerShip.getX(), playerShip.getY(), ShipType.PLAYER));
+                            shipExplosions.get(shipExplosions.size()-1).setExplosionActivateTime(System.nanoTime());
                         }
 
                     }
@@ -902,27 +921,6 @@ public class PlayScreen extends Screen {
                         }
                     }
 
-                    //explosion time checker
-                    for (ShipExplosion se : shipExplosions) {
-                        if (se.getShip() == e) {
-
-                            //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
-                            if (e.getExplosionActivateTime() + (ONESEC_NANOS / 20) < frtime) {
-                                e.setExplosionActivateTime(System.nanoTime());
-                                if (se.getCurrentFrame() < 11) {
-                                    se.nextFrame();
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                    //deletes ship
-                    if (e.getExplosionActivateTime() + (ONESEC_NANOS * 5) < frtime && e.getLives() == 0) {
-                        enemiesFlying.remove(e);
-                    }
                 }
             }
 
@@ -931,12 +929,6 @@ public class PlayScreen extends Screen {
             for (ShipExplosion se : shipExplosions) {
                 c.drawBitmap(explosion[se.getCurrentFrame()], se.getX(), se.getY(), p);
 
-                //for some reason, removing the explosion caused major lag. So we're doing it this way
-                if (se.getCurrentFrame() == 11) {
-                    se.setX(4000);
-                    se.setY(4000);
-                    // shipExplosions.remove(se);
-                }
 
             }
 
@@ -995,32 +987,6 @@ public class PlayScreen extends Screen {
                 }
 
 
-            } else {
-                /*
-                 * Explosion for main ship
-                 */
-
-                for (ShipExplosion se : shipExplosions) {
-                    if (se.getShip() == playerShip) {
-                        c.drawBitmap(explosion[se.getCurrentFrame()], se.getX(), se.getY(), p);
-
-                        //semi-clever way of adding a very precise delay (yes, I am scratching my own ass)
-                        if (playerShip.getShipExplosionActivateTime() + (ONESEC_NANOS / 20) < frtime) {
-                            playerShip.setShipExplosionActivateTime(System.nanoTime());
-                            se.nextFrame();
-
-                        }
-
-                        if (se.getCurrentFrame() == 11) {
-                            shipExplosions.remove(se);
-
-                            //end of game folks, thanks for playing
-                            gamestate = State.PLAYERDIED;
-
-                        }
-                    }
-
-                }
             }
 
             if(level.getMapEdge() != null) {

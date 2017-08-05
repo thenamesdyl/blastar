@@ -8,7 +8,7 @@ import java.io.InputStream;
 
 import me.dylanburton.blastarreborn.MainActivity;
 import me.dylanburton.blastarreborn.PlayScreen;
-import me.dylanburton.blastarreborn.enemies.ShipType;
+import me.dylanburton.blastarreborn.spaceships.ShipType;
 
 /**
  * Created by Dylan on 7/25/2017.

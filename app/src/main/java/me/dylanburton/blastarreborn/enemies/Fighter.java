@@ -2,6 +2,8 @@ package me.dylanburton.blastarreborn.enemies;
 
 import android.graphics.Bitmap;
 
+import me.dylanburton.blastarreborn.spaceships.ShipType;
+
 /**
  * Created by Dylan on 7/16/2017.
  */

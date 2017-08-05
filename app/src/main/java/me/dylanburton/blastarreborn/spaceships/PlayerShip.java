@@ -24,8 +24,6 @@ public class PlayerShip extends Ship{
     private long lastLaserSpawnTime = 0;
     private long shipHitForTingeTime = 0; //for red tinge on your spaceship
     private boolean playerHitButNotDead = false; //also for red tinge
-    private long shipExplosionActivateTime = 0;
-    private boolean endOfTheRoad = false; //makes sure the explosion is only played once
 
     Rect bounds = new Rect();//bounds for the PlayerShip
 
@@ -88,22 +86,6 @@ public class PlayerShip extends Ship{
 
     public void setPlayerHitButNotDead(boolean playerHitButNotDead) {
         this.playerHitButNotDead = playerHitButNotDead;
-    }
-
-    public long getShipExplosionActivateTime() {
-        return shipExplosionActivateTime;
-    }
-
-    public void setShipExplosionActivateTime(long shipExplosionActivateTime) {
-        this.shipExplosionActivateTime = shipExplosionActivateTime;
-    }
-
-    public boolean isEndOfTheRoad() {
-        return endOfTheRoad;
-    }
-
-    public void setEndOfTheRoad(boolean endOfTheRoad) {
-        this.endOfTheRoad = endOfTheRoad;
     }
 
 

@@ -11,9 +11,10 @@ public class ShipExplosion{
     float x=0;
     float y=0;
     int currentFrame = 0;
-    private Ship s;
+    private ShipType s;
+    private long explosionActivateTime = 0;
 
-    public ShipExplosion(float x, float y, Ship s){
+    public ShipExplosion(float x, float y, ShipType s){
         this.x = x;
         this.y = y;
         this.s = s;
@@ -42,11 +43,21 @@ public class ShipExplosion{
     public void setY(float y) {
         this.y = y;
     }
-    public Ship getShip() {
+    public ShipType getShip() {
         return s;
     }
 
-    public void setShip(Enemy e) {
+    public void setShip(ShipType s) {
         this.s = s;
     }
+
+
+    public long getExplosionActivateTime() {
+        return explosionActivateTime;
+    }
+
+    public void setExplosionActivateTime(long explosionActivateTime) {
+        this.explosionActivateTime = explosionActivateTime;
+    }
+
 }

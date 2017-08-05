@@ -2,6 +2,7 @@ package me.dylanburton.blastarreborn.enemies;
 
 import android.graphics.Bitmap;
 
+import me.dylanburton.blastarreborn.spaceships.ShipType;
 import me.dylanburton.blastarreborn.utils.HeatSinker;
 
 /**
