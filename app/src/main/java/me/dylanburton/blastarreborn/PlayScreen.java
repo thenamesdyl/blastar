@@ -78,7 +78,7 @@ public class PlayScreen extends Screen {
     private int height = 0;
 
 
-    private Bitmap starbackground, spaceship, spaceshipHit, spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText;
+    private Bitmap spaceship, spaceshipHit, spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText;
     private Bitmap imperial, imperialHit, imperialOrb[], berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battlecruiserFire[], mothership, mothershipHit, healthPack;
     private Bitmap doubleFire, doubleFireShot, oneStar, twoStar, threeStar, noStar, nuke, slowTime, forceField, shield;
     private Rect scaledDst = new Rect();
@@ -99,7 +99,6 @@ public class PlayScreen extends Screen {
     private long slowDownTime = 0; //how long the slow down is
     private long forceFieldTime = 0;
     private float elapsedSecs;
-    private int fps = 0;
 
     //various game things
     private int enemiesDestroyed = 0;
@@ -109,8 +108,6 @@ public class PlayScreen extends Screen {
     private static final String HIGHSCORE_FILE = "scoredata.dat";
     private static final int START_NUMLIVES = 8;
     private Level level;
-    private float leftBorder;
-    private float rightBorder;
 
     private int livesPercentage; //for lives rectangle
 
@@ -141,11 +138,6 @@ public class PlayScreen extends Screen {
         this.act = act;
         AssetManager assetManager = act.getAssets();
         try {
-
-            //background
-            InputStream inputStream = assetManager.open("maps/map1.jpg");
-            starbackground = BitmapFactory.decodeStream(inputStream);
-            inputStream.close();
 
             //your spaceship and laser
             spaceship = act.getScaledBitmap("spaceship/playerspaceship.png");
@@ -360,7 +352,6 @@ public class PlayScreen extends Screen {
         long newtime = System.nanoTime();
         elapsedSecs = (float) (newtime - frtime) / ONESEC_NANOS;
         frtime = newtime;
-        fps = (int) (1 / elapsedSecs);
 
         level.checkLevelSequence();//updates level spawning enemies
 
@@ -380,9 +371,6 @@ public class PlayScreen extends Screen {
             powerupSpawnTime = System.nanoTime() + (ONESEC_NANOS * randomTime);
 
             gameEndTimeCheck = 0;
-
-            leftBorder = width / 10;
-            rightBorder = width * 9 / 10;
 
         }
 
