@@ -16,6 +16,7 @@ import me.dylanburton.blastarreborn.enemies.ShipType;
 
 public class Level3 extends Level {
     private Bitmap map;
+    private Bitmap mapEdge;
     private PlayScreen ps;
     private int updateLevelStage = 0; //defends against the checkers constantly drawing ships
 
@@ -27,7 +28,9 @@ public class Level3 extends Level {
             AssetManager assetManager = act.getAssets();
             InputStream inputStream = assetManager.open("maps/map3.jpg");
             map = BitmapFactory.decodeStream(inputStream);
+            mapEdge = BitmapFactory.decodeStream(assetManager.open("maps/map3edges.png"));
             inputStream.close();
+
         }catch(Exception e){
             //dont care sorry
         }
@@ -85,4 +88,6 @@ public class Level3 extends Level {
     public Bitmap getMap() {
         return map;
     }
+
+    public Bitmap getMapEdge(){ return mapEdge; }
 }

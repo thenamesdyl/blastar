@@ -16,6 +16,7 @@ import me.dylanburton.blastarreborn.enemies.ShipType;
 
 public class Level1 extends Level{
     private Bitmap map;
+    private Bitmap mapEdge;
     private PlayScreen ps;
     private int updateLevelStage = 0; //defends against the checkers constantly drawing ships
 
@@ -120,4 +121,6 @@ public class Level1 extends Level{
     public Bitmap getMap() {
         return map;
     }
+
+    public Bitmap getMapEdge(){ return mapEdge; }
 }

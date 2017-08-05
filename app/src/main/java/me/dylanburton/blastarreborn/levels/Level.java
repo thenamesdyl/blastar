@@ -11,5 +11,6 @@ public abstract class Level {
     public abstract void checkLevelSequence();
     public abstract void setUpdateLevelStage(int updateBoundaryChecker);
     public abstract Bitmap getMap();
+    public abstract Bitmap getMapEdge();
 
 }

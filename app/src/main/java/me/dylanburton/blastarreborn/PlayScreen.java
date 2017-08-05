@@ -53,7 +53,6 @@ import me.dylanburton.blastarreborn.spaceships.ShipExplosion;
 
 /**
  * Represents the main screen of play for the game.
- *
  */
 public class PlayScreen extends Screen {
 
@@ -871,7 +870,6 @@ public class PlayScreen extends Screen {
             //secondary background for animation. Same as last draw, but instead, these are a height-length higher
             c.drawBitmap(level.getMap(), null, new Rect(secondaryMapAnimatorX - width, secondaryMapAnimatorY - (height * 2), secondaryMapAnimatorX, secondaryMapAnimatorY - height), p);
 
-
             for (Powerup pw : powerups) {
                 c.drawBitmap(pw.getBitmap(), pw.getX(), pw.getY(), p);
 
@@ -1023,6 +1021,10 @@ public class PlayScreen extends Screen {
                 }
             }
 
+            if(level.getMapEdge() != null) {
+                c.drawBitmap(level.getMapEdge(), null, scaledDst, p);
+                c.drawBitmap(level.getMapEdge(), null, new Rect(secondaryMapAnimatorX - width, secondaryMapAnimatorY - (height * 2), secondaryMapAnimatorX, secondaryMapAnimatorY - height), p);
+            }
 
             //life counter
             p.setColor(Color.rgb(20, 20, 20));
