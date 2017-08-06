@@ -81,7 +81,7 @@ public class PlayScreen extends Screen {
     private Bitmap starbackground, spaceship, spaceshipHit, spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText;
     private Bitmap imperial, imperialHit, imperialOrb[], berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battlecruiserFire[], mothership, mothershipHit, healthPack;
     private Bitmap doubleFire, doubleFireShot, oneStar, twoStar, threeStar, noStar, nuke, slowTime, forceField, shield;
-    private Bitmap lifeBarEmpty, lifeBarRect, powerupTimeRect, slantedContainer;
+    private Bitmap lifeBarEmpty, lifeBarRect, powerupTimeRect, slantedContainer, normalContainer;
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -111,6 +111,7 @@ public class PlayScreen extends Screen {
     private Level level;
 
     private int livesPercentage; //for lives rectangle
+    private float powerupTimePercentage;
 
     private int starsEarned = 0;
     private int starsEarnedFile = 0;
@@ -195,6 +196,7 @@ public class PlayScreen extends Screen {
             lifeBarEmpty = act.getScaledBitmap("topui/lifebarfoundation.png");
             powerupTimeRect = act.getScaledBitmap("topui/poweruptimerect.png");
             slantedContainer = act.getScaledBitmap("topui/slantedcontainer.png");
+            normalContainer = act.getScaledBitmap("topui/topuirect.png");
 
             //explosion for all ships
             explosion = new Bitmap[12];
@@ -388,7 +390,7 @@ public class PlayScreen extends Screen {
 
             //live percentages for lives rectangle
             if (lives >= 0) {
-                livesPercentage = width / 9 - (((width / 9 - width / 3) / START_NUMLIVES) * lives);
+                livesPercentage = (width / 9)/4 - ((((width / 9)/4 - width / 3) / START_NUMLIVES) * lives);
             } else {
                 livesPercentage = width / 9;
             }
@@ -500,8 +502,6 @@ public class PlayScreen extends Screen {
                     }
 
                 }
-
-
 
 
                 //ship explodes when charges into opposite side of screen
@@ -731,7 +731,7 @@ public class PlayScreen extends Screen {
                     }
 
 
-                }else{
+                } else {
                     //if ai is disabled, delete the bastard cause hes useless
                     enemiesIterator.remove();
                 }
@@ -995,13 +995,16 @@ public class PlayScreen extends Screen {
                 c.drawBitmap(level.getMapEdge(), null, new Rect(secondaryMapAnimatorX - width, secondaryMapAnimatorY - (height * 2), secondaryMapAnimatorX, secondaryMapAnimatorY - height), p);
             }
 
-            //life counter
-            p.setColor(Color.rgb(20, 20, 20));
-            c.drawRect(0, 0, width, height / 17, p);
-            p.setColor(Color.rgb(255, 0, 0));
-            c.drawBitmap(lifeBarRect, null, new Rect(width / 9, height / 35, livesPercentage, height / 23), p);
-            p.setColor(Color.rgb(255, 255, 255));
-            drawCenteredText(c, "Life", height / 23, p, -width * 45 / 100);
+            //topui
+            c.drawBitmap(slantedContainer, null, new Rect(0, 0, width*38/100, height/12), p);
+            c.drawBitmap(normalContainer, null, new Rect(width*38/100, 0, width*3/5,height/12), p);
+            c.drawBitmap(normalContainer, null, new Rect(width*3/5, 0, width,height/12), p);
+            c.drawBitmap(lifeBarEmpty, null, new Rect((width*140 / 1000)/5, height / 48, width*34/100, (height*679/10000)), p);
+            c.drawBitmap(lifeBarRect, null, new Rect((width*144 / 1000)/4, height / 35, livesPercentage, (height / 23)), p);
+            c.drawBitmap(powerupTimeRect, null, new Rect((width*200 / 1000), height / 21, width/3, (height / 16)), p);
+
+            //p.setColor(Color.rgb(255, 255, 255));
+            //drawCenteredText(c, "Life", height / 23, p, -width * 45 / 100);
 
             p.setColor(Color.WHITE);
             p.setTextSize(act.TS_NORMAL);
