@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.InputStream;
+import java.util.Random;
 
 import me.dylanburton.blastarreborn.MainActivity;
 import me.dylanburton.blastarreborn.PlayScreen;
@@ -19,6 +20,11 @@ public class Level3 extends Level {
     private Bitmap mapEdge;
     private PlayScreen ps;
     private int updateLevelStage = 0; //defends against the checkers constantly drawing ships
+    private static final int END_LEVEL = 7;
+    private int totalEnemies;
+    private int randomAmountShips = 0;
+    private int randomShip = 0;
+    private Random rand = new Random();
 
     public Level3(PlayScreen ps, MainActivity act){
 
@@ -38,41 +44,37 @@ public class Level3 extends Level {
 
     public void checkLevelSequence(){
 
-        if(ps.getEnemiesDestroyed() >=0) {
+        /*
+         * Everytime player has destroyed all but 2 enemies, the next wave comes in. Once player reaches designated END level, game ends.
+         */
+        if(ps.getEnemiesDestroyed() >= totalEnemies-2){
+            randomAmountShips = rand.nextInt(9)+3;
 
-            if(updateLevelStage == 0) {
-                for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(ShipType.FIGHTER,true);
+            if(updateLevelStage != END_LEVEL) {
+                updateLevelStage++;
+
+                for (int i = 0; i < randomAmountShips; i++) {
+                    randomShip = rand.nextInt(99) + 1;
+
+                    if (randomShip <=30) {
+                        ps.spawnEnemy(ShipType.FIGHTER, true);
+                    } else if (randomShip > 30 && randomShip <= 60) {
+                        ps.spawnEnemy(ShipType.BATTLECRUISER, true);
+                    } else if (randomShip > 60 && randomShip <=90) {
+                        ps.spawnEnemy(ShipType.IMPERIAL, true);
+                    } else if (randomShip > 90) {
+                        ps.spawnEnemy(ShipType.BERSERKER, true);
+                    }
+                    totalEnemies++;
                 }
-                ps.spawnEnemy(ShipType.BERSERKER,true);
-                updateLevelStage = 1;
+            }else{
+
+                //waits for player to destroy the last two enemies
+                if(ps.getEnemiesDestroyed() == totalEnemies){
+                    ps.playerWon();
+                }
             }
 
-        }
-        if(ps.getEnemiesDestroyed() >= 2){
-
-            if(updateLevelStage == 1) {
-                for (int i = 0; i < 3; i++) {
-                    ps.spawnEnemy(ShipType.FIGHTER,true);
-                }
-                ps.spawnEnemy(ShipType.BATTLECRUISER,true);
-                updateLevelStage = 2;
-            }
-
-        }
-        if(ps.getEnemiesDestroyed() >= 4){
-
-            if(updateLevelStage == 2) {
-                for (int i = 0; i < 2; i++) {
-                    ps.spawnEnemy(ShipType.BERSERKER, true);
-                }
-                updateLevelStage = 3;
-            }
-
-        }
-
-        if(ps.getEnemiesDestroyed() == 10){
-            ps.playerWon();
         }
 
     }

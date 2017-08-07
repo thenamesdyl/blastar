@@ -117,7 +117,7 @@ public class LevelScreen extends Screen {
 
         scaledDst.set(0,0,realWidth, realHeight);
         c.drawBitmap(starbackground,null,scaledDst,p);
-        //0 and 2 is width left and right, 1 and 3 is height top and bottom
+        //0 and 2 is width left and right, 1 and 3 is height top to bottom
         levelScreenBounds.set(levelScreenCoords[0], levelScreenCoords[1], levelScreenCoords[2], levelScreenCoords[3]);
         if(startZoomAnimation){
             levelScreenCoords[0] -= 10;

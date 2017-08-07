@@ -850,7 +850,7 @@ public class PlayScreen extends Screen {
             if (mapAnimatorY >= height * 2) {
                 mapAnimatorY = height;
             } else if (secondaryMapAnimatorY >= height * 2) {
-                secondaryMapAnimatorY = height;
+                secondaryMapAnimatorY = height+10;
             }
         }
 
@@ -1056,9 +1056,9 @@ public class PlayScreen extends Screen {
     }
 
     public void playerWon() {
-        if (elapsedSecs < 20 && lives >= 3) {
+        if (lives >= 6) {
             starsEarned = 3;
-        } else if (elapsedSecs < 30 && lives >= 2) {
+        } else if (lives >= 3) {
             starsEarned = 2;
         } else {
             starsEarned = 1;

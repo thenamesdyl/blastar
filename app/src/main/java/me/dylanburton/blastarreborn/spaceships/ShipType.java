@@ -6,11 +6,11 @@ package me.dylanburton.blastarreborn.spaceships;
 
 public enum ShipType {
     //Name of ship followed by how strong the enemy is then points
-    FIGHTER(5,20),
-    IMPERIAL(8,50),
+    FIGHTER(7,20),
+    IMPERIAL(10,50),
     BATTLECRUISER(13,100),
     MOTHERSHIP(100,200),
-    BERSERKER(20,500),
+    BERSERKER(6,500),
     PLAYER(0,0);
 
     private final int lives;
