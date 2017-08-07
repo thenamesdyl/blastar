@@ -331,13 +331,13 @@ public class PlayScreen extends Screen {
 
     public void addEnemyExplosion(Enemy e) {
         if (e.getShipType() == ShipType.FIGHTER) {
-            shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() * 3 / 4, e.getY() - e.getBitmap().getHeight() / 2, e.getShipType()));
+            shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() / 5, e.getY() - e.getBitmap().getHeight() / 4, e.getShipType()));
         } else if (e.getShipType() == ShipType.BERSERKER) {
-            shipExplosions.add(new ShipExplosion(e.getX() + e.getBitmap().getWidth() / 3, e.getY() + e.getBitmap().getHeight() / 3, e.getShipType()));
+            shipExplosions.add(new ShipExplosion(e.getX() + e.getBitmap().getWidth() / 3, e.getY() + e.getBitmap().getHeight() / 5, e.getShipType()));
         } else if (e.getShipType() == ShipType.IMPERIAL) {
-            shipExplosions.add(new ShipExplosion(e.getX(), e.getY() + e.getBitmap().getHeight() / 4, e.getShipType()));
+            shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth()/5, e.getY() + e.getBitmap().getHeight() / 5, e.getShipType()));
         } else if (e.getShipType() == ShipType.BATTLECRUISER) {
-            shipExplosions.add(new ShipExplosion(e.getX(), e.getY() + e.getBitmap().getHeight() / 4, e.getShipType()));
+            shipExplosions.add(new ShipExplosion(e.getX(), e.getY() + e.getBitmap().getHeight() / 5, e.getShipType()));
         } else if (e.getShipType() == ShipType.MOTHERSHIP) {
             shipExplosions.add(new ShipExplosion(e.getX(), e.getY() + e.getBitmap().getHeight() / 4, e.getShipType()));
         }
@@ -383,6 +383,7 @@ public class PlayScreen extends Screen {
 
         if (gamestate == State.RUNNING) {
 
+
             //live percentages for lives rectangle
             if (lives >= 0) {
                 livesPercentage = (width / 9)/4 - ((((width / 9)/4 - width / 3) / START_NUMLIVES) * lives);
@@ -402,7 +403,7 @@ public class PlayScreen extends Screen {
             //powerup spawning
             if (powerupSpawnTime < frtime) {
                 int randomChoice = rand.nextInt(5);
-                int randomX = rand.nextInt(width);
+                int randomX = rand.nextInt(width*9/10)+width/20;
                 if (randomChoice == 0) {
                     powerups.add(new HealthPack(healthPack, (float) randomX, -height / 10, 1));
                 } else if (randomChoice == 1) {
@@ -491,18 +492,18 @@ public class PlayScreen extends Screen {
                         e.hasCollision(playerShip.getX() + spaceship.getWidth() / 2, playerShip.getY()))
                         && lives > 0) {
 
-                    if (isForcefield && e.getShipType() != ShipType.MOTHERSHIP) {
+                    if (!isForcefield) {
 
-                        //nothing bra
-                    }else{
                         int playerShipLivesLost = e.getShipType().getLives() / 5;
                         lives = lives - playerShipLivesLost;
+
                     }
-                    if (lives > 0 && e.getShipType() != ShipType.MOTHERSHIP) {
+
+                    if (lives > 0 && !isForcefield) {
                         addEnemyExplosion(e);
                         enemiesIterator.remove();
 
-                    } else {
+                    } else if(!isForcefield){
 
                         //for red tinge on enemy, not like it matters though, players dead
                         e.setHitContactTimeForTinge(System.nanoTime());
@@ -599,7 +600,11 @@ public class PlayScreen extends Screen {
                     //this starts the next stage of enemy movement
                     if (!e.isAIStarted()) {
                         e.setX(rand.nextInt(width * 4 / 5));
-                        e.setY(-height / 3);
+                        if(e.getShipType() == ShipType.MOTHERSHIP) {
+                            e.setY(-height / 3);
+                        }else{
+                            e.setY(-height/7);
+                        }
                         e.setFinishedVelocityChange(true);
                         e.setAIStarted(true);
                     }
@@ -977,7 +982,7 @@ public class PlayScreen extends Screen {
                     c.drawBitmap(spaceshipHit, playerShip.getX(), playerShip.getY(), p);
                 } else {
                     if (isForcefield) {
-                        c.drawBitmap(forceField, playerShip.getX() - spaceship.getWidth() / 2, playerShip.getY() - spaceship.getHeight() / 3, p);
+                        c.drawBitmap(forceField, null, new Rect(playerShip.getBounds().left-width/20, playerShip.getBounds().top - height/20, playerShip.getBounds().right+width/20,playerShip.getBounds().bottom+height/20), p);
                     }
                     c.drawBitmap(spaceship, playerShip.getX(), playerShip.getY(), p);
                 }
