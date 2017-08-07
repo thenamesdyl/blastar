@@ -81,7 +81,7 @@ public class PlayScreen extends Screen {
     private Bitmap starbackground, spaceship, spaceshipHit, spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText;
     private Bitmap imperial, imperialHit, imperialOrb[], berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battlecruiserFire[], mothership, mothershipHit, healthPack;
     private Bitmap doubleFire, doubleFireShot, oneStar, twoStar, threeStar, noStar, nuke, slowTime, forceField, shield;
-    private Bitmap lifeBarEmpty, lifeBarRect, powerupTimeRect, slantedContainer, normalContainer, blackBackground;
+    private Bitmap lifeBarEmpty, lifeBarRect, powerupTimeRect, slantedContainer, normalContainer;
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -142,8 +142,6 @@ public class PlayScreen extends Screen {
             InputStream inputStream = assetManager.open("maps/map1.jpg");
             starbackground = BitmapFactory.decodeStream(inputStream);
             inputStream.close();
-
-            blackBackground = act.getScaledBitmap("blackbackground.png");
 
             //your spaceship and laser
             spaceship = act.getScaledBitmap("spaceship/playerspaceship.png");
@@ -889,8 +887,6 @@ public class PlayScreen extends Screen {
 
             // actually draw the screen
             scaledDst.set(mapAnimatorX - width, mapAnimatorY - height, mapAnimatorX, mapAnimatorY);
-            //drawing this because there is a 1 pixel line in between the background scrolling. Not sure how to fix besides this
-            c.drawBitmap(blackBackground, null, new Rect(0,0,width,height), p);
             c.drawBitmap(level.getMap(), null, scaledDst, p);
             //secondary background for animation. Same as last draw, but instead, these are a height-length higher
             c.drawBitmap(level.getMap(), null, new Rect(mapAnimatorX - width, mapAnimatorY - (height * 2), mapAnimatorX, mapAnimatorY - height), p);
