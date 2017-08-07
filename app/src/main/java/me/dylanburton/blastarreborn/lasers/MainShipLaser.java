@@ -23,7 +23,7 @@ public class MainShipLaser extends ShipLaser {
         this.setX(x);
         this.setY(y);
         this.setDx(0);
-        this.setDy(-20f);
+        this.setDy(-25f);
 
     }
 

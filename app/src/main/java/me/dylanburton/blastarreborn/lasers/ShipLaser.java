@@ -18,7 +18,7 @@ public class ShipLaser {
     private float x = 0;
     private float y = 0;
     private float dx = 0;
-    private float dy = 5;
+    private float dy = 8;
     private int currentFrame = 0;
     private long lastImperialLaserFrameChange = 0;
     private long lastBattlecruiserLaserFrameChange = 0;

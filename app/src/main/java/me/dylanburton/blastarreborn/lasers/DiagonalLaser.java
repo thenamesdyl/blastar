@@ -22,9 +22,9 @@ public class DiagonalLaser extends ShipLaser{
 
         if(slope != 0 && !(slope >= 10)) {//this wont make sense until you draw it out on paper (atleast it didnt for me)
             if (slope < 0) {
-                setDx(-5);
+                setDx(-8);
             } else {
-                setDx(5);
+                setDx(8);
             }
             setDy(5);
             slope = slope * -1;
