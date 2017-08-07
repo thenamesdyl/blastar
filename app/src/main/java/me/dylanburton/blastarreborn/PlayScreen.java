@@ -50,6 +50,7 @@ import me.dylanburton.blastarreborn.powerups.PowerupType;
 import me.dylanburton.blastarreborn.powerups.SlowTime;
 import me.dylanburton.blastarreborn.spaceships.PlayerShip;
 import me.dylanburton.blastarreborn.spaceships.ShipExplosion;
+import me.dylanburton.blastarreborn.utils.Sound;
 
 /**
  * Represents the main screen of play for the game.
@@ -78,7 +79,7 @@ public class PlayScreen extends Screen {
     private int height = 0;
 
 
-    private Bitmap starbackground, spaceship, spaceshipHit, spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText;
+    private Bitmap spaceship, spaceshipHit, spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText;
     private Bitmap imperial, imperialHit, imperialOrb[], berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battlecruiserFire[], mothership, mothershipHit, healthPack;
     private Bitmap doubleFire, doubleFireShot, oneStar, twoStar, threeStar, noStar, nuke, slowTime, forceField, shield;
     private Bitmap lifeBarEmpty, lifeBarRect, powerupTimeRect, slantedContainer, normalContainer;
@@ -108,7 +109,7 @@ public class PlayScreen extends Screen {
 
     private int livesPercentage; //for lives rectangle
     private float powerupCounterPercentage; //for powerup rect at top UI
-    private long powerupTimeDuration = ONESEC_NANOS*4;
+    private long powerupTimeDuration = ONESEC_NANOS * 3;
 
     private int starsEarned = 0;
     private int starsEarnedFile = 0;
@@ -137,11 +138,6 @@ public class PlayScreen extends Screen {
         this.act = act;
         AssetManager assetManager = act.getAssets();
         try {
-
-            //background
-            InputStream inputStream = assetManager.open("maps/map1.jpg");
-            starbackground = BitmapFactory.decodeStream(inputStream);
-            inputStream.close();
 
             //your spaceship and laser
             spaceship = act.getScaledBitmap("spaceship/playerspaceship.png");
@@ -335,7 +331,7 @@ public class PlayScreen extends Screen {
         } else if (e.getShipType() == ShipType.BERSERKER) {
             shipExplosions.add(new ShipExplosion(e.getX() + e.getBitmap().getWidth() / 3, e.getY() + e.getBitmap().getHeight() / 5, e.getShipType()));
         } else if (e.getShipType() == ShipType.IMPERIAL) {
-            shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth()/5, e.getY() + e.getBitmap().getHeight() / 5, e.getShipType()));
+            shipExplosions.add(new ShipExplosion(e.getX() - e.getBitmap().getWidth() / 5, e.getY() + e.getBitmap().getHeight() / 5, e.getShipType()));
         } else if (e.getShipType() == ShipType.BATTLECRUISER) {
             shipExplosions.add(new ShipExplosion(e.getX(), e.getY() + e.getBitmap().getHeight() / 5, e.getShipType()));
         } else if (e.getShipType() == ShipType.MOTHERSHIP) {
@@ -357,8 +353,8 @@ public class PlayScreen extends Screen {
 
     @Override
     public void update(View v) {
-       // long newtime = System.nanoTime();
-       // elapsedSecs = (float) (newtime - frtime) / ONESEC_NANOS;
+        // long newtime = System.nanoTime();
+        // elapsedSecs = (float) (newtime - frtime) / ONESEC_NANOS;
         frtime = System.nanoTime();
 
         level.checkLevelSequence();//updates level spawning enemies
@@ -378,6 +374,8 @@ public class PlayScreen extends Screen {
 
             gameEndTimeCheck = 0;
 
+            act.playSound(Sound.BATTLE);
+
 
         }
 
@@ -386,24 +384,24 @@ public class PlayScreen extends Screen {
 
             //live percentages for lives rectangle
             if (lives >= 0) {
-                livesPercentage = (width / 9)/4 - ((((width / 9)/4 - width / 3) / START_NUMLIVES) * lives);
+                livesPercentage = (width / 9) / 4 - ((((width / 9) / 4 - width / 3) / START_NUMLIVES) * lives);
             } else {
-                livesPercentage = (width / 9)/4;
+                livesPercentage = (width / 9) / 4;
             }
 
-            if(frtime < powerupEndTime){
-                float timeLeftPercentage = (float) (powerupEndTime - frtime)/powerupTimeDuration;
+            if (frtime < powerupEndTime) {
+                float timeLeftPercentage = (float) (powerupEndTime - frtime) / powerupTimeDuration;
 
-                powerupCounterPercentage = (width/5) + (width*32/100 - width/5)*timeLeftPercentage;
-            }else{
-                powerupCounterPercentage = width*328/1000;
+                powerupCounterPercentage = (width / 5) + (width * 32 / 100 - width / 5) * timeLeftPercentage;
+            } else {
+                powerupCounterPercentage = width * 328 / 1000;
             }
 
 
             //powerup spawning
             if (powerupSpawnTime < frtime) {
                 int randomChoice = rand.nextInt(5);
-                int randomX = rand.nextInt(width*9/10)+width/20;
+                int randomX = rand.nextInt(width * 9 / 10) + width / 20;
                 if (randomChoice == 0) {
                     powerups.add(new HealthPack(healthPack, (float) randomX, -height / 10, 1));
                 } else if (randomChoice == 1) {
@@ -431,7 +429,7 @@ public class PlayScreen extends Screen {
                     p.setX(10000);
 
                     if (p.getPowerupType() == PowerupType.HEALTHPACK) {
-                        if(lives != START_NUMLIVES && !(lives <= 0)) {
+                        if (lives != START_NUMLIVES && !(lives <= 0)) {
                             lives++;
                         }
                     } else if (p.getPowerupType() == PowerupType.DOUBLEFIRE) {
@@ -503,7 +501,7 @@ public class PlayScreen extends Screen {
                         addEnemyExplosion(e);
                         enemiesIterator.remove();
 
-                    } else if(!isForcefield){
+                    } else if (!isForcefield) {
 
                         //for red tinge on enemy, not like it matters though, players dead
                         e.setHitContactTimeForTinge(System.nanoTime());
@@ -600,10 +598,10 @@ public class PlayScreen extends Screen {
                     //this starts the next stage of enemy movement
                     if (!e.isAIStarted()) {
                         e.setX(rand.nextInt(width * 4 / 5));
-                        if(e.getShipType() == ShipType.MOTHERSHIP) {
+                        if (e.getShipType() == ShipType.MOTHERSHIP) {
                             e.setY(-height / 3);
-                        }else{
-                            e.setY(-height/7);
+                        } else {
+                            e.setY(-height / 7);
                         }
                         e.setFinishedVelocityChange(true);
                         e.setAIStarted(true);
@@ -848,7 +846,6 @@ public class PlayScreen extends Screen {
         }
 
 
-
         //animator for map background
         mapAnimatorY += 2.0f;
         //this means the stars are off the screen
@@ -930,7 +927,6 @@ public class PlayScreen extends Screen {
             }
 
 
-
             //explosion drawer
             for (ShipExplosion se : shipExplosions) {
                 c.drawBitmap(explosion[se.getCurrentFrame()], se.getX(), se.getY(), p);
@@ -940,7 +936,7 @@ public class PlayScreen extends Screen {
 
             //drawing lasers
             if (shipLasers.size() > 0) {
-                for (ShipLaser sl: shipLasers) {
+                for (ShipLaser sl : shipLasers) {
 
                     if (sl.getShip().getShipType() != ShipType.IMPERIAL && sl.getShip().getShipType() != ShipType.BATTLECRUISER && sl.getShip().getShipType() != ShipType.PLAYER) {
                         c.drawBitmap(sl.getBmp(), sl.getX(), sl.getY(), p);
@@ -982,7 +978,7 @@ public class PlayScreen extends Screen {
                     c.drawBitmap(spaceshipHit, playerShip.getX(), playerShip.getY(), p);
                 } else {
                     if (isForcefield) {
-                        c.drawBitmap(forceField, null, new Rect(playerShip.getBounds().left-width/20, playerShip.getBounds().top - height/20, playerShip.getBounds().right+width/20,playerShip.getBounds().bottom+height/20), p);
+                        c.drawBitmap(forceField, null, new Rect(playerShip.getBounds().left - width / 20, playerShip.getBounds().top - height / 20, playerShip.getBounds().right + width / 20, playerShip.getBounds().bottom + height / 20), p);
                     }
                     c.drawBitmap(spaceship, playerShip.getX(), playerShip.getY(), p);
                 }
@@ -1000,12 +996,12 @@ public class PlayScreen extends Screen {
             }
 
             //topui
-            c.drawBitmap(slantedContainer, null, new Rect(0, 0, width*38/100, height/12), p);
-           // c.drawBitmap(normalContainer, null, new Rect(width*38/100, 0, width*3/5,height/12), p);
-          //  c.drawBitmap(normalContainer, null, new Rect(width*3/5, 0, width,height/12), p);
-            c.drawBitmap(lifeBarEmpty, null, new Rect((width*140 / 1000)/5, height / 48, width*34/100, (height*679/10000)), p);
-            c.drawBitmap(lifeBarRect, null, new Rect((width*144 / 1000)/4, height / 35, livesPercentage, (height / 23)), p);
-            c.drawBitmap(powerupTimeRect, null, new Rect((width*202 /1000), height *52/ 1000, (int) powerupCounterPercentage, (height*61 / 1000)), p);
+            c.drawBitmap(slantedContainer, null, new Rect(0, 0, width * 38 / 100, height / 12), p);
+            // c.drawBitmap(normalContainer, null, new Rect(width*38/100, 0, width*3/5,height/12), p);
+            //  c.drawBitmap(normalContainer, null, new Rect(width*3/5, 0, width,height/12), p);
+            c.drawBitmap(lifeBarEmpty, null, new Rect((width * 140 / 1000) / 5, height / 48, width * 34 / 100, (height * 679 / 10000)), p);
+            c.drawBitmap(lifeBarRect, null, new Rect((width * 144 / 1000) / 4, height / 35, livesPercentage, (height / 23)), p);
+            c.drawBitmap(powerupTimeRect, null, new Rect((width * 202 / 1000), height * 52 / 1000, (int) powerupCounterPercentage, (height * 61 / 1000)), p);
 
 
             p.setColor(Color.WHITE);
@@ -1153,7 +1149,7 @@ public class PlayScreen extends Screen {
                 }
 
 
-                if(playerShip != null) {
+                if (playerShip != null) {
                     playerShip.setSpaceshipIsMoving(false);
                 }
 
