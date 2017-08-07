@@ -94,7 +94,7 @@ public class EntryScreen extends Screen {
             realHeight = v.getHeight();
             realWidth = v.getWidth();
 
-            grayedShipX = width*49/100;
+            grayedShipX = width*501/1000;
             grayedShipY = height*72/100;
 
             // initialize button locations
@@ -213,7 +213,7 @@ public class EntryScreen extends Screen {
 
 
         //some might wonder how I come up with these numbers, lets just say I have the world's best eye for estimation
-        grayedShipBounds.set((int) grayedShipX-(width*16/100)/2,(int) grayedShipY-(height*77/1000)/2,(int) grayedShipX + (width*16/100)/2,(int) grayedShipY + (height*77/1000)/2);
+        grayedShipBounds.set((int) grayedShipX-(width*13/100)/2,(int) grayedShipY-(height*77/1000)/2,(int) grayedShipX + (width*11/100)/2,(int) grayedShipY + (height*77/1000)/2);
         if(startAnimation){
             grayedShipY = grayedShipY+ realHeight/28;
         }
