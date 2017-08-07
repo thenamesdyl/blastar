@@ -8,16 +8,12 @@ import android.graphics.Bitmap;
 
 public class Nuke extends Powerup {
 
-        private PowerupType powerupType = PowerupType.NUKE;
-        private float x;
-        private float y;
-        private float dy = 3;
-        private Bitmap nuke;
-
         public Nuke(Bitmap nuke, float x, float y){
+            powerupType = PowerupType.NUKE;
             this.x = x;
             this.y = y;
-            this.nuke = nuke;
+            this.dy = 3;
+            this.bmp = nuke;
         }
 
         public float getX() {
@@ -37,11 +33,11 @@ public class Nuke extends Powerup {
         }
 
         public Bitmap getBitmap() {
-            return nuke;
+            return bmp;
         }
 
-        public void setBitmap(Bitmap doubleFire) {
-            this.nuke = nuke;
+        public void setBitmap(Bitmap nuke) {
+            this.bmp = nuke;
         }
 
         public float getDy() {

@@ -7,6 +7,12 @@ import android.graphics.Bitmap;
  */
 
 public abstract class Powerup {
+    PowerupType powerupType;
+    float dy;
+    float x;
+    float y;
+    Bitmap bmp;
+
     public abstract Bitmap getBitmap();
     public abstract float getX();
     public abstract float getY();

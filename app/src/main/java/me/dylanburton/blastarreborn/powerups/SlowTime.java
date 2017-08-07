@@ -8,16 +8,12 @@ import android.graphics.Bitmap;
 
 public class SlowTime extends Powerup {
 
-    private PowerupType powerupType = PowerupType.SLOWTIME;
-    private float x;
-    private float y;
-    private float dy = 3;
-    private Bitmap slowTime;
-
     public SlowTime(Bitmap slowTime, float x, float y){
+        powerupType = PowerupType.SLOWTIME;
+        this.dy = 3;
         this.x = x;
         this.y = y;
-        this.slowTime = slowTime;
+        this.bmp = slowTime;
     }
 
     public float getX() {
@@ -37,11 +33,11 @@ public class SlowTime extends Powerup {
     }
 
     public Bitmap getBitmap() {
-        return slowTime;
+        return bmp;
     }
 
     public void setBitmap(Bitmap slowTime) {
-        this.slowTime = slowTime;
+        this.bmp = slowTime;
     }
 
     public float getDy() {

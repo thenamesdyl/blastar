@@ -10,14 +10,15 @@ import me.dylanburton.blastarreborn.spaceships.ShipType;
 
 public class Battlecruiser extends Enemy {
     private int RANDOM_DIRECTION_SPEED = 10000;
-    public Battlecruiser(Bitmap shipBitmap, Bitmap btmHit, boolean isWorthEnemyDestroyedPoint){
+
+    public Battlecruiser(Bitmap shipBitmap, Bitmap btmHit, boolean isWorthEnemyDestroyedPoint) {
         //calls main Enemy constructor
         super(shipBitmap, btmHit, ShipType.BATTLECRUISER, isWorthEnemyDestroyedPoint);
 
     }
 
     @Override
-    public int getRandomDirectionSpeed(){
+    public int getRandomDirectionSpeed() {
         return RANDOM_DIRECTION_SPEED;
 
     }

@@ -7,16 +7,13 @@ import android.graphics.Bitmap;
  */
 
 public class DoubleFire extends Powerup {
-    private PowerupType powerupType = PowerupType.DOUBLEFIRE;
-    private float x;
-    private float y;
-    private float dy = 3;
-    private Bitmap doubleFire;
 
     public DoubleFire(Bitmap doubleFire, float x, float y){
+        powerupType = PowerupType.DOUBLEFIRE;
+        this.dy = 3;
         this.x = x;
         this.y = y;
-        this.doubleFire = doubleFire;
+        this.bmp = doubleFire;
     }
 
     public float getX() {
@@ -36,11 +33,11 @@ public class DoubleFire extends Powerup {
     }
 
     public Bitmap getBitmap() {
-        return doubleFire;
+        return bmp;
     }
 
     public void setBitmap(Bitmap doubleFire) {
-        this.doubleFire = doubleFire;
+        this.bmp = bmp;
     }
 
     public float getDy() {

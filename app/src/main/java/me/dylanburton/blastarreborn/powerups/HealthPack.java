@@ -7,18 +7,15 @@ import android.graphics.Bitmap;
  */
 
 public class HealthPack extends Powerup {
-    private PowerupType powerupType = PowerupType.HEALTHPACK;
-    private float x;
-    private float y;
-    private float dy = 3;
     private int amountOfLives;
-    private Bitmap healthPack;
 
     public HealthPack(Bitmap healthPack, float x, float y, int amountOfLives){
+        powerupType = PowerupType.HEALTHPACK;
         this.x = x;
         this.y = y;
+        this.dy = 3;
         this.amountOfLives = amountOfLives;
-        this.healthPack = healthPack;
+        this.bmp = healthPack;
     }
 
     public int getAmountOfLives() {
@@ -45,11 +42,11 @@ public class HealthPack extends Powerup {
     }
 
     public Bitmap getBitmap() {
-        return healthPack;
+        return bmp;
     }
 
     public void setBitmap(Bitmap healthPack) {
-        this.healthPack = healthPack;
+        this.bmp = healthPack;
     }
 
     public float getDy() {

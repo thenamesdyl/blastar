@@ -46,6 +46,7 @@ public class Level1 extends Level{
             }
 
         }
+
         if(ps.getEnemiesDestroyed() >= 2){
 
             if(updateLevelStage == 1) {

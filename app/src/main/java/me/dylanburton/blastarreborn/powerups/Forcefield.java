@@ -7,16 +7,13 @@ import android.graphics.Bitmap;
  */
 
 public class Forcefield extends Powerup {
-    private PowerupType powerupType = PowerupType.FORCEFIELD;
-    private float x;
-    private float y;
-    private float dy = 3;
-    private Bitmap forceField;
 
     public Forcefield(Bitmap forceField, float x, float y){
+        powerupType = PowerupType.FORCEFIELD;
+        this.dy = 3;
         this.x = x;
         this.y = y;
-        this.forceField = forceField;
+        this.bmp = forceField;
     }
 
     public float getX() {
@@ -36,11 +33,11 @@ public class Forcefield extends Powerup {
     }
 
     public Bitmap getBitmap() {
-        return forceField;
+        return bmp;
     }
 
-    public void setBitmap(Bitmap doubleFire) {
-        this.forceField = doubleFire;
+    public void setBitmap(Bitmap forceField) {
+        this.bmp = forceField;
     }
 
     public float getDy() {
