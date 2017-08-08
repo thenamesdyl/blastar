@@ -12,6 +12,8 @@ import android.view.View;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
+import me.dylanburton.blastarreborn.utils.Sound;
+
 /**
  * Created by Dylan on 7/19/2017.
  */
@@ -76,6 +78,8 @@ public class LevelScreen extends Screen {
         if(width == 0){
             width = v.getWidth();
             height = v.getHeight();
+
+            act.playSound(Sound.LEVEL_SELECTION);
 
             realWidth = v.getWidth();
             realHeight = v.getHeight();
