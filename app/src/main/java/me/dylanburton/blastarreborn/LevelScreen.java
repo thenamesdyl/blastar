@@ -81,6 +81,7 @@ public class LevelScreen extends Screen {
 
             act.playSound(Sound.LEVEL_SELECTION);
 
+
             realWidth = v.getWidth();
             realHeight = v.getHeight();
 

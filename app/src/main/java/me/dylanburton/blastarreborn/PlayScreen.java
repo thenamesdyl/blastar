@@ -82,7 +82,7 @@ public class PlayScreen extends Screen {
     private Bitmap spaceship, spaceshipHit, spaceshipLaser, fighter, fighterOrb, fighterHit, explosion[], gameOverOverlay, playerDiedText, playerWonText;
     private Bitmap imperial, imperialHit, imperialOrb[], berserker, berserkerHit, berserkerReverse, battlecruiser, battlecruiserHit, battlecruiserFire[], mothership, mothershipHit, healthPack;
     private Bitmap doubleFire, doubleFireShot, oneStar, twoStar, threeStar, noStar, nuke, slowTime, forceField, shield;
-    private Bitmap lifeBarEmpty, lifeBarRect, powerupTimeRect, slantedContainer, normalContainer;
+    private Bitmap lifeBarEmpty, lifeBarRect, powerupTimeRect, slantedContainer;
     private Rect scaledDst = new Rect();
 
     //main spaceship
@@ -189,7 +189,6 @@ public class PlayScreen extends Screen {
             lifeBarEmpty = act.getScaledBitmap("topui/lifebarfoundation.png");
             powerupTimeRect = act.getScaledBitmap("topui/poweruptimerect.png");
             slantedContainer = act.getScaledBitmap("topui/slantedcontainer.png");
-            normalContainer = act.getScaledBitmap("topui/topuirect.png");
 
             //explosion for all ships
             explosion = new Bitmap[12];

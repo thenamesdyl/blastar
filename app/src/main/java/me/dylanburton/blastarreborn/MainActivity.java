@@ -1,5 +1,6 @@
 package me.dylanburton.blastarreborn;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
@@ -30,7 +31,7 @@ import java.util.Map;
 
 import me.dylanburton.blastarreborn.utils.Sound;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
     static final String LOG_ID = "Dylan";
     static final float EXPECTED_DENSITY = 315.0f;  // original target density of runtime device
     static final float EXPECTED_WIDTH = 720.0f;  // original target width of runtime device
