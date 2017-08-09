@@ -804,7 +804,7 @@ public class PlayScreen extends Screen {
         }
 
         //spaceship decay
-        if (playerShip != null && playerShip.getY() < height * 9 / 10 && !playerShip.isSpaceshipMoving()) {
+        if (playerShip != null && playerShip.getY() < height * 15 / 16 && !playerShip.isSpaceshipMoving()) {
             playerShip.setY(playerShip.getY() + DECAY_SPEED);
         }
 

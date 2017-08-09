@@ -5,16 +5,15 @@ android {
     buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "me.dylanburton.blastarreborn"
-        minSdkVersion 20
+        minSdkVersion 15
         targetSdkVersion 26
-        versionCode 2
-        versionName "1.1"
+        versionCode 4
+        versionName "1.12"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            shrinkResources true
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

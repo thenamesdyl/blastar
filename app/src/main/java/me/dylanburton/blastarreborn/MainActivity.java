@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
             gamefont = Typeface.createFromAsset(getAssets(), "fonts/elitedanger.ttf");
             levelfont = Typeface.createFromAsset(getAssets(), "fonts/sugarpunch.ttf");
 
-           
+
             // create screens
             entryScreen = new EntryScreen(this);
             playScreen = new PlayScreen(this);
