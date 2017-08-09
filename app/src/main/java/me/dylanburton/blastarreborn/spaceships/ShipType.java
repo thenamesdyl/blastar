@@ -11,6 +11,7 @@ public enum ShipType {
     BATTLECRUISER(13,100),
     MOTHERSHIP(100,200),
     BERSERKER(6,500),
+    HEATSINKER(5,20),
     PLAYER(0,0);
 
     private final int lives;
