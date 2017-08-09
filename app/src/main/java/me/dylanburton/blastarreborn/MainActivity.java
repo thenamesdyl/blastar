@@ -144,6 +144,7 @@ public class MainActivity extends Activity {
         if(currentScreen != entryScreen) {
             if(currentScreen == playScreen){
 
+                levelScreen.resetVariables();
                 playSound(Sound.LEVEL_SELECTION);
                 currentScreen = levelScreen;
 

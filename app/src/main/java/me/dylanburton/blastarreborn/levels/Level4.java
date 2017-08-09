@@ -20,7 +20,7 @@ public class Level4 extends Level {
     private Bitmap mapEdge;
     private PlayScreen ps;
     private int updateLevelStage = 0; //defends against the checkers constantly drawing ships
-    private static final int END_LEVEL = 8;
+    private static final int END_LEVEL = 7;
     private int totalEnemies;
     private int randomAmountShips = 0;
     private int randomShip = 0;
