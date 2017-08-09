@@ -53,9 +53,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
             super.onCreate(savedInstanceState);
             dm = new DisplayMetrics();
@@ -63,20 +60,7 @@ public class MainActivity extends Activity {
             gamefont = Typeface.createFromAsset(getAssets(), "fonts/elitedanger.ttf");
             levelfont = Typeface.createFromAsset(getAssets(), "fonts/sugarpunch.ttf");
 
-            //consistent dpi/screen stuff
-            densityscalefactor = (float)dm.densityDpi / EXPECTED_DENSITY;
-            if (densityscalefactor > 1.5f)
-                densityscalefactor = 1.5f;
-            else if (densityscalefactor < 0.5f)
-                densityscalefactor = 0.5f;
-            sizescalefactor = (float)dm.widthPixels / EXPECTED_WIDTH;
-            if (sizescalefactor > 2f)
-                sizescalefactor = 2f;
-            else if (sizescalefactor < 0.4f)
-                sizescalefactor = 0.4f;
-            TS_NORMAL = (int)(38 * sizescalefactor);
-            TS_BIG = (int)(70 * sizescalefactor);
-
+           
             // create screens
             entryScreen = new EntryScreen(this);
             playScreen = new PlayScreen(this);
@@ -114,11 +98,8 @@ public class MainActivity extends Activity {
      */
     public Bitmap getScaledBitmap(String fname) throws IOException
     {
-        sboptions.inScreenDensity = dm.densityDpi;
-        sboptions.inTargetDensity =  dm.densityDpi;
-        sboptions.inDensity = (int)(dm.densityDpi / sizescalefactor); // hack: want to load bitmap scaled for width, abusing density scaling options to do it
         InputStream inputStream = getAssets().open(fname);
-        Bitmap btm = BitmapFactory.decodeStream(inputStream, null, sboptions);
+        Bitmap btm = BitmapFactory.decodeStream(inputStream);
         inputStream.close();
         return btm;
     }
