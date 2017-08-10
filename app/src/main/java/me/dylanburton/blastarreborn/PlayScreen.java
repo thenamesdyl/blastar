@@ -669,12 +669,12 @@ public class PlayScreen extends Screen {
                             e.setVy(e.getVy() - (e.getVy() / 50));
 
                             //borders
-                            if (e.getX() < 0 || e.getX() > width * 4 / 5) {
+                            if (e.getX() < 0 || e.getX() > width * 9 / 10) {
                                 //this check disables the ability for ship to get too far and then freeze in place
                                 if (e.getX() < 0) {
                                     e.setX(0);
-                                } else if (e.getX() > width * 4 / 5) {
-                                    e.setX(width * 4 / 5);
+                                } else if (e.getX() > width * 9 / 10) {
+                                    e.setX(width * 9 / 10);
                                 }
 
                                 e.setVx(-e.getVx());
@@ -698,12 +698,12 @@ public class PlayScreen extends Screen {
                             e.setVy(e.getVy() + (e.getRandomVelocityGeneratorY() / 50));
 
                             //borders for x and y
-                            if (e.getX() < 0 || e.getX() > width * 4 / 5) {
+                            if (e.getX() < 0 || e.getX() > width * 9 / 10) {
                                 //this check disables the ability for ship to get too far and then freeze in place
                                 if (e.getX() < 0) {
                                     e.setX(0);
-                                } else if (e.getX() > width * 4 / 5) {
-                                    e.setX(width * 4 / 5);
+                                } else if (e.getX() > width * 9 / 10) {
+                                    e.setX(width * 9 / 10);
                                 }
 
                                 e.setVx(-e.getVx());
@@ -1018,28 +1018,28 @@ public class PlayScreen extends Screen {
                 if (gamestate == State.PLAYERDIED) {
                     c.drawBitmap(gameOverOverlay, null, new Rect(0, 0, width, height), p);
 
-                    c.drawBitmap(noStar, width * 22 / 100, height / 5, p);
-                    c.drawBitmap(playerDiedText, width * 27 / 100, height * 38 / 100, p);
+                    c.drawBitmap(noStar, width * 32 / 100, height / 5, p);
+                    c.drawBitmap(playerDiedText, width * 35 / 100, height * 38 / 100, p);
 
                 } else {
 
                     c.drawBitmap(gameOverOverlay, null, new Rect(0, 0, width, height), p);
                     //playerwon
-                    c.drawBitmap(playerWonText, width * 19 / 100, height * 38 / 100, p);
+                    c.drawBitmap(playerWonText, width * 32 / 100, height * 38 / 100, p);
 
                     if (starsEarned == 3) {
-                        c.drawBitmap(threeStar, width * 23 / 100, height / 5, p);
+                        c.drawBitmap(threeStar, width * 35 / 100, height / 5, p);
 
                     } else if (starsEarned == 2) {
-                        c.drawBitmap(twoStar, width * 23 / 100, height / 5, p);
+                        c.drawBitmap(twoStar, width * 35 / 100, height / 5, p);
                     } else {
-                        c.drawBitmap(oneStar, width * 23 / 100, height / 5, p);
+                        c.drawBitmap(oneStar, width * 35 / 100, height / 5, p);
                     }
 
 
                 }
 
-                drawCenteredText(c, "Press to continue", height * 4 / 5, p, 0);
+                drawCenteredText(c, "Press to continue", height * 3 / 5, p, 0);
 
 
             }
