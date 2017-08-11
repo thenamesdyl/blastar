@@ -2,8 +2,6 @@
 
 Blastar Reborn, A shoot em' up space game.
 
-<img src="http://i.imgur.com/HrZrZ9m.jpg">
-
 | [:sparkles: Getting Started](#getting-started) | [:rocket: Download](#download) | [:camera: Screenshots](#screenshots) |
 | --------------- | -------- | ----------- |
 
