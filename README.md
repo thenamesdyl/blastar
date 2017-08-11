@@ -47,7 +47,7 @@ You can get access to Blastar source code by using one of the following ways:
 - Clone the repository locally:
 
 ```bash
-git clone https://github.com/BayatGames/RedRunner.git
+git clone https://github.com/TheNamesDyl/blastar.git
 ```
 
 ## Screenshots
