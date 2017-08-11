@@ -1,4 +1,5 @@
 # Blastar
+<img src="http://i.imgur.com/HrZrZ9m.jpg" width="50%">
 
 <p align="center">
 <a href="https://play.google.com/store/apps/details?id=me.dylanburton.blastarreborn&hl=en">
