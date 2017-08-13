@@ -68,7 +68,13 @@ git clone https://github.com/TheNamesDyl/blastar.git
   <img src="https://lh3.googleusercontent.com/Y6FRW-ap-jiuqVebmjX3zYr0DbdA7_66xncFsPhd1GLWB53a4NzlXm6LNegS_ejg8YxR=h900-rw" />
 </p>
 
+## Todo
 
+ 1. Add more levels
+ 2. Add difficulties
+ 3. Add more enemies
+ 4. Add more sound effects
+ 
 ## License
 
 MIT @ [Dylan Burton](https://github.com/TheNamesDyl)
