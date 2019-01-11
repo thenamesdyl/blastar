@@ -141,6 +141,8 @@ public class PlayScreen extends Screen {
 
             //your spaceship and laser
             spaceship = act.getScaledBitmap("spaceship/playerspaceship.png");
+            spaceship.setWidth(200);
+            spaceship.setHeight(300);
             spaceshipLaser = act.getScaledBitmap("spaceshiplaser.png");
             doubleFireShot = act.getScaledBitmap("doublefireshot.png");
 
@@ -461,8 +463,6 @@ public class PlayScreen extends Screen {
             Iterator<Enemy> enemiesIterator = enemiesFlying.iterator();
             while (enemiesIterator.hasNext()) {
                 Enemy e = enemiesIterator.next();
-
-                //Mothership spawning
 
                 //makes sure mothership is on the screen before spawning more imperials
                 if (e.getShipType() == ShipType.MOTHERSHIP && e.getX() < width) {

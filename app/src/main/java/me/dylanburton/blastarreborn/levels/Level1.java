@@ -46,7 +46,7 @@ public class Level1 extends Level{
          * Everytime player has destroyed all but 2 enemies, the next wave comes in. Once player reaches designated END level, game ends.
          */
         if(ps.getEnemiesDestroyed() >= totalEnemies-2){
-            randomAmountShips = rand.nextInt(6)+3;
+            randomAmountShips = rand.nextInt(6) + 3;
 
             if(updateLevelStage != END_LEVEL) {
                 updateLevelStage++;

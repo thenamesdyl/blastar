@@ -11,7 +11,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -57,8 +56,8 @@ public class MainActivity extends Activity {
             super.onCreate(savedInstanceState);
             dm = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(dm);
-            gamefont = Typeface.createFromAsset(getAssets(), "fonts/elitedanger.ttf");
-            levelfont = Typeface.createFromAsset(getAssets(), "fonts/sugarpunch.ttf");
+            //gamefont = Typeface.createFromAsset(getAssets(), "fonts/elitedanger.ttf");
+            //levelfont = Typeface.createFromAsset(getAssets(), "fonts/sugarpunch.ttf");
 
 
             // create screens
@@ -113,8 +112,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        mainView.resume();
-        mediaPlayer.start();
+        if (mainView != null && mediaPlayer != null) {
+            mainView.resume();
+            mediaPlayer.start();
+        }
     }
 
     /*
