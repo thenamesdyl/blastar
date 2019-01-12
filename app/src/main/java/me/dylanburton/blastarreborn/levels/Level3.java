@@ -20,7 +20,7 @@ public class Level3 extends Level {
     private Bitmap mapEdge;
     private PlayScreen ps;
     private int updateLevelStage = 0; //defends against the checkers constantly drawing ships
-    private static final int END_LEVEL = 7;
+    private static final int END_LEVEL = 5;
     private int totalEnemies;
     private int randomAmountShips = 0;
     private int randomShip = 0;
@@ -48,7 +48,7 @@ public class Level3 extends Level {
          * Everytime player has destroyed all but 2 enemies, the next wave comes in. Once player reaches designated END level, game ends.
          */
         if(ps.getEnemiesDestroyed() >= totalEnemies-2){
-            randomAmountShips = rand.nextInt(9)+3;
+            randomAmountShips = rand.nextInt(12)+3;
 
             if(updateLevelStage != END_LEVEL) {
                 updateLevelStage++;

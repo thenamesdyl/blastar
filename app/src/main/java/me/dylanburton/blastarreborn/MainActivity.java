@@ -51,29 +51,24 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try {
+        super.onCreate(savedInstanceState);
 
-            super.onCreate(savedInstanceState);
-            dm = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(dm);
-            //gamefont = Typeface.createFromAsset(getAssets(), "fonts/elitedanger.ttf");
-            //levelfont = Typeface.createFromAsset(getAssets(), "fonts/sugarpunch.ttf");
+        dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        //gamefont = Typeface.createFromAsset(getAssets(), "fonts/elitedanger.ttf");
+        //levelfont = Typeface.createFromAsset(getAssets(), "fonts/sugarpunch.ttf");
 
 
-            // create screens
-            entryScreen = new EntryScreen(this);
-            playScreen = new PlayScreen(this);
-            aboutScreen = new AboutScreen(this);
-            levelScreen = new LevelScreen(playScreen, this);
+        // create screens
+        entryScreen = new EntryScreen(this);
+        playScreen = new PlayScreen(this);
+        aboutScreen = new AboutScreen(this);
+        levelScreen = new LevelScreen(playScreen, this);
 
-            mainView = new FullScreenView(this);
-            setContentView(mainView);
+        mainView = new FullScreenView(this);
+        setContentView(mainView);
 
-            playSound(Sound.ENTRY);
-        } catch (Exception e) {
-            // tell me specifically whats happening and where
-            Log.d(LOG_ID, "onCreate", e);
-        }
+        playSound(Sound.ENTRY);
     }
 
     public void playSound(Sound s){

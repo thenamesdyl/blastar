@@ -141,8 +141,6 @@ public class PlayScreen extends Screen {
 
             //your spaceship and laser
             spaceship = act.getScaledBitmap("spaceship/playerspaceship.png");
-            spaceship.setWidth(200);
-            spaceship.setHeight(300);
             spaceshipLaser = act.getScaledBitmap("spaceshiplaser.png");
             doubleFireShot = act.getScaledBitmap("doublefireshot.png");
 
@@ -287,7 +285,6 @@ public class PlayScreen extends Screen {
 
 
     }
-
 
     public void resetGame() {
 
@@ -817,9 +814,9 @@ public class PlayScreen extends Screen {
                 shipLasers.add(new MainShipLaser(playerShip, spaceshipLaser, shipLasers.get(shipLasers.size() - 1).getX() + spaceship.getWidth() * 80 / 100, playerShip.getY() + spaceship.getHeight() / 3));
             }
             if (!isDoubleFireSpeed) {
-                playerShip.setLastLaserSpawnTime(System.nanoTime() + ONESEC_NANOS / 2);
+                playerShip.setLastLaserSpawnTime(System.nanoTime() + ONESEC_NANOS / 5);
             } else {
-                playerShip.setLastLaserSpawnTime(System.nanoTime() + (ONESEC_NANOS / 4));
+                playerShip.setLastLaserSpawnTime(System.nanoTime() + (ONESEC_NANOS / 8));
 
                 if (powerupEndTime < frtime) {
                     isDoubleFireSpeed = false;
