@@ -76,7 +76,7 @@ public class MainActivity extends Activity {
             mediaPlayer.stop();
         }
         if(s == Sound.BATTLE){
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.battlemusic);
+            // mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.battlemusic);
         }else if(s == Sound.LEVEL_SELECTION){
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.level);
         }else if(s == Sound.ENTRY){
