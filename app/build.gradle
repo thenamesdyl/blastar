@@ -1,12 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "26.0.0"
+    compileSdkVersion 34
     defaultConfig {
         applicationId "me.dylanburton.blastarreborn"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 33
         versionCode 5
         versionName "1.13"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -22,14 +21,16 @@ android {
     }
     productFlavors {
     }
+    namespace 'me.dylanburton.blastarreborn'
 
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:design:28.+'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2') {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+
+    implementation 'com.android.support:design:28.+'
 }
