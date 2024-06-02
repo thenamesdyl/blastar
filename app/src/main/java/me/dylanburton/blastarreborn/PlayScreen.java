@@ -279,7 +279,6 @@ public class PlayScreen extends Screen {
             }
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
 
